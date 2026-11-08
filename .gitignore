@@ -1,0 +1,4 @@
+.claude/
+_tmp_*.json
+*.bat
+serve.ps1
