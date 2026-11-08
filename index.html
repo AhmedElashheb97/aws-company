@@ -171,6 +171,15 @@ td.num{display:table-cell}   /* .num is inline-block; on a table cell that break
 .pchip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px 2px 8px;border-radius:99px;font-size:13.5px;font-weight:700;background:var(--ok-soft);color:#1F6340}
 .pchip i{font-style:normal;font-weight:600;font-size:12px;opacity:.75;min-width:26px}
 .pchip.pneg{background:var(--bad-soft);color:var(--bad)}
+.logl{display:flex;flex-direction:column}
+.logi{padding:12px 18px;border-bottom:1px solid var(--line-2)}
+.logi:last-child{border-bottom:0}
+.logh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.logh b.click{cursor:pointer} .logh b.click:hover{color:var(--brand-d);text-decoration:underline}
+.logi ul{margin:6px 0 0;padding-inline-start:20px;font-size:14.5px;line-height:1.75}
+.logi li::marker{color:var(--brand)}
+.lold{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(0,0,0,.25)}
+.lnew{font-weight:800}
 .pwarn{margin-top:5px;font-size:12.5px;font-weight:700;color:#8B1E1E;background:var(--bad-soft);border-radius:8px;padding:2px 8px;display:inline-block}
 .paycost{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px}
 .kpi .pchips{flex-direction:row;flex-wrap:wrap;margin-top:8px}
@@ -302,6 +311,7 @@ body.pub main{margin:0 auto}
     <a data-v="customers"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>الزبائن</a>
     <a data-v="profits"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>الأرباح</a>
     <a data-v="map"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.1 6.3 9.9 4.2a2 2 0 0 0-1.8 0L3.6 6.4A1 1 0 0 0 3 7.3v12.1a1 1 0 0 0 1.4.9l3.7-1.8a2 2 0 0 1 1.8 0l4.2 2.1a2 2 0 0 0 1.8 0l4.5-2.2a1 1 0 0 0 .6-.9V5.4a1 1 0 0 0-1.4-.9l-3.7 1.8a2 2 0 0 1-1.8 0z"/><path d="M15 6v15"/><path d="M9 3v15"/></svg></span>خريطة المواني</a>
+    <a data-v="log"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg></span>سجل التعديلات</a>
     <a href="./#track" target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.99-5.54 10.19-7.4 11.8a1 1 0 0 1-1.2 0C9.54 20.19 4 14.99 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span>صفحة التتبع<svg class="ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a>
   </nav>
   <div class="foot">
@@ -358,12 +368,72 @@ const plain = o => JSON.parse(JSON.stringify(o));
 function fbErr(e){ console.error(e); toast('تعذر الحفظ في السحابة: ' + (e.code || e.message)); }
 function save(c){
   if(!USE_FB){ try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){ toast('تعذر الحفظ في المتصفح!'); } return; }
-  if(c) fs.collection('cars').doc(c.id).set(plain(c)).catch(fbErr);
+  if(c){ logCar(shadow.cars[c.id], c); fs.collection('cars').doc(c.id).set(plain(c)).catch(fbErr); }
 }
-function saveSettingsStore(){ if(USE_FB) fs.collection('meta').doc('settings').set(plain(db.settings)).catch(fbErr); else save(); }
-function removeCar(id){ db.cars = db.cars.filter(c => c.id !== id); if(USE_FB) fs.collection('cars').doc(id).delete().catch(fbErr); else save(); }
-function saveCust(cu){ if(!USE_FB) return save(); fs.collection('customers').doc(cu.id).set(plain(cu)).catch(fbErr); }
-function removeCust(id){ db.customers = db.customers.filter(x => x.id !== id); if(USE_FB) fs.collection('customers').doc(id).delete().catch(fbErr); else save(); }
+function saveSettingsStore(){ if(USE_FB){ logSettings(); fs.collection('meta').doc('settings').set(plain(db.settings)).catch(fbErr); } else save(); }
+function removeCar(id){ const old = shadow.cars[id]; db.cars = db.cars.filter(c => c.id !== id); if(USE_FB){ if(old) addLog('car', id, carName(old), 'حذف', [`حذف السيارة${old.vin ? ' — ' + old.vin : ''}${old.customer ? ' — ' + old.customer : ''}`]); fs.collection('cars').doc(id).delete().catch(fbErr); } else save(); }
+function saveCust(cu){ if(!USE_FB) return save(); logCust(shadow.customers[cu.id], cu); fs.collection('customers').doc(cu.id).set(plain(cu)).catch(fbErr); }
+function removeCust(id){ const old = shadow.customers[id]; db.customers = db.customers.filter(x => x.id !== id); if(USE_FB){ if(old) addLog('customer', id, old.name, 'حذف', ['حذف الزبون']); fs.collection('customers').doc(id).delete().catch(fbErr); } else save(); }
+
+/* ---------- change log: who changed what, and when ---------- */
+const shadow = {cars:{}, customers:{}, settings:null};   // last copy seen from the cloud, to compare against
+const $t = n => '$' + r2(n).toLocaleString('en-US', {maximumFractionDigits:2});
+function addLog(kind, ref, title, action, changes){
+  if(!USE_FB || !fbAuth || !fbAuth.currentUser || !changes.length) return;
+  fs.collection('log').add({at:new Date().toISOString(), by:fbAuth.currentUser.email || '', kind, ref, title:title || '', action, changes}).catch(e => console.error('log', e));
+}
+const CAR_F = {customer:'الزبون', vin:'رقم الهيكل', year:'السنة', make:'النوع', lot:'رقم اللوت', auction:'المزاد', date:'تاريخ الشراء',
+  buyPrice:'سعر الشراء', auctionFees:'رسوم المزاد', officeFee:'عمولة المكتب', wirePct:'عمولة الحوالة %', yard:'الساحة', port:'ميناء الساحة',
+  relocPort:'نقل لميناء آخر', perContainer:'سيارات في الحاوية', towCharge:'السحب على الزبون', oceanCharge:'البحري على الزبون',
+  shipWirePct:'عمولة حوالة الشحن %', towCost:'السحب الفعلي', oceanCost:'البحري الفعلي', notes:'الملاحظات', img:'الصورة', link:'رابط السيارة',
+  loc:'المكان', stage:'المرحلة', lock1:'قفل المرحلة 1', lock2:'قفل المرحلة 2', manualShip:'نقل يدوي للشحن'};
+const MONEY_F = new Set(['buyPrice','auctionFees','officeFee','towCharge','oceanCharge','towCost','oceanCost']);
+function fmtF(k, v){
+  if(v === '' || v == null || v === false) return '—';
+  if(k === 'loc') return LOC[v] || v;
+  if(k === 'stage') return STG[v] || v;
+  if(k === 'yard') return P.yards[v] ? P.yards[v].n + ', ' + P.yards[v].s : v;
+  if(k === 'port' || k === 'relocPort') return pName(v);
+  if(k === 'img') return 'صورة';
+  if(k === 'manualShip') return 'نعم';
+  if(MONEY_F.has(k)) return $t(v);
+  if(k === 'notes' || k === 'link') return String(v).slice(0, 40) + (String(v).length > 40 ? '…' : '');
+  return String(v);
+}
+const who = p => p === 'office' ? 'على المكتب' : 'على الزبون';
+function diffList(a, b, label, describe, fields){
+  const out = [], A = new Map((a || []).map(x => [x.id, x])), B = new Map((b || []).map(x => [x.id, x]));
+  B.forEach((x, id) => { if(!A.has(id)) out.push(`${label} جديد${label === 'دفعة' ? 'ة' : ''}: ${describe(x)}`); });
+  A.forEach((x, id) => { if(!B.has(id)) out.push(`حذف ${label}: ${describe(x)}`); });
+  B.forEach((x, id) => { const o = A.get(id); if(!o) return;
+    const ch = fields.filter(([f]) => String(o[f] ?? '') !== String(x[f] ?? '')).map(([f, n, fm]) => `${n}: ${fm ? fm(o[f]) : (o[f] || '—')} ← ${fm ? fm(x[f]) : (x[f] || '—')}`);
+    if(ch.length) out.push(`تعديل ${label} (${describe(o)}): ${ch.join('، ')}`);
+  });
+  return out;
+}
+function logCar(o, c){
+  if(!o){ addLog('car', c.id, carName(c), 'إضافة', [`سيارة جديدة${c.vin ? ' — ' + c.vin : ''}${c.customer ? ' — الزبون ' + c.customer : ''}`]); return; }
+  const ch = [];
+  Object.keys(CAR_F).forEach(k => { if(String(o[k] ?? '') !== String(c[k] ?? '') && !(o[k] == null && (c[k] === '' || c[k] === false)) && !(c[k] == null && (o[k] === '' || o[k] === false)))
+    ch.push(`${CAR_F[k]}: ${fmtF(k, o[k])} ← ${fmtF(k, c[k])}`); });
+  const ap = x => x ? `${x.by === 'office' ? 'المكتب' : 'الزبون'} ${x.date || ''}` : '—';
+  if(JSON.stringify(o.auctionPaid || null) !== JSON.stringify(c.auctionPaid || null)) ch.push(`سداد المزاد: ${ap(o.auctionPaid)} ← ${ap(c.auctionPaid)}`);
+  ch.push(...diffList(o.payments, c.payments, 'دفعة', p => `${$t(p.amount)} — ${STG[p.stage] || ''} — ${p.date || ''}`,
+    [['amount','المبلغ',$t], ['date','التاريخ'], ['stage','المرحلة',v => STG[v] || v], ['method','الطريقة']]));
+  ch.push(...diffList(o.expenses, c.expenses, 'مصروف', e => `${e.desc || 'مصروف'} ${$t(e.amount)} (${who(e.payer)})`,
+    [['desc','الوصف'], ['amount','المبلغ',$t], ['payer','على مين',who], ['stage','المرحلة',v => STG[v] || v], ['date','التاريخ']]));
+  ch.push(...diffList(o.refunds, c.refunds, 'مبلغ راجع', r => `${$t(r.amount)}${r.returned ? ' (رجع)' : ''}`, [['amount','المبلغ',$t], ['returned','رجع للزبون']]));
+  addLog('car', c.id, carName(c), 'تعديل', ch);
+}
+function logCust(o, cu){
+  if(!o){ addLog('customer', cu.id, cu.name, 'إضافة', ['زبون جديد' + (cu.phone ? ' — ' + cu.phone : '')]); return; }
+  const F = {name:'الاسم', phone:'الهاتف', phone2:'هاتف ثاني', city:'المدينة', notes:'ملاحظات'};
+  addLog('customer', cu.id, cu.name, 'تعديل', Object.keys(F).filter(k => String(o[k] ?? '') !== String(cu[k] ?? '')).map(k => `${F[k]}: ${o[k] || '—'} ← ${cu[k] || '—'}`));
+}
+function logSettings(){
+  const o = shadow.settings || {}, s = db.settings, F = {officeName:'اسم المكتب', officeFee:'عمولة المكتب الافتراضية', wirePct:'عمولة الحوالة الافتراضية %', perContainer:'سيارات في الحاوية'};
+  addLog('settings', 'settings', 'الإعدادات', 'تعديل', Object.keys(F).filter(k => String(o[k] ?? '') !== String(s[k] ?? '')).map(k => `${F[k]}: ${o[k] ?? '—'} ← ${s[k] ?? '—'}`));
+}
 async function replaceAll(d){
   if(!USE_FB){ localStorage.setItem(KEY, JSON.stringify(d)); db = load(); return; }
   const ops = [];
@@ -389,12 +459,17 @@ function initFirebase(){
     let first = true;
     unsub.push(fs.collection('cars').onSnapshot(snap => {
       db.cars = snap.docs.map(d => Object.assign({expenses:[], payments:[], refunds:[]}, d.data()));
+      shadow.cars = Object.fromEntries(snap.docs.map(d => [d.id, Object.assign({expenses:[], payments:[], refunds:[]}, d.data())]));
       render();
       clearTimeout(syncTracking._t); syncTracking._t = setTimeout(syncTracking, 1500);
       if(first){ first = false; offerUpload(snap.empty); }
     }, fbErr));
-    unsub.push(fs.collection('customers').onSnapshot(snap => { db.customers = snap.docs.map(d => d.data()); render(); }, fbErr));
-    unsub.push(fs.collection('meta').doc('settings').onSnapshot(d => { if(d.exists){ db.settings = Object.assign(db.settings, d.data()); render(); } }, fbErr));
+    unsub.push(fs.collection('customers').onSnapshot(snap => { db.customers = snap.docs.map(d => d.data()); shadow.customers = Object.fromEntries(snap.docs.map(d => [d.id, d.data()])); render(); }, fbErr));
+    unsub.push(fs.collection('meta').doc('settings').onSnapshot(d => { if(d.exists){ db.settings = Object.assign(db.settings, d.data()); shadow.settings = d.data(); render(); } }, fbErr));
+    unsub.push(fs.collection('log').orderBy('at', 'desc').limit(500).onSnapshot(snap => {
+      db.log = snap.docs.map(d => Object.assign({id:d.id}, d.data()));
+      if(ui.view === 'log' || ui.view === 'car' || ui.view === 'customer') render();
+    }, e => console.error('log', e)));
   });
 }
 function doLogin(){
@@ -505,8 +580,44 @@ function render(){
   else if(ui.view === 'customer'){ const cu = getCust(ui.carId); app.innerHTML = cu ? viewCustomer(cu) : (ui.view = 'customers', viewCustomers()); }
   else if(ui.view === 'customers') app.innerHTML = viewCustomers();
   else if(ui.view === 'profits') app.innerHTML = viewProfits();
+  else if(ui.view === 'log'){ const f = document.activeElement && document.activeElement.id === 'lq'; app.innerHTML = viewLog(); if(f){ const e = $('#lq'); e.focus(); e.setSelectionRange(e.value.length, e.value.length); } }
   else if(ui.view === 'map') app.innerHTML = viewMap();
   else app.innerHTML = viewCars();
+}
+
+/* ---------- change log ---------- */
+const ACT_CLS = {'إضافة':'done', 'تعديل':'ship', 'حذف':'bad'};
+function logTime(at){ const d = new Date(at); return isNaN(d) ? '' : d.toLocaleString('en-GB', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}); }
+function logItems(list, showTitle){
+  return list.map(l => `<div class="logi">
+    <div class="logh">${showTitle ? `<b class="${l.kind !== 'settings' ? 'click' : ''}" ${l.kind === 'car' ? `onclick="go('car','${l.ref}')"` : l.kind === 'customer' ? `onclick="go('customer','${l.ref}')"` : ''}>${esc(l.title)}</b>` : ''}
+      <span class="bdg ${ACT_CLS[l.action] || 'exp'}">${esc(l.action)}</span>
+      <div class="sp"></div><span class="small muted"><span class="num">${esc(logTime(l.at))}</span> · ${esc((l.by || '').split('@')[0])}</span></div>
+    <ul>${(l.changes || []).map(x => `<li>${logLine(x)}</li>`).join('')}</ul></div>`).join('');
+}
+/* keep $ amounts and dates left-to-right inside Arabic, and show "old ← new" as grey → bold */
+function logLine(x){
+  const ltr = s => esc(s).replace(/−?\$[\d,]+(?:\.\d+)?|\d{4}-\d{2}-\d{2}|[A-Z0-9]{8,17}/g, m => `<bdi dir="ltr">${m}</bdi>`);
+  const i = x.lastIndexOf(' ← ');
+  if(i < 0) return ltr(x);
+  const j = x.lastIndexOf(': ', i);
+  if(j < 0) return ltr(x);
+  return `${ltr(x.slice(0, j))}: <span class="lold">${ltr(x.slice(j + 2, i))}</span> ← <span class="lnew">${ltr(x.slice(i + 3))}</span>`;
+}
+function viewLog(){
+  const all = db.log || [], q = (ui.lq || '').trim().toLowerCase(), u = ui.lu || '';
+  const users = [...new Set(all.map(l => l.by).filter(Boolean))];
+  const list = all.filter(l => (!u || l.by === u) && (!q || [l.title, l.by, ...(l.changes || [])].join(' ').toLowerCase().includes(q)));
+  return `
+  <div class="row" style="margin-bottom:16px"><h1>سجل التعديلات</h1><div class="sp"></div>
+    <span class="small muted">آخر ${all.length} تعديل — مين عدّل شنو ووقتاش</span></div>
+  <div class="card">
+    <div class="pad row" style="border-bottom:1px solid var(--line)">
+      <input class="inp search" id="lq" placeholder="بحث: سيارة، زبون، مبلغ…" value="${esc(ui.lq || '')}" oninput="ui.lq=this.value;render()">
+      <select class="inp" style="width:auto" onchange="ui.lu=this.value;render()"><option value="">كل المستخدمين</option>${users.map(x => `<option ${x === u ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select>
+    </div>
+    ${list.length ? `<div class="logl">${logItems(list, true)}</div>` : `<div class="empty">${all.length ? 'لا توجد نتائج' : 'ما فيش تعديلات مسجلة بعد — أي تعديل من توا وطالع يتسجل هني'}</div>`}
+  </div>`;
 }
 
 /* ---------- cars list ---------- */
@@ -840,6 +951,9 @@ function viewCar(c){
 
   ${refRows ? `<div class="card"><div class="pad" style="border-bottom:1px solid var(--line)"><h3>مبالغ راجعة للزبون</h3></div>
     <div class="tblwrap"><table class="tbl"><thead><tr><th>التاريخ</th><th>المبلغ</th><th>ملاحظة</th><th>الحالة</th><th></th></tr></thead><tbody>${refRows}</tbody></table></div></div>` : ''}
+  ${(() => { const h = (db.log || []).filter(l => l.kind === 'car' && l.ref === c.id);
+    return `<div class="card" style="margin-top:16px"><div class="pad row" style="border-bottom:1px solid var(--line)"><h3>سجل التعديلات على السيارة</h3><span class="small muted">مين عدّل شنو ووقتاش</span></div>
+      ${h.length ? `<div class="logl">${logItems(h.slice(0, 30), false)}</div>` : `<div class="empty">ما فيش تعديلات مسجلة على هذي السيارة بعد</div>`}</div>`; })()}
   `;
 }
 
