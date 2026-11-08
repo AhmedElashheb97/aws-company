@@ -21,19 +21,47 @@ body{background:var(--bg);color:var(--ink);font-family:"Segoe UI","Segoe UI Web 
 button,input,select,textarea{font:inherit;color:inherit}
 .num{direction:ltr;unicode-bidi:isolate;display:inline-block;font-variant-numeric:tabular-nums}
 
-/* header */
-header{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
-.hwrap{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:22px;height:62px}
+/* side menu */
+:root{--side:250px}
 .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;white-space:nowrap}
 .logo img{height:36px;width:auto;display:block}
 #login .logo img{height:64px}
 .pubh .logo img{height:70px}
-nav{display:flex;gap:4px;flex:1;overflow-x:auto;scrollbar-width:none}
-@media (max-width:1050px){ #cloud .em{display:none} nav a{padding-left:9px;padding-right:9px} }
-nav a{padding:20px 12px 18px;color:var(--muted);text-decoration:none;font-weight:600;border-bottom:3px solid transparent;white-space:nowrap;cursor:pointer}
-nav a:hover{color:var(--ink)}
-nav a.on{color:var(--brand-d);border-bottom-color:var(--brand)}
-main{max-width:1280px;margin:0 auto;padding:22px 20px 60px}
+#side{position:fixed;top:0;bottom:0;inset-inline-start:0;width:var(--side);background:var(--surface);border-inline-end:1px solid var(--line);
+  display:flex;flex-direction:column;gap:14px;padding:18px 14px;z-index:20;overflow-y:auto}
+#side .brand{display:flex;flex-direction:column;align-items:center;gap:4px;padding:2px 0 10px;border-bottom:1px solid var(--line-2)}
+#side .brand img{height:52px;width:auto}
+#side .brand span{font-weight:800;font-size:15px;letter-spacing:.3px}
+#side .newcar{width:100%;justify-content:center;padding:11px 14px;border-radius:12px;box-shadow:0 4px 12px rgba(232,112,26,.28)}
+#nav{display:flex;flex-direction:column;gap:4px}
+#nav a,.sbtn{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;color:var(--muted);text-decoration:none;font-weight:700;cursor:pointer;
+  border:0;background:transparent;width:100%;text-align:start;transition:background .15s,color .15s}
+#nav a .ic,.sbtn .ic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:#F6EEE6;color:#7A5A40;flex:none;transition:background .15s,color .15s}
+#nav a svg,.sbtn svg{width:19px;height:19px}
+#nav a:hover,.sbtn:hover{background:var(--brand-softer);color:var(--ink)}
+#nav a.on{background:linear-gradient(160deg,#FFF1E4,#FFE4CC);color:#A2440A}
+#nav a.on .ic{background:var(--brand);color:#fff;box-shadow:0 4px 10px rgba(232,112,26,.35)}
+#nav a .ext{margin-inline-start:auto;opacity:.5;width:14px;height:14px}
+#side .navlbl{font-size:12px;font-weight:700;color:var(--muted);padding:0 12px;letter-spacing:.3px}
+#side .foot{margin-top:auto;display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--line-2);padding-top:10px}
+#cloud .em{display:block;font-size:12.5px;color:var(--muted);padding:2px 12px 6px;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right}
+.sbtn.out{color:var(--bad)} .sbtn.out .ic{background:var(--bad-soft);color:var(--bad)}
+main{max-width:1320px;margin-inline-start:var(--side);padding:24px 28px 60px}
+@media (max-width:900px){
+  #side{position:sticky;inset:auto;top:0;width:auto;height:auto;flex-direction:row;align-items:center;gap:8px;padding:8px 10px;border-inline-end:0;border-bottom:1px solid var(--line);overflow:visible}
+  #side .brand{border:0;padding:0;flex-direction:row}
+  #side .brand img{height:30px} #side .brand span,#side .navlbl,#cloud .em{display:none}
+  #nav{position:fixed;bottom:0;left:0;right:0;flex-direction:row;justify-content:space-around;gap:0;background:var(--surface);
+    border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(80,40,10,.06);z-index:30}
+  #nav a{flex-direction:column;gap:3px;padding:2px 4px;font-size:11.5px;width:auto;flex:1;align-items:center;white-space:nowrap;background:transparent !important}
+  #nav a .ic{width:40px;height:30px;border-radius:99px;background:transparent} #nav a .ext{display:none}
+  .sbtn{width:auto;padding:4px;font-size:0;gap:0} .sbtn .ic{width:36px;height:36px}
+  #side .foot{margin:0 0 0 auto;flex-direction:row;border:0;padding:0;gap:2px;margin-inline-start:auto}
+  #cloud{display:flex}
+  #side .newcar{width:auto;padding:9px 14px;box-shadow:none}
+  main{margin:0;padding:16px 12px 90px}
+  #toast{bottom:84px}
+}
 
 /* buttons */
 .btn{border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:9px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:background .15s,border-color .15s}
@@ -203,7 +231,8 @@ a.lnk:hover{text-decoration:underline}
 #login .box{width:100%;max-width:380px;padding:28px}
 #login .logo{justify-content:center;margin-bottom:6px;font-size:20px}
 #login .err{color:var(--bad);font-size:13px;min-height:20px;margin-top:8px}
-body.pub header{display:none}
+body.pub #side{display:none}
+body.pub main{margin:0 auto}
 .pubw{max-width:900px;margin:0 auto}
 .pubh{text-align:center;margin:10px 0 16px}
 .pubh .logo{font-size:22px;margin-bottom:4px}
@@ -229,9 +258,6 @@ body.pub header{display:none}
   .grid.g3{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:600px){
-  .hwrap{padding:0 12px;gap:10px}
-  .logo span{display:none}
-  main{padding:16px 12px 50px}
   .grid,.grid.g3,.choice{grid-template-columns:1fr}
 }
 @media print{
@@ -246,21 +272,22 @@ body.pub header{display:none}
 </style>
 </head>
 <body>
-<header>
-  <div class="hwrap">
-    <div class="logo"><img src="logo.png" alt="AWS"><span id="officeName">مكتب السيارات</span></div>
-    <nav id="nav">
-      <a data-v="cars">السيارات</a>
-      <a data-v="customers">الزبائن</a>
-      <a data-v="profits">الأرباح</a>
-      <a href="./#track" target="_blank" rel="noopener">🔗 صفحة التتبع</a>
-      <a data-v="map">خريطة المواني</a>
-    </nav>
-    <span id="cloud" class="small muted" style="white-space:nowrap"></span>
-    <button class="btn ghost" onclick="openSettings()" title="الإعدادات">⚙️</button>
-    <button class="btn pri" onclick="carForm()">＋ سيارة جديدة</button>
+<aside id="side">
+  <div class="brand"><img src="logo.png" alt="AWS"><span id="officeName">مكتب السيارات</span></div>
+  <button class="btn pri newcar" onclick="carForm()" title="سيارة جديدة">＋ <b>سيارة جديدة</b></button>
+  <div class="navlbl">القائمة</div>
+  <nav id="nav">
+    <a data-v="cars"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span>السيارات</a>
+    <a data-v="customers"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>الزبائن</a>
+    <a data-v="profits"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>الأرباح</a>
+    <a data-v="map"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.1 6.3 9.9 4.2a2 2 0 0 0-1.8 0L3.6 6.4A1 1 0 0 0 3 7.3v12.1a1 1 0 0 0 1.4.9l3.7-1.8a2 2 0 0 1 1.8 0l4.2 2.1a2 2 0 0 0 1.8 0l4.5-2.2a1 1 0 0 0 .6-.9V5.4a1 1 0 0 0-1.4-.9l-3.7 1.8a2 2 0 0 1-1.8 0z"/><path d="M15 6v15"/><path d="M9 3v15"/></svg></span>خريطة المواني</a>
+    <a href="./#track" target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.99-5.54 10.19-7.4 11.8a1 1 0 0 1-1.2 0C9.54 20.19 4 14.99 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span>صفحة التتبع<svg class="ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a>
+  </nav>
+  <div class="foot">
+    <button class="sbtn" onclick="openSettings()"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span>الإعدادات</button>
+    <div id="cloud"></div>
   </div>
-</header>
+</aside>
 <main id="app"></main>
 <div id="modalRoot"></div>
 <div id="toast"></div>
@@ -336,7 +363,8 @@ function initFirebase(){
     unsub.forEach(f => f()); unsub = [];
     if(!user){ $('#login').classList.add('on'); setCloud(''); return; }
     $('#login').classList.remove('on');
-    setCloud(`<span title="${esc(user.email)}">☁️</span> <span class="em">${esc(user.email)}</span> <a href="#" onclick="fbAuth.signOut();return false" style="color:var(--brand-d)">خروج</a>`);
+    setCloud(`<span class="em" title="${esc(user.email)}">${esc(user.email)}</span>
+      <button class="sbtn out" onclick="fbAuth.signOut()"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg></span>خروج</button>`);
     let first = true;
     unsub.push(fs.collection('cars').onSnapshot(snap => {
       db.cars = snap.docs.map(d => Object.assign({expenses:[], payments:[], refunds:[]}, d.data()));
