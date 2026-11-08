@@ -231,6 +231,17 @@ a.lnk:hover{text-decoration:underline}
 #login .box{width:100%;max-width:380px;padding:28px}
 #login .logo{justify-content:center;margin-bottom:6px;font-size:20px}
 #login .err{color:var(--bad);font-size:13px;min-height:20px;margin-top:8px}
+.xbox{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:14px}
+.xroute:not(:empty){margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--info-soft);color:#1E4E80;font-size:14px;line-height:1.8}
+#xRows{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.xrow{display:grid;grid-template-columns:minmax(0,1fr) 92px 178px 112px 142px 34px;gap:6px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px}
+.xrow.reloc{border-color:#9DC3EA;background:#F5FAFF}
+.xrow .inp{padding:7px 9px}
+.xinv{grid-column:1/-1;display:flex;gap:6px;align-items:center;color:var(--muted)}
+.xtot:not(:empty){margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)}
+@keyframes flash{0%,100%{box-shadow:0 0 0 0 rgba(232,112,26,0)}30%,70%{box-shadow:0 0 0 5px rgba(232,112,26,.45);border-color:var(--brand)}}
+.flash{animation:flash .6s ease 3}
+@media (max-width:900px){ .xrow{grid-template-columns:1fr 1fr} .xrow [data-k="desc"]{grid-column:1/-1} }
 body.pub #side{display:none}
 body.pub main{margin:0 auto}
 .pubw{max-width:900px;margin:0 auto}
@@ -653,7 +664,7 @@ function ln(label, val, cls=''){ return `<div class="ln ${cls}"><span>${label}</
 
 function viewCar(c){
   const k = calc(c);
-  const y = P.yards[c.yard], port = portById(c.port);
+  const y = P.yards[c.yard], port = portById(c.relocPort || c.port);
   const isCur1 = c.stage === 'buy', isCur2 = c.stage === 'ship';
   const exp1c = c.expenses.filter(e => e.stage === 'buy' && e.payer === 'customer');
   const exp2c = c.expenses.filter(e => e.stage === 'ship' && e.payer === 'customer');
@@ -765,7 +776,7 @@ function viewCar(c){
       <div><div class="l">رقم اللوت</div><div class="v num">${esc(c.lot || '—')}</div></div>
       <div><div class="l">المزاد</div><div class="v">${esc(c.auction || '—')}</div></div>
       <div><div class="l">الساحة</div><div class="v">${y ? esc(yardLabel(y)) : '—'}</div></div>
-      <div><div class="l">ميناء الشحن</div><div class="v">${port ? esc(port.name) : '—'}</div></div>
+      <div><div class="l">ميناء الشحن</div><div class="v">${port ? esc(port.name) : '—'}${c.relocPort && c.port ? `<div class="small muted">منقولة من ${esc(pName(c.port))}</div>` : ''}</div></div>
       <div><div class="l">تاريخ الشراء</div><div class="v num">${esc(c.date || '—')}</div></div>
     </div>
     ${c.notes ? `<div class="note info" style="margin-top:12px">${esc(c.notes)}</div>` : ''}
@@ -958,7 +969,7 @@ function carForm(id, custId){
     <div class="fsec">المرحلة 2: الشحن (من خريطة المواني — قابلة للتعديل)</div>
     <div class="f full"><label>الساحة</label><input class="inp" name="yard" list="yardsList" value="${y ? esc(yardLabel(y)) : ''}" placeholder="اكتب اسم الساحة أو الولاية… مثلاً Dallas" onchange="cfYard()" style="direction:ltr;text-align:right">
       <datalist id="yardsList">${P.yards.map(yy => `<option value="${esc(yardLabel(yy))}">`).join('')}</datalist><div class="hint" id="yardHint"></div></div>
-    <div class="f"><label>ميناء الشحن</label><select class="inp" name="port" onchange="cfOcean()"><option value="">—</option>${P.ports.map(p => `<option value="${p.id}" ${c.port === p.id ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></div>
+    <div class="f"><label>ميناء الساحة</label><select class="inp" name="port" onchange="cfPortChanged()"><option value="">—</option>${P.ports.map(p => `<option value="${p.id}" ${c.port === p.id ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></div>
     <div class="f"><label>سيارات في الحاوية</label><select class="inp" name="perContainer" onchange="cfOcean()">${[2,3,4].map(n => `<option ${+(c.perContainer||4) === n ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
     <div class="f"></div>
     ${fld('السحب الداخلي — على الزبون ($)','towCharge',c.towCharge,'number')}
@@ -967,11 +978,27 @@ function carForm(id, custId){
     ${fld('السحب — دفعناه فعلاً ($)','towCost',c.towCost,'number')}
     ${fld('البحري — دفعناه فعلاً ($)','oceanCost',c.oceanCost,'number')}
     <div class="f"></div>
+    <div class="fsec">نقل ومصاريف إضافية</div>
+    <div class="f full xbox">
+      <div class="hint" style="margin:0 0 10px">المصاريف اللي على الزبون تنضاف لإجمالي الزبون وتطلع في الفاتورة. هذي تكاليف نمررها للزبون، ما تنحسبش ربح.</div>
+      <label>نقل السيارة إلى موقع آخر لـ Atlantic Express</label>
+      <select class="inp" name="relocPort" id="relocSel" onchange="cfReloc()"></select>
+      <div class="xroute" id="relocHint"></div>
+      <div id="xRows"></div>
+      <div class="row" style="margin-top:10px;gap:6px">
+        <button type="button" class="btn sm" onclick="xQuick('move')">＋ نقل من مكان لمكان</button>
+        <button type="button" class="btn sm" onclick="xQuick('fedex')">＋ FedEx</button>
+        <button type="button" class="btn sm" onclick="xQuick('storage')">＋ تخزين</button>
+        <button type="button" class="btn sm" onclick="xQuick('other')">＋ مصروف آخر</button>
+      </div>
+      <div class="xtot" id="xTot"></div>
+    </div>
     <div class="f full"><label>ملاحظات</label><textarea class="inp" name="notes" rows="2">${esc(c.notes||'')}</textarea></div>
   </form>`;
   openModal(id ? 'تعديل السيارة' : 'سيارة جديدة', body, `<button class="btn pri" onclick="document.getElementById('cf').requestSubmit()">حفظ</button><button class="btn" onclick="closeModal()">إلغاء</button>`, true);
   window._cfId = id || ''; vinLookup.last = c.vin || null;
   cfWire(); cfCust();
+  xInit(c);
   const im = $('#imgPrev'); im.onerror = () => { if(im.getAttribute('src')) $('#imgHint').textContent = 'الصورة ما فتحتش من هذا الرابط — جرّب رابط آخر أو ارفعها من الجهاز'; };
 }
 function cfEl(n){ return document.querySelector(`#cf [name="${n}"]`); }
@@ -1051,12 +1078,124 @@ function cfYard(){
   const q = quote(i, y.p, +cfEl('perContainer').value);
   if(q.towCharge != null){ cfEl('towCharge').value = q.towCharge; cfEl('towCost').value = q.towCost; $('#yardHint').textContent = `ميناء ${y.p} · سحب ${q.towCharge}$ (تكلفة ${q.towCost}$)`; }
   else { $('#yardHint').textContent = `ميناء ${y.p} · سعر السحب لهذه الساحة غير متوفر بعد — أدخله يدوياً`; }
-  cfOcean();
+  cfPortChanged();
 }
+/* ocean freight is priced from where the car actually ships: the relocation port if chosen, else the yard's port */
 function cfOcean(){
-  const pid = cfEl('port').value; if(!pid) return;
+  const pid = (cfEl('relocPort') && cfEl('relocPort').value) || cfEl('port').value; if(!pid) return;
   const q = quote(null, pid, +cfEl('perContainer').value);
   if(q.oceanCharge != null){ cfEl('oceanCharge').value = q.oceanCharge; cfEl('oceanCost').value = q.oceanCost; }
+  xRoute(); xTotals();
+}
+
+/* ---------- extra transport & charges inside the car form ---------- */
+const pName = id => { const p = portById(id); return p ? p.name : (id || '—'); };
+function xInit(c){
+  window._xRows = (c.expenses || []).map(e => Object.assign({}, e));
+  const box = $('#cf'); box.addEventListener('input', xTotals); box.addEventListener('change', xTotals);
+  xPortOptions(c.relocPort || '');
+  xDraw(); xRoute(); xTotals();
+}
+function xPortOptions(sel){
+  const yp = cfEl('port').value;
+  $('#relocSel').innerHTML = `<option value="">لا — تنشحن من ميناء الساحة</option>` +
+    P.ports.filter(p => p.id !== yp || p.id === sel).map(p => `<option value="${p.id}" ${p.id === sel ? 'selected' : ''}>${esc(p.name)}</option>`).join('');
+}
+function cfPortChanged(){
+  const r = cfEl('relocPort').value, yp = cfEl('port').value;
+  xPortOptions(r && r !== yp ? r : '');
+  if(r && r === yp) cfReloc(); else { xRelocDesc(); cfOcean(); }
+}
+function xRelocRow(){ return window._xRows.find(e => e.reloc); }
+function xRelocDesc(){
+  const row = xRelocRow(), r = cfEl('relocPort').value;
+  if(row && r){ row.desc = `نقل السيارة من ${pName(cfEl('port').value)} إلى ${pName(r)}`; xDraw(); }
+}
+function cfReloc(){
+  const r = cfEl('relocPort').value, yp = cfEl('port').value;
+  let row = xRelocRow();
+  if(r && r !== yp){
+    if(!row){
+      row = window._xRows.find(e => /^نقل السيارة من /.test(e.desc || ''));   // a transfer line kept from before: reuse it
+      if(row) row.reloc = true; else { row = xNew({reloc:true}); window._xRows.unshift(row); }
+    }
+    xRelocDesc(); xDraw(); cfOcean();
+    xFocus(row.id, 'amount'); toast('اكتب تكلفة النقل');
+  } else {
+    if(r) cfEl('relocPort').value = '';
+    if(row && !N(row.amount)) window._xRows = window._xRows.filter(e => e !== row);
+    else if(row) delete row.reloc;      // has an amount: keep it as a normal line so nothing typed is lost
+    xDraw(); cfOcean();
+  }
+}
+function xRoute(){
+  const r = cfEl('relocPort') && cfEl('relocPort').value, h = $('#relocHint'); if(!h) return;
+  if(!r){ h.innerHTML = ''; return; }
+  const yi = YARD_IDX[cfEl('yard').value], y = P.yards[yi], yp = cfEl('port').value;
+  h.innerHTML = `<div>1. السحب: ${esc(y ? y.n + ', ' + y.s : 'الساحة')} ← ${esc(pName(yp))} (${money(cfEl('towCharge').value)})</div>
+    <div>2. النقل: ${esc(pName(yp))} ← ${esc(pName(r))} <span class="muted">(اكتبه في السطر تحت)</span></div>
+    <div>3. البحري من ${esc(pName(r))} (${money(cfEl('oceanCharge').value)})</div>`;
+}
+function xNew(o){ return Object.assign({id:uid(), desc:'', amount:'', stage:'ship', payer:'customer', date:today(), kind:'expense'}, o); }
+function xDraw(){
+  $('#xRows').innerHTML = window._xRows.map(e => `<div class="xrow ${e.reloc ? 'reloc' : ''}" data-id="${e.id}">
+    <input class="inp" data-k="desc" value="${esc(e.desc)}" placeholder="الوصف" oninput="xSet(this)">
+    <input class="inp num" data-k="amount" type="number" step="any" value="${esc(e.amount)}" placeholder="المبلغ $" oninput="xSet(this)">
+    <select class="inp" data-k="stage" onchange="xSet(this)"><option value="ship" ${e.stage !== 'buy' ? 'selected' : ''}>مع الشحن (المرحلة 2)</option><option value="buy" ${e.stage === 'buy' ? 'selected' : ''}>مع المزاد (المرحلة 1)</option></select>
+    <select class="inp" data-k="payer" onchange="xSet(this);xDraw()"><option value="customer" ${e.payer !== 'office' ? 'selected' : ''}>على الزبون</option><option value="office" ${e.payer === 'office' ? 'selected' : ''}>على المكتب</option></select>
+    <input class="inp" data-k="date" type="date" value="${esc(e.date || '')}" oninput="xSet(this)">
+    <button type="button" class="btn sm danger" onclick="xDel('${e.id}')" title="حذف">×</button>
+    ${e.payer === 'office' ? `<label class="xinv small"><input type="checkbox" data-k="onInv" ${e.onInv ? 'checked' : ''} onchange="xSet(this)"> يطلع في الفاتورة (على حساب المكتب)</label>` : ''}
+  </div>`).join('');
+  xTotals();
+}
+function xSet(el){
+  const e = window._xRows.find(x => x.id === el.closest('.xrow').dataset.id); if(!e) return;
+  const k = el.dataset.k; e[k] = el.type === 'checkbox' ? el.checked : el.value;
+  xTotals();
+}
+function xDel(id){
+  const e = window._xRows.find(x => x.id === id);
+  window._xRows = window._xRows.filter(x => x.id !== id);
+  if(e && e.reloc){ cfEl('relocPort').value = ''; cfOcean(); }
+  xDraw();
+}
+function xFocus(id, k){ setTimeout(() => { const el = document.querySelector(`.xrow[data-id="${id}"] [data-k="${k}"]`); if(el){ el.focus(); el.scrollIntoView({block:'center', behavior:'smooth'}); } }, 30); }
+function xQuick(t){
+  if(t === 'move'){
+    const row = xRelocRow();
+    if(row && cfEl('relocPort').value) return xFocus(row.id, 'amount');
+    const s = $('#relocSel'); s.scrollIntoView({block:'center', behavior:'smooth'});
+    s.classList.remove('flash'); void s.offsetWidth; s.classList.add('flash'); setTimeout(() => s.focus(), 300); return;
+  }
+  const row = xNew(t === 'fedex' ? {desc:'FedEx للتايتل', amount:45} : t === 'storage' ? {desc:'تخزين', kind:'fine'} : {});
+  window._xRows.push(row); xDraw();
+  xFocus(row.id, t === 'other' ? 'desc' : 'amount');
+}
+function xTotals(){
+  const el = $('#xTot'); if(!el || !window._xRows) return;
+  const v = n => N(cfEl(n).value), rows = window._xRows;
+  const sum = (p, st) => r2(rows.filter(e => (e.payer === 'office' ? 'office' : 'customer') === p && (!st || (e.stage === 'buy' ? 'buy' : 'ship') === st)).reduce((s,e) => s + N(e.amount), 0));
+  const base = v('buyPrice') + v('auctionFees');
+  const req1 = r2(base + v('officeFee') + base * v('wirePct') / 100 + sum('customer','buy'));
+  const ship = v('towCharge') + v('oceanCharge') + sum('customer','ship');
+  const req2 = r2(ship + ship * v('shipWirePct') / 100);
+  el.innerHTML = `<div class="row" style="gap:16px">
+      <span>على الزبون: <b>${money(sum('customer'))}</b></span>
+      <span class="muted">على المكتب: <b>${money(sum('office'))}</b></span></div>
+    <div class="row" style="gap:16px;margin-top:4px">
+      <span>المطلوب من الزبون — المرحلة 1: <b>${money(req1)}</b></span>
+      <span>المرحلة 2: <b>${money(req2)}</b></span>
+      <span>الإجمالي: <b style="color:var(--brand-d)">${money(req1 + req2)}</b></span></div>`;
+}
+function xCollect(){
+  return (window._xRows || []).filter(e => String(e.desc || '').trim() || N(e.amount)).map(e => {
+    const o = Object.assign({}, e, {desc:String(e.desc || '').trim() || 'مصروف', amount:r2(N(e.amount)), stage:e.stage === 'buy' ? 'buy' : 'ship',
+      payer:e.payer === 'office' ? 'office' : 'customer', date:e.date || today(), kind:e.kind === 'fine' ? 'fine' : 'expense'});
+    if(o.payer !== 'office') delete o.onInv; else o.onInv = !!o.onInv;
+    if(!o.reloc) delete o.reloc;
+    return o;
+  });
 }
 function saveCar(id){
   const d = formData('cf');
@@ -1072,6 +1211,8 @@ function saveCar(id){
   if(!cu && !keepLegacy){ $('#custHint').innerHTML = '<span style="color:var(--bad)">اختر الزبون أو أضف زبون جديد</span>'; cfEl('customerId').focus(); return; }
   ['newOpen','newName','newPhone','newCity'].forEach(k => delete d[k]);
   if(cu){ d.customerId = cu.id; d.customer = cu.name; d.phone = cu.phone || ''; } else delete d.customerId;
+  d.relocPort = d.relocPort && d.relocPort !== d.port ? d.relocPort : '';
+  d.expenses = xCollect();
   let c = id ? getCar(id) : null;
   if(c) Object.assign(c, d);
   else { c = Object.assign({id:uid(), created:new Date().toISOString(), stage:'buy', loc:0, expenses:[], payments:[], refunds:[], auctionPaid:null, lock1:null, lock2:null, manualShip:false}, d); db.cars.push(c); }
@@ -1180,8 +1321,9 @@ function expenseForm(cid, eid){
     </div></div>
     <div class="f full"><label>على مين؟</label><div class="choice">
       <label><input type="radio" name="payer" value="customer" ${e.payer === 'customer' ? 'checked' : ''}><span><b>على الزبون</b><div class="small muted">ينزاد على حسابه ويطلع في الفاتورة</div></span></label>
-      <label><input type="radio" name="payer" value="office" ${e.payer === 'office' ? 'checked' : ''}><span><b>على المكتب</b><div class="small muted">ما يطلعش في الفاتورة، ينقص من المكسب</div></span></label>
-    </div></div>
+      <label><input type="radio" name="payer" value="office" ${e.payer === 'office' ? 'checked' : ''}><span><b>على المكتب</b><div class="small muted">ينقص من المكسب</div></span></label>
+    </div>
+    <label class="small" style="display:flex;gap:6px;align-items:center;margin-top:8px"><input type="checkbox" name="onInv" value="1" ${e.onInv ? 'checked' : ''}> لو على المكتب: يطلع في الفاتورة (على حساب المكتب — ما ينحسبش على الزبون)</label></div>
     <div class="f full"><label>المرحلة</label><div class="choice">
       <label><input type="radio" name="stage" value="buy" ${e.stage === 'buy' ? 'checked' : ''}><span><b>شراء</b></span></label>
       <label><input type="radio" name="stage" value="ship" ${e.stage === 'ship' ? 'checked' : ''}><span><b>شحن</b></span></label>
@@ -1190,7 +1332,7 @@ function expenseForm(cid, eid){
 }
 function saveExpense(cid, eid){
   const c = getCar(cid), d = formData('ef');
-  const data = {desc:d.desc, amount:r2(N(d.amount)), date:d.date || today(), payer:d.payer, stage:d.stage, kind:d.kind === 'fine' ? 'fine' : 'expense'};
+  const data = {desc:d.desc, amount:r2(N(d.amount)), date:d.date || today(), payer:d.payer, stage:d.stage, kind:d.kind === 'fine' ? 'fine' : 'expense', onInv:d.payer === 'office' && d.onInv === '1'};
   if(eid) Object.assign(c.expenses.find(x => x.id === eid), data);
   else c.expenses.push(Object.assign({id:uid()}, data));
   closeModal(); commit(c); toast('تم حفظ المصروف');
@@ -1202,7 +1344,9 @@ function printInvoice(id){
   const c = getCar(id), k = calc(c);
   const row = (a, b) => `<tr><td>${a}</td><td style="direction:ltr;text-align:left">${b}</td></tr>`;
   const $$ = n => '$' + r2(n).toLocaleString('en-US', {maximumFractionDigits:2});
-  const ce = st => c.expenses.filter(e => e.payer === 'customer' && e.stage === st).map(e => row((e.kind === 'fine' ? 'غرامة: ' : '') + esc(e.desc), $$(e.amount))).join('');
+  const ce = st => c.expenses.filter(e => (e.payer === 'customer' || e.onInv) && e.stage === st).map(e => e.payer === 'customer'
+      ? row((e.kind === 'fine' ? 'غرامة: ' : '') + esc(e.desc), $$(e.amount))
+      : row(esc(e.desc) + ' <i>(على حساب المكتب — ما ينحسبش عليك)</i>', '<s>' + $$(e.amount) + '</s> $0')).join('');
   $('#print').innerHTML = `
     <div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="AWS" style="height:56px"><h1>${esc(db.settings.officeName)}</h1></div>
     <div>فاتورة الزبون — التاريخ: ${today()}</div>
@@ -1234,8 +1378,10 @@ function trackUrl(vin){
 }
 /* what the customer may see — no costs, no office profit */
 function trkSnap(c){
-  const k = calc(c), port = portById(c.port);
-  const ce = st => c.expenses.filter(e => e.payer === 'customer' && e.stage === st).map(e => ({t:(e.kind === 'fine' ? 'غرامة: ' : '') + (e.desc || 'مصروف'), a:r2(e.amount)}));
+  const k = calc(c), port = portById(c.relocPort || c.port);
+  const ce = st => c.expenses.filter(e => (e.payer === 'customer' || e.onInv) && e.stage === st).map(e => e.payer === 'customer'
+    ? {t:(e.kind === 'fine' ? 'غرامة: ' : '') + (e.desc || 'مصروف'), a:r2(e.amount)}
+    : {t:(e.desc || 'مصروف') + ' — على حساب المكتب', a:r2(e.amount), free:true});
   const s1 = [{t:'سعر الشراء في المزاد', a:r2(c.buyPrice)}, {t:'رسوم المزاد', a:r2(c.auctionFees)}, {t:'عمولة المكتب', a:r2(c.officeFee)},
               {t:`عمولة الحوالة (${+N(c.wirePct).toFixed(2)}%)`, a:k.wire}, ...ce('buy')];
   const s2 = [{t:'السحب الداخلي', a:r2(c.towCharge)}, {t:'الشحن البحري', a:r2(c.oceanCharge)}, ...ce('ship')];
@@ -1303,7 +1449,7 @@ async function pubSearch(){
   try{ history.replaceState(null, '', location.pathname + '?vin=' + encodeURIComponent(vin)); }catch(e){}
   const stage = (s, n, title) => !s ? '' : `<div class="card stage"><div class="top"><div class="n">${n}</div><h3>${title}</h3><div class="sp"></div>
       ${s.rem <= 0.009 ? '<span class="bdg done">✓ خالص</span>' : '<span class="bdg bad">فيها باقي</span>'}</div><div class="body">
-      ${s.items.map(x => ln(esc(x.t), money(x.a))).join('')}${ln('الإجمالي', money(s.req), 'tot')}${ln('المدفوع', money(s.paid))}
+      ${s.items.map(x => x.free ? ln(esc(x.t), `<s class="muted">${money(x.a)}</s> ${money(0)}`, 'sub') : ln(esc(x.t), money(x.a))).join('')}${ln('الإجمالي', money(s.req), 'tot')}${ln('المدفوع', money(s.paid))}
       ${ln(s.rem > 0.009 ? 'الباقي' : 'الحالة', s.rem > 0.009 ? money(s.rem) : 'خالص ✓', 'rem ' + (s.rem > 0.009 ? 'due' : 'zero'))}</div></div>`;
   const photos = [...new Set([d.img, ...(d.photos || [])].filter(Boolean))];
   const due = Math.max(0, N(d.s1 && d.s1.rem)) + Math.max(0, N(d.s2 && d.s2.rem));
