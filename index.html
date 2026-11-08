@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AWS COMPANY</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="icon-180.png">
 <style>
 :root{
   --bg:#FBF6F1; --surface:#FFFFFF; --surface-2:#FFF8F2;
@@ -23,7 +25,9 @@ button,input,select,textarea{font:inherit;color:inherit}
 header{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
 .hwrap{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:22px;height:62px}
 .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;white-space:nowrap}
-.logo i{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#F59A4A,var(--brand-d));display:grid;place-items:center;color:#fff;font-style:normal;font-size:18px}
+.logo img{height:36px;width:auto;display:block}
+#login .logo img{height:64px}
+.pubh .logo img{height:70px}
 nav{display:flex;gap:4px;flex:1;overflow-x:auto;scrollbar-width:none}
 @media (max-width:1050px){ #cloud .em{display:none} nav a{padding-left:9px;padding-right:9px} }
 nav a{padding:20px 12px 18px;color:var(--muted);text-decoration:none;font-weight:600;border-bottom:3px solid transparent;white-space:nowrap;cursor:pointer}
@@ -244,7 +248,7 @@ body.pub header{display:none}
 <body>
 <header>
   <div class="hwrap">
-    <div class="logo"><i>🚗</i><span id="officeName">مكتب السيارات</span></div>
+    <div class="logo"><img src="logo.png" alt="AWS"><span id="officeName">مكتب السيارات</span></div>
     <nav id="nav">
       <a data-v="cars">السيارات</a>
       <a data-v="customers">الزبائن</a>
@@ -262,7 +266,7 @@ body.pub header{display:none}
 <div id="print"></div>
 <div id="login">
   <form class="card box" onsubmit="event.preventDefault();doLogin()">
-    <div class="logo"><i>🚗</i><span>AWS COMPANY</span></div>
+    <div class="logo" style="flex-direction:column;gap:6px"><img src="logo.png" alt="AWS"><span>AWS COMPANY</span></div>
     <div class="muted small" style="text-align:center;margin-bottom:18px">سجّل الدخول للوصول للبيانات</div>
     <div class="f" style="margin-bottom:12px"><label>البريد الإلكتروني</label><input class="inp" id="lgEmail" type="email" required style="direction:ltr"></div>
     <div class="f"><label>كلمة المرور</label><input class="inp" id="lgPass" type="password" required style="direction:ltr"></div>
@@ -1171,7 +1175,7 @@ function printInvoice(id){
   const $$ = n => '$' + r2(n).toLocaleString('en-US', {maximumFractionDigits:2});
   const ce = st => c.expenses.filter(e => e.payer === 'customer' && e.stage === st).map(e => row((e.kind === 'fine' ? 'غرامة: ' : '') + esc(e.desc), $$(e.amount))).join('');
   $('#print').innerHTML = `
-    <h1>${esc(db.settings.officeName)}</h1>
+    <div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="AWS" style="height:56px"><h1>${esc(db.settings.officeName)}</h1></div>
     <div>فاتورة الزبون — التاريخ: ${today()}</div>
     <p><b>الزبون:</b> ${esc(c.customer||'')} ${c.phone ? ' — ' + esc(c.phone) : ''}<br>
        <b>السيارة:</b> ${esc(carName(c))} ${c.vin ? ' — VIN: ' + esc(c.vin) : ''} ${c.lot ? ' — Lot: ' + esc(c.lot) : ''}</p>
@@ -1254,7 +1258,7 @@ function renderPublic(){
   document.body.classList.add('pub');
   const q = vinKey(new URLSearchParams(location.search).get('vin'));
   $('#app').innerHTML = `<div class="pubw">
-    <div class="pubh"><div class="logo" style="justify-content:center"><i>🚗</i><span>AWS COMPANY</span></div>
+    <div class="pubh"><div class="logo" style="justify-content:center;flex-direction:column;gap:6px"><img src="logo.png" alt="AWS"><span>AWS COMPANY</span></div>
       <div class="muted">تتبّع سيارتك برقم الهيكل (VIN)</div></div>
     <form class="card pad inrow" onsubmit="event.preventDefault();pubSearch()" style="margin-bottom:14px">
       <input class="inp num" id="pv" placeholder="أدخل رقم الهيكل — 17 خانة" maxlength="17" value="${esc(q)}" style="direction:ltr;text-align:center;font-size:18px;letter-spacing:1px" oninput="this.value=this.value.toUpperCase()">
