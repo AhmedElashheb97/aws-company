@@ -7,7 +7,7 @@
 <style>
 :root{
   --bg:#FBF6F1; --surface:#FFFFFF; --surface-2:#FFF8F2;
-  --ink:#2A1D13; --muted:#7D6B5C; --line:#EEE1D5; --line-2:#F5ECE3;
+  --ink:#120A04; --muted:#4A3A2D; --line:#E2D2C3; --line-2:#EDE1D5;
   --brand:#E8701A; --brand-d:#C2570C; --brand-soft:#FFEEDF; --brand-softer:#FFF6EE;
   --ok:#2F855A; --ok-soft:#E6F4EC; --bad:#C53030; --bad-soft:#FDECEC;
   --info:#2B6CB0; --info-soft:#E8F1FB; --warn:#A8650B; --warn-soft:#FFF4DC;
@@ -195,6 +195,22 @@ a.lnk:hover{text-decoration:underline}
 #login .box{width:100%;max-width:380px;padding:28px}
 #login .logo{justify-content:center;margin-bottom:6px;font-size:20px}
 #login .err{color:var(--bad);font-size:13px;min-height:20px;margin-top:8px}
+
+/* readability: bigger, darker text on screen */
+@media screen{
+  body{font-size:16.5px}
+  .btn.sm{font-size:14.5px}
+  h1{font-size:25px} h2{font-size:19px} h3{font-size:17px}
+  .small,.tbl th,.f label,.step,.legend{font-size:14px}
+  .kpi .l,.ln.sub,.fin .s,.note{font-size:14.5px}
+  .kpi .v{font-size:27px}
+  .bdg,.info .l,.sec,.hint{font-size:13.5px}
+  .ln{font-size:16px} .ln.rem{font-size:19px} .profit .pv{font-size:21px}
+  .bars .br{font-size:15px}
+  .info .v,.tbl td{font-weight:600}
+  .bdg.buy{color:#7A4705} .bdg.ship{color:#1A4A80} .bdg.done,.bdg.recv{color:#1F6340}
+  .bdg.loc,.kpi.hl .v,.sec,.fsec,nav a.on,a.lnk{color:#A2440A}
+}
 
 @media (max-width:900px){
   .stages,.mapgrid{grid-template-columns:1fr}
