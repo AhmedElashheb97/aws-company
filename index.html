@@ -163,6 +163,8 @@ h3{font-size:15px;margin:0}
 .profit .pv{font-size:19px;font-weight:700}
 .profit.loss{background:var(--bad-soft);border-color:#F3C2C2}
 .ppos{color:var(--ok)} .pneg{color:var(--bad)}
+.vinln{margin-top:3px;letter-spacing:.4px}
+td.num{display:table-cell}   /* .num is inline-block; on a table cell that breaks the row background */
 .pcell{white-space:nowrap}
 .ptot{font-size:18px;font-weight:800;line-height:1.2}
 .pchips{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-top:6px}
@@ -855,7 +857,7 @@ function viewProfits(){
       <div class="l">${sets[key].t}</div><div class="v">${money(sum(sets[key].rows))}</div><div class="small muted">${sets[key].rows.length} مرحلة</div></div>`;
   const d = sets[ui.drill] || sets.recv;
   const drows = d.rows.slice().sort((a,b) => (b.date||'').localeCompare(a.date||'')).map(r => `<tr class="click" onclick="go('car','${r.c.id}')">
-      <td><b>${esc(carName(r.c))}</b><div class="small muted num">${esc(r.c.vin||r.c.lot||'')}</div></td><td>${esc(r.c.customer||'—')}</td>
+      <td><div class="carcell">${carThumb(r.c)}<div><b>${esc(carName(r.c))}</b><div class="small muted vinln"><span class="num">${esc(r.c.vin||r.c.lot||'')}</span></div></div></div></td><td>${esc(r.c.customer||'—')}</td>
       <td><span class="bdg ${r.stage}">${STG[r.stage]}</span></td>
       <td class="num">${r.date ? esc(r.date) : '<span class="muted">لم تكتمل</span>'}</td>
       <td><b class="${pcls(r.amount)}">${money(r.amount)}</b></td></tr>`).join('');
@@ -1484,7 +1486,7 @@ async function pubSearch(){
           <div class="l">${due > 0.009 ? 'الباقي عليك' : 'الحساب'}</div><div class="v ${due > 0.009 ? 'pneg' : 'ppos'}">${due > 0.009 ? money(due) : 'خالص ✓'}</div></div>
       </div></div>
     <div class="card pad" style="margin-bottom:14px"><h3 style="margin-bottom:8px">مكان السيارة الآن: <span style="color:var(--brand-d)">${esc(LOC[d.loc] || '')}</span></h3>
-      <div class="steps">${LOC.map((l,i) => `<div class="step ${i < d.loc ? 'past' : i === d.loc ? 'cur' : ''}" style="cursor:default"><span class="dot"></span>${l}${d.locAt && d.locAt[i] && i <= d.loc ? `<div class="num small muted">${esc(d.locAt[i])}</div>` : ''}</div>`).join('')}</div></div>
+      <div class="steps">${LOC.map((l,i) => `<div class="step ${i < d.loc ? 'past' : i === d.loc ? 'cur' : ''}" style="cursor:default"><span class="dot"></span>${l}${d.locAt && d.locAt[i] && i <= d.loc ? `<div class="small muted"><span class="num">${esc(d.locAt[i])}</span></div>` : ''}</div>`).join('')}</div></div>
     <div class="stages">${stage(d.s1, 1, 'الشراء')}${stage(d.s2, 2, 'الشحن')}</div>
     ${(d.pays || []).length ? `<div class="card" style="margin-bottom:14px"><div class="pad"><h3>الدفعات المستلمة</h3></div><div class="tblwrap"><table class="tbl">
       <thead><tr><th>التاريخ</th><th>المرحلة</th><th>المبلغ</th></tr></thead><tbody>
@@ -1661,7 +1663,7 @@ async function oldImport(mode){
     out.innerHTML = `<div class="note info" style="margin:0 0 10px">لقينا <b>${cars.length}</b> سيارة${upd ? ` (منهم ${upd} موجودين — يتحدّثوا)` : ''}، و<b>${oldPlan.custs.length}</b> زبون جديد، و<b>${fines}</b> غرامة، و<b>${npay}</b> دفعة للمرحلة 1، و<b>${fees.length}</b> عمولة دفع على المكتب (${money(fees.reduce((s,e) => s + e.amount, 0))}).${viOk ? '' : '<br>⚠ حسابك ما عندهش صلاحية الأرباح في القديم، فتكلفة الشحن الفعلية تكون مقدّرة.'}</div>
       <div class="tblwrap" style="max-height:300px;overflow:auto"><table class="tbl"><thead><tr><th>السيارة</th><th>الزبون</th><th>المكان</th><th>دفعات المرحلة 1</th><th>غرامات</th></tr></thead><tbody>
       ${cars.map(c => { const t = Object.assign({stage:'buy', refunds:[], payments:c.oldPayments}, c, {payments:c.oldPayments}); const k = calc(t);
-        return `<tr><td><b>${esc(carName(c))}</b><div class="small muted num">${esc(c.vin)}</div></td><td>${esc(c.customer || '—')}</td><td><span class="bdg loc">${LOC[c.loc]}</span></td>
+        return `<tr><td><b>${esc(carName(c))}</b><div class="small muted vinln"><span class="num">${esc(c.vin)}</span></div></td><td>${esc(c.customer || '—')}</td><td><span class="bdg loc">${LOC[c.loc]}</span></td>
         <td>${money(c.oldPayments.reduce((s,p) => s + p.amount, 0))} <span class="small muted">من ${money(k.req1)}</span>
           ${k.rem1 <= 0.004 ? '<div class="small" style="color:var(--ok)">✓ تكمل المرحلة 1</div>' : `<div class="small" style="color:var(--bad)">باقي ${money(k.rem1)}</div>`}
           ${c.skippedPay > 0 ? `<div class="small" style="color:var(--info)">${money(c.skippedPay)} زيادة عن المرحلة 1 — ما تنقلتش</div>` : ''}</td>
