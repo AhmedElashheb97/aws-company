@@ -199,6 +199,10 @@ a.lnk:hover{text-decoration:underline}
 #login .box{width:100%;max-width:380px;padding:28px}
 #login .logo{justify-content:center;margin-bottom:6px;font-size:20px}
 #login .err{color:var(--bad);font-size:13px;min-height:20px;margin-top:8px}
+body.pub header{display:none}
+.pubw{max-width:900px;margin:0 auto}
+.pubh{text-align:center;margin:10px 0 16px}
+.pubh .logo{font-size:22px;margin-bottom:4px}
 
 /* readability: bigger, darker text on screen */
 @media screen{
@@ -332,6 +336,7 @@ function initFirebase(){
     unsub.push(fs.collection('cars').onSnapshot(snap => {
       db.cars = snap.docs.map(d => Object.assign({expenses:[], payments:[], refunds:[]}, d.data()));
       render();
+      clearTimeout(syncTracking._t); syncTracking._t = setTimeout(syncTracking, 1500);
       if(first){ first = false; offerUpload(snap.empty); }
     }, fbErr));
     unsub.push(fs.collection('customers').onSnapshot(snap => { db.customers = snap.docs.map(d => d.data()); render(); }, fbErr));
@@ -710,6 +715,7 @@ function viewCar(c){
       <button class="btn pri" onclick="paymentForm('${c.id}')">＋ دفعة من الزبون</button>
       <button class="btn" onclick="expenseForm('${c.id}')">＋ مصروف</button>
       <button class="btn" onclick="printInvoice('${c.id}')">🧾 فاتورة الزبون</button>
+      ${c.vin ? `<button class="btn" onclick="trackLinkForm('${c.id}')">🔗 رابط التتبع</button>` : ''}
       <button class="btn" onclick="carForm('${c.id}')">تعديل</button>
       <button class="btn danger" onclick="delCar('${c.id}')">حذف</button>
     </div>
@@ -1041,7 +1047,7 @@ function saveCar(id){
 function delCar(id){ ask('حذف هذه السيارة وكل دفعاتها ومصاريفها؟ لا يمكن التراجع.', () => { removeCar(id); go('cars'); toast('تم الحذف'); }, 'حذف'); }
 
 /* ---------- location / stage ---------- */
-function setLoc(id, i){ const c = getCar(id); c.loc = i; commit(c); }
+function setLoc(id, i){ const c = getCar(id); c.loc = i; c.locAt = Object.assign({}, c.locAt, {[i]: today()}); commit(c); }
 function manualShip(id){
   const c = getCar(id), k = calc(c);
   ask(`نقل السيارة لمرحلة الشحن قبل ما يكمل الزبون؟<br><span class="muted small">الباقي من المرحلة 1 (${money(k.rem1)}) يبقى ظاهر كدين عليه، ومكسبها ما يتحسبش مستلم لين يكمل.</span>`,
@@ -1181,8 +1187,115 @@ function printInvoice(id){
     <h3>الدفعات</h3>
     <table><tr><th>التاريخ</th><th>المرحلة</th><th>الطريقة</th><th>المبلغ</th></tr>
       ${c.payments.map(p => `<tr><td>${esc(p.date)}</td><td>${STG[p.stage]}</td><td>${esc(p.method)}</td><td style="direction:ltr;text-align:left">${$$(p.amount)}</td></tr>`).join('') || '<tr><td colspan="4">—</td></tr>'}</table>
-    <h3>إجمالي الباقي على الزبون: <span style="direction:ltr;display:inline-block">${$$(Math.max(0,k.rem1) + (c.stage !== 'buy' ? Math.max(0,k.rem2) : 0))}</span></h3>`;
+    <h3>إجمالي الباقي على الزبون: <span style="direction:ltr;display:inline-block">${$$(Math.max(0,k.rem1) + (c.stage !== 'buy' ? Math.max(0,k.rem2) : 0))}</span></h3>
+    ${c.vin ? `<p>تتبّع سيارتك: <span style="direction:ltr;display:inline-block">${esc(trackUrl(c.vin))}</span></p>` : ''}`;
   window.print();
+}
+
+/* ---------- customer tracking (public page by VIN) ---------- */
+const PUB = new URLSearchParams(location.search).has('vin') || location.hash === '#track';
+const vinKey = v => String(v || '').trim().toUpperCase();
+function trackUrl(vin){
+  const base = /^(localhost|127\.)/.test(location.hostname) ? 'https://aws-company.vercel.app/' : location.origin + location.pathname;
+  return base + '?vin=' + encodeURIComponent(vinKey(vin));
+}
+/* what the customer may see — no costs, no office profit */
+function trkSnap(c){
+  const k = calc(c), port = portById(c.port);
+  const ce = st => c.expenses.filter(e => e.payer === 'customer' && e.stage === st).map(e => ({t:(e.kind === 'fine' ? 'غرامة: ' : '') + (e.desc || 'مصروف'), a:r2(e.amount)}));
+  const s1 = [{t:'سعر الشراء في المزاد', a:r2(c.buyPrice)}, {t:'رسوم المزاد', a:r2(c.auctionFees)}, {t:'عمولة المكتب', a:r2(c.officeFee)},
+              {t:`عمولة الحوالة (${+N(c.wirePct).toFixed(2)}%)`, a:k.wire}, ...ce('buy')];
+  const s2 = [{t:'السحب الداخلي', a:r2(c.towCharge)}, {t:'الشحن البحري', a:r2(c.oceanCharge)}, ...ce('ship')];
+  if(k.wire2) s2.push({t:`عمولة الحوالة (${+N(c.shipWirePct).toFixed(2)}%)`, a:k.wire2});
+  const showShip = c.stage !== 'buy' || k.paid2 > 0;
+  return {
+    vin: vinKey(c.vin), title: carName(c), lot: c.lot || '', auction: c.auction || '', port: port ? port.name : '',
+    customer: c.customer || '', office: db.settings.officeName || 'AWS COMPANY',
+    loc: c.loc || 0, locAt: c.locAt || {}, img: c.img || '', photos: (c.photos || []).slice(0, 12),
+    s1: {items: s1.filter(x => x.a), req: k.req1, paid: k.paid1, rem: k.rem1, done: !!c.lock1},
+    s2: showShip ? {items: s2.filter(x => x.a), req: k.req2, paid: k.paid2, rem: k.rem2, done: !!c.lock2} : null,
+    pays: c.payments.slice().sort((a,b) => (a.date||'').localeCompare(b.date||'')).map(p => ({date:p.date || '', stage:p.stage, a:r2(p.amount)})),
+  };
+}
+const hstr = t => { let h = 5381; for(let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
+let trkBusy = false;
+/* keep tracking/{VIN} in step with the cars: write what changed, remove VINs that no longer exist */
+async function syncTracking(){
+  if(!USE_FB || PUB || trkBusy || !fbAuth.currentUser) return;
+  trkBusy = true;
+  try{
+    let seen = {}; try{ seen = JSON.parse(localStorage.getItem('trk_h') || '{}'); }catch(e){}
+    const now = {};
+    for(const c of db.cars){
+      const v = vinKey(c.vin); if(v.length < 5) continue;
+      const snap = trkSnap(c), h = hstr(JSON.stringify(snap)); now[v] = h;
+      if(seen[v] !== h){ snap.updated = new Date().toISOString(); await fs.collection('tracking').doc(v).set(snap); }
+    }
+    for(const v of Object.keys(seen)) if(!now[v]) await fs.collection('tracking').doc(v).delete().catch(() => {});
+    try{ localStorage.setItem('trk_h', JSON.stringify(now)); }catch(e){}
+  }catch(e){ console.error('tracking sync', e); }
+  finally{ trkBusy = false; }
+}
+function waPhone(p){ p = String(p || '').replace(/\D/g, ''); if(p.startsWith('00')) p = p.slice(2); if(p.startsWith('0')) p = '218' + p.slice(1); return p; }
+function trackMsg(c){ return `السلام عليكم ${c.customer || ''}\nرابط تتبع سيارتك ${carName(c)}:\n${trackUrl(c.vin)}\n\n${db.settings.officeName || ''}`; }
+function trackLinkForm(id){
+  const c = getCar(id), u = trackUrl(c.vin), ph = waPhone(c.phone);
+  syncTracking();
+  openModal('رابط التتبع', `
+    <div class="hint" style="margin-bottom:8px">الزبون يفتح الرابط ويشوف مكان سيارته وصورها وفاتورته والباقي عليه — بدون تكاليفنا أو مكسبنا.</div>
+    <div class="inrow"><input class="inp num" id="trkU" value="${esc(u)}" readonly style="direction:ltr" onclick="this.select()">
+      <button class="btn" onclick="copyText($('#trkU').value)">نسخ</button></div>`,
+    `${ph ? `<a class="btn pri" target="_blank" rel="noopener" href="https://wa.me/${ph}?text=${encodeURIComponent(trackMsg(c))}">إرسال واتساب للزبون</a>` : ''}
+     <a class="btn" target="_blank" rel="noopener" href="${esc(u)}">فتح الصفحة</a><button class="btn" onclick="closeModal()">إغلاق</button>`);
+}
+function copyText(t){ (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast('تم نسخ الرابط'), () => prompt('انسخ الرابط:', t)); }
+
+function renderPublic(){
+  document.body.classList.add('pub');
+  const q = vinKey(new URLSearchParams(location.search).get('vin'));
+  $('#app').innerHTML = `<div class="pubw">
+    <div class="pubh"><div class="logo" style="justify-content:center"><i>🚗</i><span>AWS COMPANY</span></div>
+      <div class="muted">تتبّع سيارتك برقم الهيكل (VIN)</div></div>
+    <form class="card pad inrow" onsubmit="event.preventDefault();pubSearch()" style="margin-bottom:14px">
+      <input class="inp num" id="pv" placeholder="أدخل رقم الهيكل — 17 خانة" maxlength="17" value="${esc(q)}" style="direction:ltr;text-align:center;font-size:18px;letter-spacing:1px" oninput="this.value=this.value.toUpperCase()">
+      <button class="btn pri">تتبّع</button></form>
+    <div id="pres"></div></div>`;
+  if(q) pubSearch();
+}
+async function pubSearch(){
+  const vin = vinKey($('#pv').value), out = $('#pres'); if(!vin) return;
+  out.innerHTML = `<div class="card empty">جاري البحث...</div>`;
+  let d = null; try{ const s = await fs.collection('tracking').doc(vin).get(); d = s.exists ? s.data() : null; }catch(e){ console.error(e); }
+  if(!d){ out.innerHTML = `<div class="card empty">ما لقيناش سيارة بهذا الرقم. تأكد من رقم الهيكل (17 خانة) أو تواصل مع المكتب.</div>`; return; }
+  try{ history.replaceState(null, '', location.pathname + '?vin=' + encodeURIComponent(vin)); }catch(e){}
+  const stage = (s, n, title) => !s ? '' : `<div class="card stage"><div class="top"><div class="n">${n}</div><h3>${title}</h3><div class="sp"></div>
+      ${s.rem <= 0.009 ? '<span class="bdg done">✓ خالص</span>' : '<span class="bdg bad">فيها باقي</span>'}</div><div class="body">
+      ${s.items.map(x => ln(esc(x.t), money(x.a))).join('')}${ln('الإجمالي', money(s.req), 'tot')}${ln('المدفوع', money(s.paid))}
+      ${ln(s.rem > 0.009 ? 'الباقي' : 'الحالة', s.rem > 0.009 ? money(s.rem) : 'خالص ✓', 'rem ' + (s.rem > 0.009 ? 'due' : 'zero'))}</div></div>`;
+  const photos = [...new Set([d.img, ...(d.photos || [])].filter(Boolean))];
+  const due = Math.max(0, N(d.s1 && d.s1.rem)) + Math.max(0, N(d.s2 && d.s2.rem));
+  out.innerHTML = `
+    <div class="card pad ${photos.length ? 'carinfo' : ''}" style="margin-bottom:14px">
+      ${photos.length ? `<div><img class="photo" id="mainPhoto" src="${esc(photos[0])}" referrerpolicy="no-referrer" alt="">
+        ${photos.length > 1 ? `<div class="gal">${photos.map(u => `<img src="${esc(u)}" loading="lazy" referrerpolicy="no-referrer" alt="" onclick="$('#mainPhoto').src=this.src" onerror="this.remove()">`).join('')}</div>` : ''}</div>` : ''}
+      <div><h1>${esc(d.title)}</h1><div class="muted" style="margin-bottom:12px">${esc(d.customer)}</div>
+        <div class="info">
+          <div><div class="l">VIN</div><div class="v num">${esc(d.vin)}</div></div>
+          ${d.lot ? `<div><div class="l">رقم اللوت</div><div class="v num">${esc(d.lot)}</div></div>` : ''}
+          ${d.auction ? `<div><div class="l">المزاد</div><div class="v">${esc(d.auction)}</div></div>` : ''}
+          ${d.port ? `<div><div class="l">ميناء الشحن</div><div class="v">${esc(d.port)}</div></div>` : ''}
+          <div><div class="l">آخر تحديث</div><div class="v num">${esc((d.updated || '').slice(0,10))}</div></div>
+        </div>
+        <div class="kpi card ${due > 0.009 ? '' : 'hl'}" style="margin-top:14px;box-shadow:none">
+          <div class="l">${due > 0.009 ? 'الباقي عليك' : 'الحساب'}</div><div class="v ${due > 0.009 ? 'pneg' : 'ppos'}">${due > 0.009 ? money(due) : 'خالص ✓'}</div></div>
+      </div></div>
+    <div class="card pad" style="margin-bottom:14px"><h3 style="margin-bottom:8px">مكان السيارة الآن: <span style="color:var(--brand-d)">${esc(LOC[d.loc] || '')}</span></h3>
+      <div class="steps">${LOC.map((l,i) => `<div class="step ${i < d.loc ? 'past' : i === d.loc ? 'cur' : ''}" style="cursor:default"><span class="dot"></span>${l}${d.locAt && d.locAt[i] && i <= d.loc ? `<div class="num small muted">${esc(d.locAt[i])}</div>` : ''}</div>`).join('')}</div></div>
+    <div class="stages">${stage(d.s1, 1, 'الشراء')}${stage(d.s2, 2, 'الشحن')}</div>
+    ${(d.pays || []).length ? `<div class="card" style="margin-bottom:14px"><div class="pad"><h3>الدفعات المستلمة</h3></div><div class="tblwrap"><table class="tbl">
+      <thead><tr><th>التاريخ</th><th>المرحلة</th><th>المبلغ</th></tr></thead><tbody>
+      ${d.pays.map(p => `<tr><td class="num">${esc(p.date)}</td><td><span class="bdg ${p.stage}">${STG[p.stage] || ''}</span></td><td><b>${money(p.a)}</b></td></tr>`).join('')}</tbody></table></div></div>` : ''}
+    <div class="muted small" style="text-align:center">${esc(d.office || '')} — شكراً لثقتكم</div>`;
 }
 
 /* ---------- settings / backup ---------- */
@@ -1442,9 +1555,12 @@ async function oldImportRun(){
   }catch(e){ fbErr(e); $('#oiBtns').innerHTML = `<button class="btn pri" onclick="oldImportRun()">إعادة المحاولة</button>`; }
 }
 
-if(USE_FB) initFirebase();
-else setCloud('<span title="البيانات في هذا المتصفح فقط — عبّي firebase-config.js للربط">💾 محلي</span>');
-render();
+if(PUB && USE_FB){ firebase.initializeApp(FBC); fs = firebase.firestore(); renderPublic(); }
+else {
+  if(USE_FB) initFirebase();
+  else setCloud('<span title="البيانات في هذا المتصفح فقط — عبّي firebase-config.js للربط">💾 محلي</span>');
+  render();
+}
 </script>
 </body>
 </html>
