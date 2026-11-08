@@ -171,6 +171,8 @@ td.num{display:table-cell}   /* .num is inline-block; on a table cell that break
 .pchip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px 2px 8px;border-radius:99px;font-size:13.5px;font-weight:700;background:var(--ok-soft);color:#1F6340}
 .pchip i{font-style:normal;font-weight:600;font-size:12px;opacity:.75;min-width:26px}
 .pchip.pneg{background:var(--bad-soft);color:var(--bad)}
+.pwarn{margin-top:5px;font-size:12.5px;font-weight:700;color:#8B1E1E;background:var(--bad-soft);border-radius:8px;padding:2px 8px;display:inline-block}
+.paycost{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px}
 .kpi .pchips{flex-direction:row;flex-wrap:wrap;margin-top:8px}
 .pst{font-size:12.5px;color:var(--muted);margin-top:5px}
 .note{padding:10px 13px;border-radius:10px;background:var(--warn-soft);color:#7A4A06;font-size:13px;margin-top:10px}
@@ -566,7 +568,8 @@ function carRow(c, withCust){
           <span class="pchip ${pcls(k.profit1)}" title="${c.lock1 ? 'مستلم' : 'متوقع'}"><i>شراء</i>${money(k.profit1)}${c.lock1 ? ' ✓' : ''}</span>
           <span class="pchip ${pcls(k.profit2)}" title="${c.lock2 ? 'مستلم' : 'متوقع'}"><i>شحن</i>${money(k.profit2)}${c.lock2 ? ' ✓' : ''}</span>
         </div>
-        <div class="pst">${c.lock1 && c.lock2 ? 'مستلم' : c.lock1 || c.lock2 ? 'جزء مستلم' : 'متوقع'}</div></td>
+        <div class="pst">${c.lock1 && c.lock2 ? 'مستلم' : c.lock1 || c.lock2 ? 'جزء مستلم' : 'متوقع'}</div>
+        ${payCostMissing(c) ? `<div class="pwarn" title="ما تسجلتش تكلفة الدفع للمزاد — المكسب ممكن أكبر من الحقيقة">⚠ تكلفة الدفع ناقصة</div>` : ''}</td>
   </tr>`;
 }
 const pcls = n => n < 0 ? 'pneg' : 'ppos';   // loss red, profit green
@@ -715,6 +718,8 @@ function viewCar(c){
       ${ln('دفعات الزبون', money(k.payments1))}
       ${ln('الباقي', money(k.rem1), 'rem ' + (k.rem1 > 0 ? 'due' : 'zero'))}
       ${auctionBox}
+      ${payCostMissing(c) ? `<div class="note bad">⚠ ما سجلتش كم كلفك الدفع للمزاد (بطاقة / PayPal / صرف). المكسب تحت ممكن يكون أكبر من الحقيقة.
+        <button class="btn sm" style="margin-top:6px" onclick="auctionForm('${c.id}')">سجّل تكلفة الدفع</button></div>` : ''}
       <div class="profit ${k.profit1 < 0 ? 'loss' : c.lock1 ? 'recv' : ''}">
         <div class="row"><span class="small muted" style="font-weight:700">${k.profit1 < 0 ? 'خسارة المرحلة 1' : 'مكسب المرحلة 1'}</span><div class="sp"></div>
           ${c.lock1 ? `<span class="bdg recv">مستلم · ${dt(c.lock1)}</span>` : `<span class="bdg exp">متوقع</span>`}</div>
@@ -1250,19 +1255,50 @@ function manualShip(id){
 function undoManualShip(id){ const c = getCar(id); c.manualShip = false; c.stage = 'buy'; commit(c); }
 
 /* ---------- auction paid ---------- */
+/* what it really cost the office to pay the auction (card fee, PayPal, FX loss) — the 1.5% charged to the customer is not profit until this is taken off */
+const PAY_HOW = ['بطاقة','PayPal','حوالة','صرف عملة','أخرى'];
+const isPayCost = e => e.payer === 'office' && e.stage === 'buy' && (e.payCost || /عمولة الدفع|على الدفع|paypal|بطاقة|صرف|card|fx/i.test(e.desc || ''));
+const payCostMissing = c => c.auctionPaid && c.auctionPaid.by === 'office' && !c.payCostSet && !c.expenses.some(isPayCost);
 function auctionForm(id){
   const c = getCar(id), k = calc(c);
+  const pc = c.expenses.find(e => e.payCost);
   openModal('تم السداد للمزاد', `
     <div style="margin-bottom:12px">مين دفع للمزاد؟ <span class="muted">(سعر الشراء + الرسوم = ${money(k.base)})</span></div>
     <div class="f" style="margin-bottom:12px"><label>تاريخ السداد</label><input class="inp" type="date" id="apDate" value="${c.auctionPaid ? c.auctionPaid.date : today()}"></div>
+    <div class="paycost">
+      <div style="font-weight:700;margin-bottom:4px">لو دفعت انت: كم كلفك الدفع؟</div>
+      <div class="hint" style="margin:0 0 10px">عمولة البطاقة أو PayPal أو خسارة الصرف. تنحسب على المكتب وتنقص من المكسب — الزبون ما يشوفهاش.
+        عمولة الحوالة اللي خذيناها من الزبون <b>${money(k.wire)}</b>.</div>
+      <div class="grid g3">
+        <div class="f"><label>طريقة الدفع</label><select class="inp" id="pcHow">${PAY_HOW.map(m => `<option ${pc && pc.how === m ? 'selected' : ''}>${m}</option>`).join('')}</select></div>
+        <div class="f"><label>المبلغ اللي خرج منك فعلاً ($)</label><input class="inp" type="number" step="any" id="pcOut" placeholder="${r2(k.base)}" oninput="pcFromOut(${k.base})">
+          <div class="hint">اختياري — نحسبلك الفرق</div></div>
+        <div class="f"><label>تكلفة الدفع ($)</label><input class="inp" type="number" step="any" id="pcCost" value="${pc ? esc(pc.amount) : ''}" placeholder="0" oninput="pcHint(${k.wire})">
+          <div class="hint" id="pcHint"></div></div>
+      </div>
+    </div>
     <div class="choice">
       <button class="big" onclick="setAuction('${id}','office')"><b>أنا (المكتب)</b><span class="small muted">المبلغ يتسجل دين على الزبون (سلفة منا)</span></button>
       <button class="big" onclick="setAuction('${id}','customer')"><b>الزبون</b><span class="small muted">سعر الشراء والرسوم يتحسبوا مدفوعين، وتبقى عليه العمولات والمصاريف</span></button>
     </div>`,
     c.auctionPaid ? `<button class="btn danger" onclick="setAuction('${id}',null)">إلغاء تسجيل السداد</button>` : '');
+  pcHint(k.wire);
+}
+function pcFromOut(base){ const v = $('#pcOut').value; if(v === '') return; $('#pcCost').value = r2(Math.max(0, N(v) - base)); pcHint(); }
+function pcHint(wire){
+  if(wire == null) wire = pcHint.w; else pcHint.w = wire;
+  const cost = N($('#pcCost').value), net = r2(wire - cost);
+  $('#pcHint').innerHTML = $('#pcCost').value === '' ? '' : `الحوالة ${money(wire)} − التكلفة ${money(cost)} = <b class="${pcls(net)}">${money(net)}</b>`;
 }
 function setAuction(id, by){
   const c = getCar(id);
+  if(by === 'office' && $('#pcCost')){
+    const v = $('#pcCost').value, how = $('#pcHow').value;
+    c.expenses = c.expenses.filter(e => !e.payCost);
+    if(v !== '' && N(v) > 0) c.expenses.push({id:uid(), payCost:true, how, desc:`عمولة الدفع — ${how}`, amount:r2(N(v)), date:$('#apDate').value || today(), payer:'office', stage:'buy', kind:'expense'});
+    c.payCostSet = v !== '';          // "0" means: paid with no cost — stop warning
+  }
+  if(by !== 'office'){ c.expenses = c.expenses.filter(e => !e.payCost); delete c.payCostSet; }
   c.auctionPaid = by ? {by, date: $('#apDate').value || today()} : null;
   if(by && (c.loc||0) < 1) c.loc = 1;
   closeModal(); commit(c); toast(by ? 'تم تسجيل السداد للمزاد' : 'تم الإلغاء');
