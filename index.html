@@ -163,8 +163,13 @@ h3{font-size:15px;margin:0}
 .profit .pv{font-size:19px;font-weight:700}
 .profit.loss{background:var(--bad-soft);border-color:#F3C2C2}
 .ppos{color:var(--ok)} .pneg{color:var(--bad)}
-.pst{display:flex;gap:8px;justify-content:space-between;max-width:160px;white-space:nowrap}
-.pst > span{color:var(--muted)}
+.pcell{white-space:nowrap}
+.ptot{font-size:18px;font-weight:800;line-height:1.2}
+.pchips{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-top:6px}
+.pchip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px 2px 8px;border-radius:99px;font-size:13.5px;font-weight:700;background:var(--ok-soft);color:#1F6340}
+.pchip i{font-style:normal;font-weight:600;font-size:12px;opacity:.75;min-width:26px}
+.pchip.pneg{background:var(--bad-soft);color:var(--bad)}
+.pst{font-size:12.5px;color:var(--muted);margin-top:5px}
 .note{padding:10px 13px;border-radius:10px;background:var(--warn-soft);color:#7A4A06;font-size:13px;margin-top:10px}
 .note.info{background:var(--info-soft);color:#1E4E80}
 .note.bad{background:var(--bad-soft);color:#8B1E1E}
@@ -552,10 +557,12 @@ function carRow(c, withCust){
     <td>${c.stage === 'done' ? '<span class="muted">—</span>' : `<b style="color:${cur > 0 ? 'var(--bad)' : 'var(--ok)'}">${money(cur)}</b>`}
         ${debt1 ? `<div class="small" style="color:var(--bad)">+ دين الشراء ${money(k.rem1)}</div>` : ''}
         ${k.refundDue > 0 ? `<div class="small" style="color:var(--info)">راجع للزبون ${money(k.refundDue)}</div>` : ''}</td>
-    <td><b class="${pcls(k.profit1 + k.profit2)}">${money(k.profit1 + k.profit2)}</b>
-        <div class="small pst"><span>شراء</span> <b class="${pcls(k.profit1)}">${money(k.profit1)}</b></div>
-        <div class="small pst"><span>شحن</span> <b class="${pcls(k.profit2)}">${money(k.profit2)}</b></div>
-        <div class="small muted">${c.lock1 && c.lock2 ? 'مستلم' : c.lock1 || c.lock2 ? 'جزء مستلم' : 'متوقع'}</div></td>
+    <td class="pcell"><div class="ptot ${pcls(k.profit1 + k.profit2)}">${money(k.profit1 + k.profit2)}</div>
+        <div class="pchips">
+          <span class="pchip ${pcls(k.profit1)}" title="${c.lock1 ? 'مستلم' : 'متوقع'}"><i>شراء</i>${money(k.profit1)}${c.lock1 ? ' ✓' : ''}</span>
+          <span class="pchip ${pcls(k.profit2)}" title="${c.lock2 ? 'مستلم' : 'متوقع'}"><i>شحن</i>${money(k.profit2)}${c.lock2 ? ' ✓' : ''}</span>
+        </div>
+        <div class="pst">${c.lock1 && c.lock2 ? 'مستلم' : c.lock1 || c.lock2 ? 'جزء مستلم' : 'متوقع'}</div></td>
   </tr>`;
 }
 const pcls = n => n < 0 ? 'pneg' : 'ppos';   // loss red, profit green
