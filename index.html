@@ -129,6 +129,10 @@ h3{font-size:15px;margin:0}
 .profit{margin-top:12px;padding:11px 13px;border-radius:10px;background:var(--brand-softer);border:1px solid #F6DEC8}
 .profit.recv{background:var(--ok-soft);border-color:#C7E6D3}
 .profit .pv{font-size:19px;font-weight:700}
+.profit.loss{background:var(--bad-soft);border-color:#F3C2C2}
+.ppos{color:var(--ok)} .pneg{color:var(--bad)}
+.pst{display:flex;gap:8px;justify-content:space-between;max-width:160px;white-space:nowrap}
+.pst > span{color:var(--muted)}
 .note{padding:10px 13px;border-radius:10px;background:var(--warn-soft);color:#7A4A06;font-size:13px;margin-top:10px}
 .note.info{background:var(--info-soft);color:#1E4E80}
 .note.bad{background:var(--bad-soft);color:#8B1E1E}
@@ -499,9 +503,13 @@ function carRow(c, withCust){
     <td>${c.stage === 'done' ? '<span class="muted">—</span>' : `<b style="color:${cur > 0 ? 'var(--bad)' : 'var(--ok)'}">${money(cur)}</b>`}
         ${debt1 ? `<div class="small" style="color:var(--bad)">+ دين الشراء ${money(k.rem1)}</div>` : ''}
         ${k.refundDue > 0 ? `<div class="small" style="color:var(--info)">راجع للزبون ${money(k.refundDue)}</div>` : ''}</td>
-    <td>${money(k.profit1 + k.profit2)}<div class="small muted">${c.lock1 && c.lock2 ? 'مستلم' : c.lock1 || c.lock2 ? 'جزء مستلم' : 'متوقع'}</div></td>
+    <td><b class="${pcls(k.profit1 + k.profit2)}">${money(k.profit1 + k.profit2)}</b>
+        <div class="small pst"><span>شراء</span> <b class="${pcls(k.profit1)}">${money(k.profit1)}</b></div>
+        <div class="small pst"><span>شحن</span> <b class="${pcls(k.profit2)}">${money(k.profit2)}</b></div>
+        <div class="small muted">${c.lock1 && c.lock2 ? 'مستلم' : c.lock1 || c.lock2 ? 'جزء مستلم' : 'متوقع'}</div></td>
   </tr>`;
 }
+const pcls = n => n < 0 ? 'pneg' : 'ppos';   // loss red, profit green
 
 /* ---------- customers ---------- */
 function custStats(cu){
@@ -638,10 +646,10 @@ function viewCar(c){
       ${ln('دفعات الزبون', money(k.payments1))}
       ${ln('الباقي', money(k.rem1), 'rem ' + (k.rem1 > 0 ? 'due' : 'zero'))}
       ${auctionBox}
-      <div class="profit ${c.lock1 ? 'recv' : ''}">
-        <div class="row"><span class="small muted" style="font-weight:700">مكسب المرحلة 1</span><div class="sp"></div>
-          ${c.lock1 ? `<span class="bdg recv">مكسب مستلم · ${dt(c.lock1)}</span>` : `<span class="bdg exp">مكسب متوقع</span>`}</div>
-        <div class="pv">${money(k.profit1)}</div>
+      <div class="profit ${k.profit1 < 0 ? 'loss' : c.lock1 ? 'recv' : ''}">
+        <div class="row"><span class="small muted" style="font-weight:700">${k.profit1 < 0 ? 'خسارة المرحلة 1' : 'مكسب المرحلة 1'}</span><div class="sp"></div>
+          ${c.lock1 ? `<span class="bdg recv">مستلم · ${dt(c.lock1)}</span>` : `<span class="bdg exp">متوقع</span>`}</div>
+        <div class="pv ${pcls(k.profit1)}">${money(k.profit1)}</div>
         <div class="small muted">عمولة المكتب ${money(c.officeFee)} + الحوالة ${money(k.wire)} − مصاريف على المكتب ${money(k.offExp1)}</div>
       </div>
     </div>
@@ -662,10 +670,10 @@ function viewCar(c){
       <div class="sec">تكلفتنا الفعلية (لشركة الشحن)</div>
       ${ln('السحب', money(c.towCost), 'sub')}
       ${ln('البحري', money(c.oceanCost), 'sub')}
-      <div class="profit ${c.lock2 ? 'recv' : ''}">
-        <div class="row"><span class="small muted" style="font-weight:700">مكسب المرحلة 2</span><div class="sp"></div>
-          ${c.lock2 ? `<span class="bdg recv">مكسب مستلم · ${dt(c.lock2)}</span>` : `<span class="bdg exp">مكسب متوقع</span>`}</div>
-        <div class="pv">${money(k.profit2)}</div>
+      <div class="profit ${k.profit2 < 0 ? 'loss' : c.lock2 ? 'recv' : ''}">
+        <div class="row"><span class="small muted" style="font-weight:700">${k.profit2 < 0 ? 'خسارة المرحلة 2' : 'مكسب المرحلة 2'}</span><div class="sp"></div>
+          ${c.lock2 ? `<span class="bdg recv">مستلم · ${dt(c.lock2)}</span>` : `<span class="bdg exp">متوقع</span>`}</div>
+        <div class="pv ${pcls(k.profit2)}">${money(k.profit2)}</div>
         <div class="small muted">شحن من الزبون ${money(k.shipCharge)}${k.wire2 ? ' + الحوالة ' + money(k.wire2) : ''} − دفعناه ${money(k.actual)} − مصاريف على المكتب ${money(k.offExp2)}</div>
       </div>
       ${c.stage === 'buy' ? `<div class="note info">تبدأ تلقائياً لما يكمل الزبون المرحلة 1.</div>` : ''}
@@ -785,7 +793,7 @@ function viewProfits(){
       <td><b>${esc(carName(r.c))}</b><div class="small muted num">${esc(r.c.vin||r.c.lot||'')}</div></td><td>${esc(r.c.customer||'—')}</td>
       <td><span class="bdg ${r.stage}">${STG[r.stage]}</span></td>
       <td class="num">${r.date ? esc(r.date) : '<span class="muted">لم تكتمل</span>'}</td>
-      <td><b>${money(r.amount)}</b></td></tr>`).join('');
+      <td><b class="${pcls(r.amount)}">${money(r.amount)}</b></td></tr>`).join('');
 
   // last 12 months
   const months = []; const now = new Date();
