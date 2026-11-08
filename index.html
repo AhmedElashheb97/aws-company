@@ -570,9 +570,15 @@ const pcls = n => n < 0 ? 'pneg' : 'ppos';   // loss red, profit green
 /* ---------- customers ---------- */
 function custStats(cu){
   const cars = db.cars.filter(c => c.customerId === cu.id);
-  let due = 0, refund = 0, active = 0;
-  cars.forEach(c => { const k = calc(c); due += Math.max(k.rem1,0) + (c.stage !== 'buy' ? Math.max(k.rem2,0) : 0); refund += k.refundDue; if(c.stage !== 'done') active++; });
-  return {cars, due, refund, active};
+  let due1 = 0, due2 = 0, refund = 0, active = 0;
+  cars.forEach(c => { const k = calc(c); due1 += Math.max(k.rem1,0); due2 += c.stage !== 'buy' ? Math.max(k.rem2,0) : 0; refund += k.refundDue; if(c.stage !== 'done') active++; });
+  due1 = r2(due1); due2 = r2(due2);
+  return {cars, due:r2(due1 + due2), due1, due2, refund, active};
+}
+/* remaining per stage as pills: red = still owed, green = paid up */
+function duePills(s){
+  const p = (t, v) => `<span class="pchip ${v > 0.009 ? 'pneg' : 'ppos'}"><i>${t}</i>${v > 0.009 ? money(v) : 'خالص ✓'}</span>`;
+  return `<div class="pchips">${p('شراء', s.due1)}${p('شحن', s.due2)}</div>`;
 }
 function viewCustomers(){
   const q = (ui.cq || '').trim().toLowerCase();
@@ -583,9 +589,9 @@ function viewCustomers(){
   const unlinked = db.cars.filter(c => !c.customerId && c.customer);
   const rows = list.map(({cu, s}) => `<tr class="click" onclick="go('customer','${cu.id}')">
     <td><b>${esc(cu.name)}</b>${cu.notes ? `<div class="small muted">${esc(cu.notes.slice(0,60))}</div>` : ''}</td>
-    <td class="num">${esc(cu.phone || '—')}</td><td>${esc(cu.city || '—')}</td>
+    <td><span class="num">${esc(cu.phone || '—')}</span></td><td>${esc(cu.city || '—')}</td>
     <td>${s.cars.length}${s.active ? ` <span class="small muted">(${s.active} نشطة)</span>` : ''}</td>
-    <td><b style="color:${s.due > 0 ? 'var(--bad)' : 'var(--ok)'}">${money(s.due)}</b></td>
+    <td class="pcell"><div class="ptot ${s.due > 0.009 ? 'pneg' : 'ppos'}">${money(s.due)}</div>${duePills(s)}</td>
     <td>${s.refund > 0 ? `<span style="color:var(--info)">${money(s.refund)}</span>` : '<span class="muted">—</span>'}</td></tr>`).join('');
   return `
   <div class="row" style="margin-bottom:16px"><h1>الزبائن</h1><div class="sp"></div><button class="btn pri" onclick="custForm()">＋ زبون جديد</button></div>
@@ -621,6 +627,8 @@ function viewCustomer(cu){
   <div class="kpis">
     <div class="card kpi"><div class="l">السيارات</div><div class="v">${s.cars.length}<span class="small muted"> (${s.active} نشطة)</span></div></div>
     <div class="card kpi"><div class="l">الباقي عليه</div><div class="v" style="color:${s.due > 0 ? 'var(--bad)' : 'var(--ok)'}">${money(s.due)}</div></div>
+    <div class="card kpi"><div class="l">باقي الشراء (المرحلة 1)</div><div class="v ${s.due1 > 0.009 ? 'pneg' : 'ppos'}">${s.due1 > 0.009 ? money(s.due1) : 'خالص ✓'}</div></div>
+    <div class="card kpi"><div class="l">باقي الشحن (المرحلة 2)</div><div class="v ${s.due2 > 0.009 ? 'pneg' : 'ppos'}">${s.due2 > 0.009 ? money(s.due2) : 'خالص ✓'}</div></div>
     <div class="card kpi"><div class="l">راجع له</div><div class="v">${money(s.refund)}</div></div>
   </div>
   <div class="card">
