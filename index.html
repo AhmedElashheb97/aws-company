@@ -693,7 +693,7 @@ function viewGroup(){
 }
 /* choose any cars — from any port, any yard — and put them in a container (new number or an existing one).
    port: the port block the button came from (its cars are listed first); ctId: adding to an existing container */
-const SHIPPERS = ['Atlantic Express'];
+const SHIPPERS = ['Atlantic Express', 'MTL'];
 function shipperList(){ return [...new Set([...SHIPPERS, ...(db.containers || []).map(x => x.shipper).filter(Boolean)])]; }
 function assignForm(port, ctId){
   const ct0 = ctId ? getCt(ctId) : null;
