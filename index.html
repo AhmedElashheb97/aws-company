@@ -171,6 +171,22 @@ td.num{display:table-cell}   /* .num is inline-block; on a table cell that break
 .pchip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px 2px 8px;border-radius:99px;font-size:13.5px;font-weight:700;background:var(--ok-soft);color:#1F6340}
 .pchip i{font-style:normal;font-weight:600;font-size:12px;opacity:.75;min-width:26px}
 .pchip.pneg{background:var(--bad-soft);color:var(--bad)}
+.pchipc{display:inline-block;width:12px;height:12px;border-radius:4px;background:var(--pc);vertical-align:-1px}
+.gport{margin-bottom:16px;overflow:hidden;border-top:4px solid var(--pc)}
+.gph{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 18px;background:linear-gradient(180deg,color-mix(in srgb,var(--pc) 12%,#fff),#fff)}
+.gst{padding:8px 18px 2px;font-weight:800;color:var(--muted);font-size:14px;border-top:1px solid var(--line-2)}
+.gcars{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px;padding:8px 18px 14px}
+.gcar{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:var(--surface);transition:border-color .15s,background .15s}
+.gcar:hover{border-color:var(--brand);background:var(--brand-softer)}
+.gtx{flex:1;min-width:0;line-height:1.5} .gtx b{display:block}
+.aflist{display:flex;flex-direction:column;gap:6px;max-height:46vh;overflow-y:auto}
+.afrow{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.afrow:has(input:checked){border-color:var(--brand);background:var(--brand-softer)}
+.afrow input{accent-color:var(--brand);margin-top:5px;width:17px;height:17px}
+b.click{cursor:pointer} b.click:hover{color:var(--brand-d)}
+.seg{display:inline-flex;background:#F4EBE2;border-radius:10px;padding:3px;gap:3px}
+.seg button{border:0;background:transparent;min-width:46px;padding:7px 12px;border-radius:8px;cursor:pointer;font-weight:800;font-size:16px;color:var(--muted)}
+.seg button.on{background:var(--brand);color:#fff;box-shadow:0 2px 6px rgba(232,112,26,.35)}
 .logl{display:flex;flex-direction:column}
 .logi{padding:12px 18px;border-bottom:1px solid var(--line-2)}
 .logi:last-child{border-bottom:0}
@@ -310,6 +326,7 @@ body.pub main{margin:0 auto}
     <a data-v="cars"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span>السيارات</a>
     <a data-v="customers"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>الزبائن</a>
     <a data-v="profits"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>الأرباح</a>
+    <a data-v="containers"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="1.5"/><path d="M6 9v7"/><path d="M10 9v7"/><path d="M14 9v7"/><path d="M18 9v7"/></svg></span>الحاويات</a>
     <a data-v="map"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.1 6.3 9.9 4.2a2 2 0 0 0-1.8 0L3.6 6.4A1 1 0 0 0 3 7.3v12.1a1 1 0 0 0 1.4.9l3.7-1.8a2 2 0 0 1 1.8 0l4.2 2.1a2 2 0 0 0 1.8 0l4.5-2.2a1 1 0 0 0 .6-.9V5.4a1 1 0 0 0-1.4-.9l-3.7 1.8a2 2 0 0 1-1.8 0z"/><path d="M15 6v15"/><path d="M9 3v15"/></svg></span>خريطة المواني</a>
     <a data-v="log"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg></span>سجل التعديلات</a>
     <a href="./#track" target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.99-5.54 10.19-7.4 11.8a1 1 0 0 1-1.2 0C9.54 20.19 4 14.99 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span>صفحة التتبع<svg class="ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a>
@@ -373,10 +390,15 @@ function save(c){
 function saveSettingsStore(){ if(USE_FB){ logSettings(); fs.collection('meta').doc('settings').set(plain(db.settings)).catch(fbErr); } else save(); }
 function removeCar(id){ const old = shadow.cars[id]; db.cars = db.cars.filter(c => c.id !== id); if(USE_FB){ if(old) addLog('car', id, carName(old), 'حذف', [`حذف السيارة${old.vin ? ' — ' + old.vin : ''}${old.customer ? ' — ' + old.customer : ''}`]); fs.collection('cars').doc(id).delete().catch(fbErr); } else save(); }
 function saveCust(cu){ if(!USE_FB) return save(); logCust(shadow.customers[cu.id], cu); fs.collection('customers').doc(cu.id).set(plain(cu)).catch(fbErr); }
+function saveContainer(ct, changes){
+  if(!USE_FB) return save();
+  if(changes && changes.length) addLog('container', ct.id, 'حاوية ' + (ct.no || ''), shadow.containers && shadow.containers[ct.id] ? 'تعديل' : 'إضافة', changes);
+  fs.collection('containers').doc(ct.id).set(plain(ct)).catch(fbErr);
+}
 function removeCust(id){ const old = shadow.customers[id]; db.customers = db.customers.filter(x => x.id !== id); if(USE_FB){ if(old) addLog('customer', id, old.name, 'حذف', ['حذف الزبون']); fs.collection('customers').doc(id).delete().catch(fbErr); } else save(); }
 
 /* ---------- change log: who changed what, and when ---------- */
-const shadow = {cars:{}, customers:{}, settings:null};   // last copy seen from the cloud, to compare against
+const shadow = {cars:{}, customers:{}, containers:{}, settings:null};   // last copy seen from the cloud, to compare against
 const $t = n => '$' + r2(n).toLocaleString('en-US', {maximumFractionDigits:2});
 function addLog(kind, ref, title, action, changes){
   if(!USE_FB || !fbAuth || !fbAuth.currentUser || !changes.length) return;
@@ -386,7 +408,7 @@ const CAR_F = {customer:'الزبون', vin:'رقم الهيكل', year:'الس�
   buyPrice:'سعر الشراء', auctionFees:'رسوم المزاد', officeFee:'عمولة المكتب', wirePct:'عمولة الحوالة %', yard:'الساحة', port:'ميناء الساحة',
   relocPort:'نقل لميناء آخر', perContainer:'سيارات في الحاوية', towCharge:'السحب على الزبون', oceanCharge:'البحري على الزبون',
   shipWirePct:'عمولة حوالة الشحن %', towCost:'السحب الفعلي', oceanCost:'البحري الفعلي', notes:'الملاحظات', img:'الصورة', link:'رابط السيارة',
-  loc:'المكان', stage:'المرحلة', lock1:'قفل المرحلة 1', lock2:'قفل المرحلة 2', manualShip:'نقل يدوي للشحن'};
+  loc:'المكان', stage:'المرحلة', lock1:'قفل المرحلة 1', lock2:'قفل المرحلة 2', manualShip:'نقل يدوي للشحن', containerNo:'رقم الحاوية', booking:'رقم الحجز'};
 const MONEY_F = new Set(['buyPrice','auctionFees','officeFee','towCharge','oceanCharge','towCost','oceanCost']);
 function fmtF(k, v){
   if(v === '' || v == null || v === false) return '—';
@@ -466,6 +488,9 @@ function initFirebase(){
     }, fbErr));
     unsub.push(fs.collection('customers').onSnapshot(snap => { db.customers = snap.docs.map(d => d.data()); shadow.customers = Object.fromEntries(snap.docs.map(d => [d.id, d.data()])); render(); }, fbErr));
     unsub.push(fs.collection('meta').doc('settings').onSnapshot(d => { if(d.exists){ db.settings = Object.assign(db.settings, d.data()); shadow.settings = d.data(); render(); } }, fbErr));
+    unsub.push(fs.collection('containers').onSnapshot(snap => {
+      db.containers = snap.docs.map(d => d.data()); shadow.containers = Object.fromEntries(snap.docs.map(d => [d.id, d.data()])); render();
+    }, e => console.error('containers', e)));
     unsub.push(fs.collection('log').orderBy('at', 'desc').limit(500).onSnapshot(snap => {
       db.log = snap.docs.map(d => Object.assign({id:d.id}, d.data()));
       if(ui.view === 'log' || ui.view === 'car' || ui.view === 'customer') render();
@@ -574,12 +599,15 @@ document.getElementById('nav').addEventListener('click', e => { const a = e.targ
 
 function render(){
   $('#officeName').textContent = db.settings.officeName || 'مكتب السيارات';
-  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.v === ui.view || (ui.view === 'car' && a.dataset.v === 'cars') || (ui.view === 'customer' && a.dataset.v === 'customers')));
+  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.v === ui.view || ((ui.view === 'car' || ui.view === 'group') && a.dataset.v === 'cars') || (ui.view === 'customer' && a.dataset.v === 'customers') || (ui.view === 'container' && a.dataset.v === 'containers')));
   const app = $('#app');
   if(ui.view === 'car'){ const c = getCar(ui.carId); app.innerHTML = c ? viewCar(c) : (ui.view = 'cars', viewCars()); }
   else if(ui.view === 'customer'){ const cu = getCust(ui.carId); app.innerHTML = cu ? viewCustomer(cu) : (ui.view = 'customers', viewCustomers()); }
   else if(ui.view === 'customers') app.innerHTML = viewCustomers();
   else if(ui.view === 'profits') app.innerHTML = viewProfits();
+  else if(ui.view === 'group') app.innerHTML = viewGroup();
+  else if(ui.view === 'containers') app.innerHTML = viewContainers();
+  else if(ui.view === 'container'){ const ct = getCt(ui.carId); app.innerHTML = ct ? viewContainer(ct) : (ui.view = 'containers', viewContainers()); }
   else if(ui.view === 'log'){ const f = document.activeElement && document.activeElement.id === 'lq'; app.innerHTML = viewLog(); if(f){ const e = $('#lq'); e.focus(); e.setSelectionRange(e.value.length, e.value.length); } }
   else if(ui.view === 'map') app.innerHTML = viewMap();
   else app.innerHTML = viewCars();
@@ -590,7 +618,7 @@ const ACT_CLS = {'إضافة':'done', 'تعديل':'ship', 'حذف':'bad'};
 function logTime(at){ const d = new Date(at); return isNaN(d) ? '' : d.toLocaleString('en-GB', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}); }
 function logItems(list, showTitle){
   return list.map(l => `<div class="logi">
-    <div class="logh">${showTitle ? `<b class="${l.kind !== 'settings' ? 'click' : ''}" ${l.kind === 'car' ? `onclick="go('car','${l.ref}')"` : l.kind === 'customer' ? `onclick="go('customer','${l.ref}')"` : ''}>${esc(l.title)}</b>` : ''}
+    <div class="logh">${showTitle ? `<b class="${l.kind !== 'settings' ? 'click' : ''}" ${l.kind === 'car' ? `onclick="go('car','${l.ref}')"` : l.kind === 'customer' ? `onclick="go('customer','${l.ref}')"` : l.kind === 'container' ? `onclick="go('container','${l.ref}')"` : ''}>${esc(l.title)}</b>` : ''}
       <span class="bdg ${ACT_CLS[l.action] || 'exp'}">${esc(l.action)}</span>
       <div class="sp"></div><span class="small muted"><span class="num">${esc(logTime(l.at))}</span> · ${esc((l.by || '').split('@')[0])}</span></div>
     <ul>${(l.changes || []).map(x => `<li>${logLine(x)}</li>`).join('')}</ul></div>`).join('');
@@ -618,6 +646,220 @@ function viewLog(){
     </div>
     ${list.length ? `<div class="logl">${logItems(list, true)}</div>` : `<div class="empty">${all.length ? 'لا توجد نتائج' : 'ما فيش تعديلات مسجلة بعد — أي تعديل من توا وطالع يتسجل هني'}</div>`}
   </div>`;
+}
+
+/* ---------- containers: group cars by export port, assign them, split the real cost ---------- */
+const shipPort = c => c.relocPort || c.port || '';
+const getCt = id => (db.containers || []).find(x => x.id === id);
+const ctCars = ct => db.cars.filter(c => c.containerId === ct.id);
+const vin6 = c => (c.vin || '').slice(-6);
+const PER = 4;   // cars in a full 40ft container
+function portChip(p){ return `<span class="pchipc" style="--pc:${PORT_COLORS[p] || '#bbb'}"></span>`; }
+function gCar(c){
+  const y = P.yards[c.yard], ct = c.containerId && getCt(c.containerId);
+  return `<div class="gcar" onclick="go('car','${c.id}')">${carThumb(c)}
+    <div class="gtx"><b>${esc(carName(c))}</b>
+      <div class="small"><span class="num muted">…${esc(vin6(c))}</span> · ${esc(c.customer || '—')}</div>
+      <div class="small muted">${y ? esc(y.n + ' — ' + y.a) : 'بدون ساحة'}${ct || c.containerNo ? ` · 📦 <span class="num">${esc(ct ? ct.no : c.containerNo)}</span>` : ''}</div></div>
+    <span class="bdg loc">${LOC[c.loc || 0]}</span></div>`;
+}
+function viewGroup(){
+  const pend = db.cars.filter(c => (c.loc || 0) < 4);
+  const by = {}; pend.forEach(c => { const p = shipPort(c) || '__none'; (by[p] = by[p] || []).push(c); });
+  const order = [...P.ports.map(p => p.id).filter(id => by[id]), ...(by.__none ? ['__none'] : [])];
+  const block = p => {
+    const cars = by[p], n = cars.length;
+    if(p === '__none') return `<div class="card gport" style="--pc:#bbb"><div class="gph"><h3>بدون ميناء</h3><span class="muted small">افتح السيارة واختار الساحة</span></div>
+      <div class="gcars">${cars.map(gCar).join('')}</div></div>`;
+    const wh = cars.filter(c => (c.loc || 0) >= 3).length, full = Math.floor(n / PER), rest = n % PER;
+    const st = {}; cars.forEach(c => { const s = (P.yards[c.yard] || {}).s || '—'; (st[s] = st[s] || []).push(c); });
+    return `<div class="card gport" style="--pc:${PORT_COLORS[p] || '#bbb'}">
+      <div class="gph">${portChip(p)}<h3>${esc(pName(p))}</h3>
+        <span class="small"><b>${n}</b> سيارة · <b>${wh}</b> منهم وصلت المستودع</span>
+        <span class="bdg ${full ? 'done' : 'exp'}">${full} حاوية كاملة</span>
+        ${rest ? `<span class="bdg bad">ناقص ${PER - rest} لحاوية كاملة</span>` : ''}
+        <div class="sp"></div><button class="btn sm pri" onclick="assignForm('${p}')">حددهم لرقم الحاوية</button></div>
+      ${Object.keys(st).sort().map(s => `<div class="gst">${esc(s)} <span class="muted">(${st[s].length})</span></div><div class="gcars">${st[s].map(gCar).join('')}</div>`).join('')}
+    </div>`;
+  };
+  return `
+  <div class="chead"><button class="btn" onclick="go('cars')">→ رجوع</button>
+    <div style="flex:1"><h1>سيارات تنشحن مع بعض</h1><div class="muted small">السيارات اللي لسه ما انشحنتش، مقسومة حسب ميناء التصدير — كل ${PER} سيارات = حاوية 40 قدم</div></div>
+    <button class="btn" onclick="go('containers')">📦 الحاويات</button></div>
+  ${order.length ? order.map(block).join('') : `<div class="card empty">كل السيارات انشحنت — ما فيش سيارات تستنى حاوية</div>`}`;
+}
+/* pick cars of one port and put them in a container (new number or an existing one) */
+function assignForm(port){
+  const cars = db.cars.filter(c => (c.loc || 0) < 4 && shipPort(c) === port);
+  const open = (db.containers || []).filter(x => x.port === port && (x.loc ?? 0) < 5);
+  openModal(`تحديد حاوية — ${esc(pName(port))}`, `<form id="af" onsubmit="event.preventDefault();applyAssign('${port}')">
+    <div class="grid g3" style="margin-bottom:14px">
+      <div class="f"><label>رقم الحاوية</label><input class="inp" name="no" list="ctList" required style="direction:ltr;text-transform:uppercase" placeholder="MSKU1234567" oninput="afPick(this.value)">
+        <datalist id="ctList">${open.map(x => `<option value="${esc(x.no)}">${esc(x.booking || '')}</option>`).join('')}</datalist>
+        <div class="hint" id="afHint">${open.length ? 'اكتب رقم جديد أو اختار حاوية مفتوحة' : ''}</div></div>
+      <div class="f"><label>رقم الحجز (Booking)</label><input class="inp" name="booking" style="direction:ltr"></div>
+      <div class="f"><label>المرحلة</label><select class="inp" name="loc"><option value="">— بدون تغيير —</option>${LOC.map((l,i) => `<option value="${i}">${l}</option>`).join('')}</select></div>
+    </div>
+    <div class="row small" style="margin-bottom:6px"><b>السيارات</b><span class="muted">— شيل التحديد من أي سيارة ما تبيهاش</span><div class="sp"></div><span id="afCnt"></span></div>
+    <div class="aflist">${cars.map(c => `<label class="afrow"><input type="checkbox" value="${c.id}" checked onchange="afCount()">
+      <span><b>${esc(carName(c))}</b> <span class="num muted">…${esc(vin6(c))}</span> · ${esc(c.customer || '—')}<br><span class="small muted">${esc(((P.yards[c.yard] || {}).n) || 'بدون ساحة')} · ${LOC[c.loc || 0]} · محسوبة على حاوية ${+(c.perContainer || 4)}${c.containerNo ? ` · حالياً في <span class="num">${esc(c.containerNo)}</span>` : ''}</span></span></label>`).join('')}</div>
+  </form>`, `<button class="btn pri" onclick="document.getElementById('af').requestSubmit()">تطبيق</button><button class="btn" onclick="closeModal()">إلغاء</button>`, true);
+  afCount();
+}
+function afCount(){ const n = document.querySelectorAll('#af .afrow input:checked').length; $('#afCnt').innerHTML = `<b>${n}</b> محددة${n > PER ? ` <span style="color:var(--bad)">— أكثر من ${PER}!</span>` : ''}`; }
+function afPick(v){
+  const ct = (db.containers || []).find(x => (x.no || '').toUpperCase() === v.trim().toUpperCase());
+  const f = document.getElementById('af');
+  if(ct){ if(!f.booking.value) f.booking.value = ct.booking || ''; $('#afHint').innerHTML = `حاوية موجودة فيها <b>${ctCars(ct).length}</b> سيارة — السيارات المحددة تنضاف لها`; }
+  else $('#afHint').textContent = v.trim() ? 'حاوية جديدة' : '';
+}
+function applyAssign(port){
+  const f = document.getElementById('af'), no = f.no.value.trim().toUpperCase(), booking = f.booking.value.trim(), loc = f.loc.value;
+  const ids = [...f.querySelectorAll('.afrow input:checked')].map(x => x.value);
+  if(!no) return; if(!ids.length) return toast('حدد سيارة وحدة على الأقل');
+  let ct = (db.containers || []).find(x => (x.no || '').toUpperCase() === no), isNew = !ct;
+  if(!ct){ ct = {id:uid(), no, booking, port, shipDate:'', eta:'', loc:loc === '' ? null : +loc, cost:'', shares:{}, created:new Date().toISOString()}; (db.containers = db.containers || []).push(ct); }
+  else { if(booking) ct.booking = booking; if(loc !== '') ct.loc = +loc; }
+  const names = [];
+  ids.forEach(id => { const c = getCar(id); if(!c) return;
+    c.containerId = ct.id; c.containerNo = ct.no; c.booking = ct.booking || '';
+    if(loc !== ''){ c.loc = +loc; c.locAt = Object.assign({}, c.locAt, {[+loc]: today()}); }
+    names.push(carName(c)); sync(c); save(c); });
+  saveContainer(ct, [`${isNew ? 'حاوية جديدة' : 'إضافة سيارات'}: ${names.join('، ')}`]);
+  closeModal(); toast(`تم — ${ids.length} سيارة في الحاوية ${no}`); go('container', ct.id);
+}
+function containerForm(id){
+  const ct = id ? getCt(id) : {port:'', loc:null};
+  openModal(id ? 'تعديل الحاوية' : 'حاوية جديدة', `<form id="ctf" class="grid" onsubmit="event.preventDefault();saveCtForm('${id || ''}')">
+    ${fld('رقم الحاوية','no',ct.no,'text','required style="direction:ltr;text-transform:uppercase"')}
+    ${fld('رقم الحجز (Booking)','booking',ct.booking,'text','style="direction:ltr"')}
+    <div class="f"><label>ميناء التصدير</label><select class="inp" name="port" required><option value="">—</option>${P.ports.map(p => `<option value="${p.id}" ${ct.port === p.id ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></div>
+    <div class="f"></div>
+    ${fld('تاريخ الشحن','shipDate',ct.shipDate,'date')}
+    ${fld('تاريخ الوصول المتوقع','eta',ct.eta,'date')}
+  </form>`, `<button class="btn pri" onclick="document.getElementById('ctf').requestSubmit()">حفظ</button><button class="btn" onclick="closeModal()">إلغاء</button>`);
+}
+function saveCtForm(id){
+  const d = formData('ctf'); d.no = d.no.trim().toUpperCase();
+  const dup = (db.containers || []).find(x => (x.no || '').toUpperCase() === d.no && x.id !== id);
+  if(dup) return toast('فيه حاوية بنفس الرقم');
+  let ct = id ? getCt(id) : null; const ch = [];
+  const F = {no:'رقم الحاوية', booking:'رقم الحجز', port:'الميناء', shipDate:'تاريخ الشحن', eta:'الوصول المتوقع'};
+  if(ct){ Object.keys(F).forEach(k => { if(String(ct[k] || '') !== String(d[k] || '')) ch.push(`${F[k]}: ${ct[k] || '—'} ← ${d[k] || '—'}`); }); Object.assign(ct, d); }
+  else { ct = Object.assign({id:uid(), loc:null, cost:'', shares:{}, created:new Date().toISOString()}, d); (db.containers = db.containers || []).push(ct); ch.push('حاوية جديدة'); }
+  ctCars(ct).forEach(c => { if(c.containerNo !== ct.no || c.booking !== (ct.booking || '')){ c.containerNo = ct.no; c.booking = ct.booking || ''; save(c); } });
+  saveContainer(ct, ch); closeModal(); go('container', ct.id);
+}
+/* real cost vs what we priced: customers were charged for a container of X cars; if it ships with fewer, each car costs more */
+function ctMath(ct){
+  const cars = ctCars(ct), Y = cars.length, p = portById(ct.port), oc = p ? p.ocean : {};
+  const X = Math.max(0, ...cars.map(c => +(c.perContainer || 4)));
+  const expected = r2(cars.reduce((s,c) => { const k = +(c.perContainer || 4); return s + (oc[k] ? oc[k] / k : N(c.oceanCost)); }, 0));
+  const listY = oc[Math.min(4, Math.max(2, Y))] || 0;
+  const actual = ct.cost !== '' && ct.cost != null ? N(ct.cost) : (Y ? listY : 0);
+  return {cars, Y, X, expected, actual, real:ct.cost !== '' && ct.cost != null, loss:r2(actual - expected),
+          charged:r2(cars.reduce((s,c) => s + N(c.oceanCharge), 0)), shares:r2(cars.reduce((s,c) => s + N(c.oceanCost), 0))};
+}
+function viewContainers(){
+  const list = (db.containers || []).slice().sort((a,b) => (b.shipDate || b.created || '').localeCompare(a.shipDate || a.created || ''));
+  const rows = list.map(ct => { const m = ctMath(ct);
+    return `<tr class="click" onclick="go('container','${ct.id}')">
+      <td><b class="num">${esc(ct.no)}</b>${ct.booking ? `<div class="small muted">Booking <span class="num">${esc(ct.booking)}</span></div>` : ''}</td>
+      <td>${portChip(ct.port)} ${esc(pName(ct.port))}</td>
+      <td><b>${m.Y}</b> <span class="muted small">/ ${PER}</span>${m.Y && m.Y < m.X ? ` <span class="bdg bad">ناقصة</span>` : ''}</td>
+      <td><span class="num">${esc(ct.shipDate || '—')}</span></td><td><span class="num">${esc(ct.eta || '—')}</span></td>
+      <td>${ct.loc != null ? `<span class="bdg loc">${LOC[ct.loc]}</span>` : '<span class="muted">—</span>'}</td>
+      <td>${m.real ? money(m.actual) : '<span class="muted small">ما تسجلتش</span>'}</td></tr>`; }).join('');
+  return `
+  <div class="row" style="margin-bottom:16px"><h1>الحاويات</h1><div class="sp"></div>
+    <button class="btn" onclick="go('group')">تجميع الحاويات</button><button class="btn pri" onclick="containerForm()">＋ حاوية جديدة</button></div>
+  <div class="card">${rows ? `<div class="tblwrap"><table class="tbl"><thead><tr><th>رقم الحاوية</th><th>ميناء التصدير</th><th>السيارات</th><th>تاريخ الشحن</th><th>الوصول المتوقع</th><th>المرحلة</th><th>التكلفة الفعلية</th></tr></thead><tbody>${rows}</tbody></table></div>`
+    : `<div class="empty">ما فيش حاويات بعد — من <b>تجميع الحاويات</b> حدد سيارات ميناء واكتب رقم الحاوية</div>`}</div>`;
+}
+function viewContainer(ct){
+  const m = ctMath(ct), p = portById(ct.port);
+  const free = db.cars.filter(c => !c.containerId && (c.loc || 0) < 4 && shipPort(c) === ct.port);
+  const rows = m.cars.map(c => `<tr>
+    <td><div class="carcell">${carThumb(c)}<div><b class="click" onclick="go('car','${c.id}')">${esc(carName(c))}</b><div class="small muted"><span class="num">…${esc(vin6(c))}</span> · ${esc(c.customer || '—')}</div></div></div></td>
+    <td>${+(c.perContainer || 4)}</td><td>${money(c.oceanCharge)}</td>
+    <td><input class="inp num shin" data-id="${c.id}" type="number" step="any" value="${esc(c.oceanCost ?? '')}" style="width:110px"> ${ct.shares && ct.shares[c.id] != null ? '<span class="small muted">يدوي</span>' : ''}</td>
+    <td><span class="bdg loc">${LOC[c.loc || 0]}</span></td>
+    <td><button class="btn sm danger" onclick="ctRemove('${ct.id}','${c.id}')" title="شيلها من الحاوية">×</button></td></tr>`).join('');
+  return `
+  <div class="chead"><button class="btn" onclick="go('containers')">→ رجوع</button>
+    <div style="flex:1;min-width:220px"><h1>📦 <span class="num">${esc(ct.no)}</span></h1>
+      <div class="muted">${portChip(ct.port)} ${esc(pName(ct.port))}${ct.booking ? ` · Booking <span class="num">${esc(ct.booking)}</span>` : ''}</div></div>
+    <div class="actions"><button class="btn" onclick="containerForm('${ct.id}')">تعديل</button><button class="btn danger" onclick="ctDelete('${ct.id}')">حذف</button></div></div>
+  ${m.Y && m.Y < m.X && m.loss > 0 ? `<div class="note bad" style="margin-bottom:14px">⚠ حسبت على الزبائن حاوية <b>${m.X}</b> سيارات والحاوية فيها <b>${m.Y}</b> — الفرق خسارة عليك <b>${money(m.loss)}</b>${m.real ? '' : ' <span class="small">(حسب جدول الأسعار — سجّل التكلفة الفعلية للدقة)</span>'}</div>` : ''}
+  <div class="kpis">
+    <div class="card kpi"><div class="l">السيارات</div><div class="v">${m.Y}<span class="small muted"> / ${PER}</span></div></div>
+    <div class="card kpi"><div class="l">تاريخ الشحن</div><div class="v" style="font-size:20px"><span class="num">${esc(ct.shipDate || '—')}</span></div></div>
+    <div class="card kpi"><div class="l">الوصول المتوقع</div><div class="v" style="font-size:20px"><span class="num">${esc(ct.eta || '—')}</span></div></div>
+    <div class="card kpi"><div class="l">البحري على الزبائن (مجموع)</div><div class="v" style="font-size:20px">${money(m.charged)}</div></div>
+  </div>
+  <div class="card pad" style="margin-bottom:16px">
+    <div class="row" style="margin-bottom:8px"><h3>مرحلة الحاوية</h3><span class="small muted">تتغير معاها كل السيارات اللي فيها</span></div>
+    <div class="steps">${LOC.map((l,i) => `<div class="step ${ct.loc != null && i < ct.loc ? 'past' : ct.loc === i ? 'cur' : ''}" onclick="ctLoc('${ct.id}',${i})"><span class="dot"></span>${l}</div>`).join('')}</div></div>
+  <div class="card pad" style="margin-bottom:16px">
+    <h3 style="margin-bottom:8px">التكلفة الفعلية لشركة الشحن (الحاوية كاملة)</h3>
+    <div class="inrow" style="max-width:520px"><input class="inp num" id="ctCost" type="number" step="any" value="${esc(ct.cost ?? '')}" placeholder="${p && p.ocean[Math.min(4, Math.max(2, m.Y || 4))] || ''}">
+      <button class="btn pri" onclick="ctSetCost('${ct.id}')">قسّمها على السيارات بالتساوي</button></div>
+    <div class="hint">${m.Y ? `كل سيارة: ${m.real ? money(m.actual / m.Y) : '—'} · المتوقع حسب الأسعار: ${money(m.expected)}` : 'زيد سيارات للحاوية أول'}</div>
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="pad row" style="border-bottom:1px solid var(--line)"><h3>السيارات في الحاوية</h3><div class="sp"></div>
+      ${free.length ? `<select class="inp" id="ctAdd" style="width:auto"><option value="">＋ زيد سيارة من نفس الميناء…</option>${free.map(c => `<option value="${c.id}">${esc(carName(c))} · ${esc(c.customer || '')}</option>`).join('')}</select><button class="btn sm" onclick="ctAddCar('${ct.id}')">زيد</button>` : ''}</div>
+    ${rows ? `<div class="tblwrap"><table class="tbl"><thead><tr><th>السيارة</th><th>محسوبة على حاوية</th><th>البحري على الزبون</th><th>نصيبها من التكلفة الفعلية</th><th>المكان</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="pad row"><span class="small">مجموع الأنصبة: <b>${money(m.shares)}</b>${m.real && Math.abs(m.shares - m.actual) > 0.009 ? ` <span style="color:var(--bad)">(الحاوية ${money(m.actual)} — الفرق ${money(m.actual - m.shares)})</span>` : ''}</span><div class="sp"></div>
+        <button class="btn" onclick="ctSaveShares('${ct.id}')">حفظ الأنصبة اليدوية</button></div>`
+      : `<div class="empty">الحاوية فاضية</div>`}
+  </div>
+  ${(() => { const h = (db.log || []).filter(l => l.kind === 'container' && l.ref === ct.id);
+    return h.length ? `<div class="card"><div class="pad" style="border-bottom:1px solid var(--line)"><h3>سجل التعديلات على الحاوية</h3></div><div class="logl">${logItems(h.slice(0, 20), false)}</div></div>` : ''; })()}`;
+}
+function ctLoc(id, i){
+  const ct = getCt(id), cars = ctCars(ct); if(ct.loc === i) return;
+  ask(`تغيير مرحلة الحاوية إلى <b>${LOC[i]}</b>؟ تتغير معاها ${cars.length} سيارة.`, () => {
+    const old = ct.loc; ct.loc = i;
+    if(i === 4 && !ct.shipDate) ct.shipDate = today();
+    cars.forEach(c => { c.loc = i; c.locAt = Object.assign({}, c.locAt, {[i]: today()}); sync(c); save(c); });
+    saveContainer(ct, [`المرحلة: ${old != null ? LOC[old] : '—'} ← ${LOC[i]} (${cars.length} سيارة)`]); render(); toast('تم تحديث المرحلة');
+  }, 'تغيير');
+}
+function ctSetCost(id){
+  const ct = getCt(id), cars = ctCars(ct), v = $('#ctCost').value;
+  if(v === '' || !cars.length) return toast(cars.length ? 'اكتب التكلفة' : 'الحاوية فاضية');
+  const tot = r2(N(v)), each = r2(tot / cars.length); let left = tot;
+  const old = ct.cost; ct.cost = tot; ct.shares = {};
+  cars.forEach((c, i) => { const s = i === cars.length - 1 ? r2(left) : each; left = r2(left - s); c.oceanCost = s; c.oceanActual = true; sync(c); save(c); });
+  saveContainer(ct, [`التكلفة الفعلية: ${old !== '' && old != null ? $t(old) : '—'} ← ${$t(tot)} — مقسومة على ${cars.length} (${$t(each)} للسيارة)`]); render(); toast('تم التقسيم');
+}
+function ctSaveShares(id){
+  const ct = getCt(id), ch = []; ct.shares = ct.shares || {};
+  document.querySelectorAll('.shin').forEach(inp => { const c = getCar(inp.dataset.id); if(!c || inp.value === '') return;
+    const v = r2(N(inp.value)); if(r2(N(c.oceanCost)) === v) return;
+    ch.push(`${carName(c)}: ${$t(c.oceanCost)} ← ${$t(v)}`); c.oceanCost = v; c.oceanActual = true; ct.shares[c.id] = v; sync(c); save(c); });
+  if(!ch.length) return toast('ما فيش تغيير');
+  saveContainer(ct, ch); render(); toast('تم حفظ الأنصبة');
+}
+function ctAddCar(id){
+  const ct = getCt(id), c = getCar($('#ctAdd').value); if(!c) return;
+  c.containerId = ct.id; c.containerNo = ct.no; c.booking = ct.booking || '';
+  if(ct.loc != null && (c.loc || 0) < ct.loc){ c.loc = ct.loc; c.locAt = Object.assign({}, c.locAt, {[ct.loc]: today()}); }
+  sync(c); save(c); saveContainer(ct, [`إضافة سيارة: ${carName(c)}`]); render();
+}
+function ctRemove(id, cid){
+  const ct = getCt(id), c = getCar(cid);
+  ask(`شيل ${esc(carName(c))} من الحاوية؟`, () => { c.containerId = null; c.containerNo = ''; c.booking = ''; if(ct.shares) delete ct.shares[cid];
+    save(c); saveContainer(ct, [`شيل سيارة: ${carName(c)}`]); render(); }, 'شيل');
+}
+function ctDelete(id){
+  const ct = getCt(id), cars = ctCars(ct);
+  ask(`حذف الحاوية ${esc(ct.no)}؟${cars.length ? ` السيارات (${cars.length}) تبقى، بس تنشال منها.` : ''}`, () => {
+    cars.forEach(c => { c.containerId = null; c.containerNo = ''; c.booking = ''; save(c); });
+    addLog('container', id, 'حاوية ' + ct.no, 'حذف', ['حذف الحاوية' + (cars.length ? ` وشيل ${cars.length} سيارة منها` : '')]);
+    db.containers = db.containers.filter(x => x.id !== id); fs.collection('containers').doc(id).delete().catch(fbErr); go('containers');
+  }, 'حذف');
 }
 
 /* ---------- cars list ---------- */
@@ -652,6 +894,7 @@ function viewCars(){
       <div class="tabs">
         ${['all','buy','ship','done'].map(s => `<button class="${ui.filter === s ? 'on' : ''}" onclick="ui.filter='${s}';render()">${s === 'all' ? 'الكل' : STG[s]} <span class="small">(${cnt(s)})</span></button>`).join('')}
       </div>
+      <button class="btn" onclick="go('group')">📦 تجميع الحاويات</button>
       <div class="sp"></div>
       <input class="inp search" id="q" placeholder="بحث: زبون، VIN، لوت…" value="${esc(ui.q)}" oninput="ui.q=this.value;render();const e=document.getElementById('q');e.focus();e.setSelectionRange(e.value.length,e.value.length)">
     </div>
@@ -914,6 +1157,7 @@ function viewCar(c){
       <div><div class="l">الساحة</div><div class="v">${y ? esc(yardLabel(y)) : '—'}</div></div>
       <div><div class="l">ميناء الشحن</div><div class="v">${port ? esc(port.name) : '—'}${c.relocPort && c.port ? `<div class="small muted">منقولة من ${esc(pName(c.port))}</div>` : ''}</div></div>
       <div><div class="l">تاريخ الشراء</div><div class="v num">${esc(c.date || '—')}</div></div>
+      ${c.containerId || c.containerNo ? `<div><div class="l">الحاوية</div><div class="v">${c.containerId && getCt(c.containerId) ? `<a class="lnk" href="#" onclick="go('container','${c.containerId}');return false">📦 <span class="num">${esc(c.containerNo)}</span></a>` : `<span class="num">${esc(c.containerNo)}</span>`}${c.booking ? `<div class="small muted">Booking <span class="num">${esc(c.booking)}</span></div>` : ''}</div></div>` : ''}
     </div>
     ${c.notes ? `<div class="note info" style="margin-top:12px">${esc(c.notes)}</div>` : ''}
     </div>
@@ -1109,7 +1353,10 @@ function carForm(id, custId){
     <div class="f full"><label>الساحة</label><input class="inp" name="yard" list="yardsList" value="${y ? esc(yardLabel(y)) : ''}" placeholder="اكتب اسم الساحة أو الولاية… مثلاً Dallas" onchange="cfYard()" style="direction:ltr;text-align:right">
       <datalist id="yardsList">${P.yards.map(yy => `<option value="${esc(yardLabel(yy))}">`).join('')}</datalist><div class="hint" id="yardHint"></div></div>
     <div class="f"><label>ميناء الساحة</label><select class="inp" name="port" onchange="cfPortChanged()"><option value="">—</option>${P.ports.map(p => `<option value="${p.id}" ${c.port === p.id ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></div>
-    <div class="f"><label>سيارات في الحاوية</label><select class="inp" name="perContainer" onchange="cfOcean()">${[2,3,4].map(n => `<option ${+(c.perContainer||4) === n ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
+    <div class="f"><label>سيارات في الحاوية</label>
+      <input type="hidden" name="perContainer" value="${+(c.perContainer||4)}">
+      <div class="seg" id="pcSeg">${[2,3,4].map(n => `<button type="button" class="${+(c.perContainer||4) === n ? 'on' : ''}" onclick="cfPer(${n})">${n}</button>`).join('')}</div>
+      <div class="hint" id="perHint"></div></div>
     <div class="f"></div>
     ${fld('السحب الداخلي — على الزبون ($)','towCharge',c.towCharge,'number')}
     ${fld('الشحن البحري — على الزبون ($)','oceanCharge',c.oceanCharge,'number')}
@@ -1137,7 +1384,7 @@ function carForm(id, custId){
   openModal(id ? 'تعديل السيارة' : 'سيارة جديدة', body, `<button class="btn pri" onclick="document.getElementById('cf').requestSubmit()">حفظ</button><button class="btn" onclick="closeModal()">إلغاء</button>`, true);
   window._cfId = id || ''; vinLookup.last = c.vin || null;
   cfWire(); cfCust();
-  xInit(c);
+  xInit(c); cfPerHint();
   const im = $('#imgPrev'); im.onerror = () => { if(im.getAttribute('src')) $('#imgHint').textContent = 'الصورة ما فتحتش من هذا الرابط — جرّب رابط آخر أو ارفعها من الجهاز'; };
 }
 function cfEl(n){ return document.querySelector(`#cf [name="${n}"]`); }
@@ -1222,9 +1469,20 @@ function cfYard(){
 /* ocean freight is priced from where the car actually ships: the relocation port if chosen, else the yard's port */
 function cfOcean(){
   const pid = (cfEl('relocPort') && cfEl('relocPort').value) || cfEl('port').value; if(!pid) return;
-  const q = quote(null, pid, +cfEl('perContainer').value);
+  const n = +cfEl('perContainer').value, q = quote(null, pid, n);
   if(q.oceanCharge != null){ cfEl('oceanCharge').value = q.oceanCharge; cfEl('oceanCost').value = q.oceanCost; }
-  xRoute(); xTotals();
+  cfPerHint(); xRoute(); xTotals();
+}
+function cfPer(n){
+  cfEl('perContainer').value = n;
+  document.querySelectorAll('#pcSeg button').forEach(b => b.classList.toggle('on', +b.textContent === n));
+  cfOcean(); cfPerHint();
+}
+/* per car = (container price + $25 × cars) ÷ cars */
+function cfPerHint(){
+  const h = $('#perHint'); if(!h) return;
+  const pid = (cfEl('relocPort') && cfEl('relocPort').value) || cfEl('port').value, p = portById(pid), n = +cfEl('perContainer').value;
+  h.innerHTML = p && p.ocean[n] ? `(<span class="num">$${p.ocean[n].toLocaleString('en-US')}</span> + <span class="num">$${P.markup.ocean_per_car || 0}</span>×${n}) ÷ ${n} = <b>${money(p.ocean[n] / n + (P.markup.ocean_per_car || 0))}</b>` : '';
 }
 
 /* ---------- extra transport & charges inside the car form ---------- */
@@ -1558,7 +1816,7 @@ function trkSnap(c){
   if(k.wire2) s2.push({t:`عمولة الحوالة (${+N(c.shipWirePct).toFixed(2)}%)`, a:k.wire2});
   const showShip = c.stage !== 'buy' || k.paid2 > 0;
   return {
-    vin: vinKey(c.vin), title: carName(c), lot: c.lot || '', auction: c.auction || '', port: port ? port.name : '',
+    vin: vinKey(c.vin), title: carName(c), lot: c.lot || '', auction: c.auction || '', port: port ? port.name : '', container: c.containerNo || '',
     customer: c.customer || '', office: db.settings.officeName || 'AWS COMPANY',
     loc: c.loc || 0, locAt: c.locAt || {}, img: c.img || '', photos: (c.photos || []).slice(0, 12),
     s1: {items: s1.filter(x => x.a), req: k.req1, paid: k.paid1, rem: k.rem1, done: !!c.lock1},
@@ -1633,6 +1891,7 @@ async function pubSearch(){
           ${d.lot ? `<div><div class="l">رقم اللوت</div><div class="v num">${esc(d.lot)}</div></div>` : ''}
           ${d.auction ? `<div><div class="l">المزاد</div><div class="v">${esc(d.auction)}</div></div>` : ''}
           ${d.port ? `<div><div class="l">ميناء الشحن</div><div class="v">${esc(d.port)}</div></div>` : ''}
+          ${d.container ? `<div><div class="l">رقم الحاوية</div><div class="v num">${esc(d.container)}</div></div>` : ''}
           <div><div class="l">آخر تحديث</div><div class="v num">${esc((d.updated || '').slice(0,10))}</div></div>
         </div>
         <div class="kpi card ${due > 0.009 ? '' : 'hl'}" style="margin-top:14px;box-shadow:none">
