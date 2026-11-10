@@ -893,6 +893,24 @@ function ctDelete(id){
   }, 'حذف');
 }
 
+/* cars where the office paid the auction and the customer hasn't paid it back yet */
+function advList(){
+  const list = db.cars.map(c => ({c, k:calc(c)})).filter(o => o.k.advance > 0.009).sort((a,b) => b.k.advance - a.k.advance);
+  const tot = list.reduce((s,o) => s + o.k.advance, 0);
+  openModal('سلف المكتب للمزاد', list.length ? `
+    <div class="hint" style="margin:0 0 10px">سيارات دفعنا مزادها من عندنا والزبون لسّا ما رجّعهاش. اضغط على أي سيارة تفتحها.</div>
+    <div class="tblwrap"><table class="tbl"><thead><tr><th>السيارة</th><th>الزبون</th><th>دفعنا للمزاد</th><th>السلفة الباقية</th><th>كل الباقي عليه</th></tr></thead><tbody>
+    ${list.map(({c,k}) => `<tr class="click" onclick="closeModal();go('car','${c.id}')">
+      <td><div class="carcell">${carThumb(c)}<div><b>${esc(carName(c))}</b><div class="small muted vinln"><span class="num">${esc(c.vin || c.lot || '')}</span></div></div></div></td>
+      <td>${esc(c.customer || '—')}${c.phone ? `<div class="small muted"><span class="num">${esc(c.phone)}</span></div>` : ''}</td>
+      <td>${money(k.base)}<div class="small muted"><span class="num">${esc(c.auctionPaid.date || '')}</span></div></td>
+      <td><b class="pneg">${money(k.advance)}</b></td>
+      <td>${money(k.rem1)}</td></tr>`).join('')}
+    </tbody></table></div>
+    <div class="row" style="margin-top:10px"><b>${list.length} سيارة</b><div class="sp"></div><span>المجموع: <b class="pneg">${money(tot)}</b></span></div>`
+    : `<div class="empty">ما فيش سلف — كل الزبائن رجّعوا فلوس المزاد ✓</div>`, '', true);
+}
+
 /* ---------- cars list ---------- */
 function viewCars(){
   const m = thisMonth();
@@ -918,7 +936,7 @@ function viewCars(){
   <div class="kpis">
     <div class="card kpi"><div class="l">سيارات نشطة</div><div class="v">${active}<span class="small muted"> / ${db.cars.length}</span></div></div>
     <div class="card kpi"><div class="l">المطلوب من الزبائن</div><div class="v" style="color:var(--bad)">${money(due)}</div>${duePills({due1:r2(due1), due2:r2(due2)})}</div>
-    <div class="card kpi"><div class="l">سلف المكتب للمزاد</div><div class="v">${money(adv)}</div></div>
+    <div class="card kpi click" onclick="advList()" title="اضغط تشوف السيارات"><div class="l">سلف المكتب للمزاد</div><div class="v">${money(adv)}</div><div class="small muted">اضغط تشوف السيارات ←</div></div>
     <div class="card kpi hl kpi click" onclick="go('profits')"><div class="l">مكسب مستلم — ${monthName(m)}</div><div class="v">${money(recv)}</div></div>  </div>
   <div class="card">
     <div class="pad row" style="border-bottom:1px solid var(--line)">
