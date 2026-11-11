@@ -83,6 +83,8 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
+- 2026-11-11 — Customer page: new card "مكسبنا منه" = sum of profit1 + profit2 over all his cars (same figures as the per-car
+  "المكسب" column), with pills مستلم (locked stages) / متوقع (not locked yet). Display only — `calc`/`sync` untouched.
 - 2026-11-11 — Profits page list: lock date now sits under its header, profit column aligned to the edge and bolder, and the
   list total is a larger green/red "الإجمالي · N مرحلة" pill (was a small plain number). Visual only.
 - 2026-11-11 — New look (Ahmed approved from before/after screenshots, inspired by a dashboard he sent): floating top bar instead of
