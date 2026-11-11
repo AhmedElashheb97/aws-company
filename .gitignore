@@ -1,4 +1,5 @@
-.claude/
+.claude/*
+!.claude/settings.json
 _tmp_*.json
 *.bat
 serve.ps1

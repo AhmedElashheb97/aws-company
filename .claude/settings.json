@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" 2>/dev/null; git pull --rebase --autostash -q 2>&1 && echo \"git pull: up to date with GitHub\" || echo \"git pull FAILED - run git pull manually before editing\"",
+            "timeout": 60,
+            "statusMessage": "Pulling latest from GitHub..."
+          }
+        ]
+      }
+    ]
+  }
+}
