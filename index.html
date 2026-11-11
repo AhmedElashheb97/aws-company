@@ -417,7 +417,6 @@ body{background:var(--bg)}
 }
 
 /* profits page: total in the list header + money column */
-.pchip.pexp{background:#EEF1F5;color:#334155}
 @media screen{
 .ptotal{display:flex;align-items:center;gap:12px;padding:8px 16px;border-radius:14px;background:var(--ok-soft);color:#0B7A55;border:1px solid #BFEBD6}
 .ptotal.pneg{background:var(--bad-soft);color:var(--bad);border-color:#F6C9C9}
@@ -1206,10 +1205,10 @@ function viewCustomers(){
 function viewCustomer(cu){
   const s = custStats(cu);
   const cars = s.cars.slice().sort((a,b) => (b.created||'').localeCompare(a.created||''));
-  // our profit from this customer: same per-car figures as the "المكسب" column below, split by locked (received) / not yet
-  let pGot = 0, pExp = 0;
-  s.cars.forEach(c => { const k = calc(c); if(c.lock1) pGot += k.profit1; else pExp += k.profit1; if(c.lock2) pGot += k.profit2; else pExp += k.profit2; });
-  pGot = r2(pGot); pExp = r2(pExp); const pTot = r2(pGot + pExp);
+  // our profit from this customer: received only = profit of the stages he has fully paid (locked), same figures as the ✓ chips below
+  let pGot = 0, pN = 0;
+  s.cars.forEach(c => { const k = calc(c); if(c.lock1){ pGot += k.profit1; pN++; } if(c.lock2){ pGot += k.profit2; pN++; } });
+  pGot = r2(pGot);
   return `
   <div class="chead">
     <button class="btn" onclick="go('customers')">→ رجوع</button>
@@ -1228,8 +1227,8 @@ function viewCustomer(cu){
     <div class="card kpi"><div class="l">باقي الشراء (المرحلة 1)</div><div class="v ${s.due1 > 0.009 ? 'pneg' : 'ppos'}">${s.due1 > 0.009 ? money(s.due1) : 'خالص ✓'}</div></div>
     <div class="card kpi"><div class="l">باقي الشحن (المرحلة 2)</div><div class="v ${s.due2 > 0.009 ? 'pneg' : 'ppos'}">${s.due2 > 0.009 ? money(s.due2) : 'خالص ✓'}</div></div>
     <div class="card kpi"><div class="l">راجع له</div><div class="v">${money(s.refund)}</div></div>
-    <div class="card kpi" style="--kc:#0E9F6E" title="مجموع مكسب المكتب من كل سياراته (شراء + شحن)"><div class="l">مكسبنا منه</div><div class="v ${pcls(pTot)}">${money(pTot)}</div>
-      <div class="pchips"><span class="pchip ${pcls(pGot)}"><i>مستلم</i>${money(pGot)}</span><span class="pchip ${pExp < 0 ? 'pneg' : 'pexp'}"><i>متوقع</i>${money(pExp)}</span></div></div>
+    <div class="card kpi" style="--kc:#0E9F6E" title="مكسب المكتب المستلم من سياراته — المراحل اللي خلّصها بس (شراء + شحن)"><div class="l">مكسبنا منه (المستلم)</div><div class="v ${pcls(pGot)}">${money(pGot)}</div>
+      <div class="small muted">${pN} مرحلة مقفولة</div></div>
   </div>
   <div class="card">
     <div class="pad" style="border-bottom:1px solid var(--line)"><h3>سياراته</h3></div>
