@@ -416,6 +416,15 @@ body{background:var(--bg)}
 .bdg.loc{color:#334155} .sec,.fsec,a.lnk,.kpi.hl .v{color:var(--brand-d)}
 }
 
+/* profits page: total in the list header + money column */
+@media screen{
+.ptotal{display:flex;align-items:center;gap:12px;padding:8px 16px;border-radius:14px;background:var(--ok-soft);color:#0B7A55;border:1px solid #BFEBD6}
+.ptotal.pneg{background:var(--bad-soft);color:var(--bad);border-color:#F6C9C9}
+.ptotal > span{font-size:13.5px;font-weight:700;opacity:.85}
+.ptotal b{font-size:26px;font-weight:800;letter-spacing:-.3px;line-height:1.1}
+.tbl th.pamt,.tbl td.pamt{text-align:end;padding-inline-end:20px;white-space:nowrap}
+.tbl td.pamt b{font-size:18px;font-weight:800}
+}
 /* ---------- desktop: floating top bar instead of the side menu ---------- */
 @media screen and (min-width:901px){
   #side{position:sticky;top:12px;inset-inline-start:auto;bottom:auto;width:auto;margin:12px 16px 0;flex-direction:row;align-items:center;gap:6px;
@@ -1447,8 +1456,8 @@ function viewProfits(){
   const drows = d.rows.slice().sort((a,b) => (b.date||'').localeCompare(a.date||'')).map(r => `<tr class="click" onclick="go('car','${r.c.id}')">
       <td><div class="carcell">${carThumb(r.c)}<div><b>${esc(carName(r.c))}</b><div class="small muted vinln"><span class="num">${esc(r.c.vin||r.c.lot||'')}</span></div></div></div></td><td>${esc(r.c.customer||'—')}</td>
       <td><span class="bdg ${r.stage}">${STG[r.stage]}</span></td>
-      <td class="num">${r.date ? esc(r.date) : '<span class="muted">لم تكتمل</span>'}</td>
-      <td><b class="${pcls(r.amount)}">${money(r.amount)}</b></td></tr>`).join('');
+      <td>${r.date ? `<span class="num">${esc(r.date)}</span>` : '<span class="muted">لم تكتمل</span>'}</td>
+      <td class="pamt"><b class="${pcls(r.amount)}">${money(r.amount)}</b></td></tr>`).join('');
 
   // last 12 months
   const months = []; const now = new Date();
@@ -1465,8 +1474,9 @@ function viewProfits(){
   <div class="small muted" style="margin:-6px 0 10px">المستلم حسب تاريخ قفل المرحلة${m ? ' — ' + monthName(m) : ''}</div>
   <div class="kpis">${card('recv',true)}${card('recv1')}${card('recv2')}</div>
   <div class="card" style="margin-bottom:16px">
-    <div class="pad row" style="border-bottom:1px solid var(--line)"><h3>${d.t}</h3><span class="muted small">— السيارات اللي وراه</span><div class="sp"></div><b>${money(sum(d.rows))}</b></div>
-    ${drows ? `<div class="tblwrap"><table class="tbl"><thead><tr><th>السيارة</th><th>الزبون</th><th>المرحلة</th><th>تاريخ القفل</th><th>المكسب</th></tr></thead><tbody>${drows}</tbody></table></div>` : `<div class="empty">لا يوجد</div>`}
+    <div class="pad row" style="border-bottom:1px solid var(--line)"><h3>${d.t}</h3><span class="muted small">— السيارات اللي وراه</span><div class="sp"></div>
+      <div class="ptotal ${pcls(sum(d.rows))}"><span>الإجمالي · ${d.rows.length} مرحلة</span><b>${money(sum(d.rows))}</b></div></div>
+    ${drows ? `<div class="tblwrap"><table class="tbl"><thead><tr><th>السيارة</th><th>الزبون</th><th>المرحلة</th><th>تاريخ القفل</th><th class="pamt">المكسب</th></tr></thead><tbody>${drows}</tbody></table></div>` : `<div class="empty">لا يوجد</div>`}
   </div>
   <div class="card pad">
     <h3 style="margin-bottom:10px">المكسب المستلم — آخر 12 شهر</h3>

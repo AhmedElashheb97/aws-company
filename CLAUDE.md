@@ -83,6 +83,8 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
+- 2026-11-11 — Profits page list: lock date now sits under its header, profit column aligned to the edge and bolder, and the
+  list total is a larger green/red "الإجمالي · N مرحلة" pill (was a small plain number). Visual only.
 - 2026-11-11 — New look (Ahmed approved from before/after screenshots, inspired by a dashboard he sent): floating top bar instead of
   the side menu, welcome banner with attention chips (cars with balance due, missing payment cost, auction advances, cars waiting
   for a container), tinted KPI cards with icons, section titles, new buttons. Visual only — `calc`/`sync` untouched. On phones the
