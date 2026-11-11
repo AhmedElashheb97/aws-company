@@ -81,6 +81,8 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
+- 2026-11-11 — Reverted commit 3948fa7 ("Update index.html", uploaded by Ahmed by hand on GitHub, removed ~1370 lines) at his request;
+  `index.html` is back to the c0238c8 version. The reverted version is still in git history if he wants parts of it back.
 - 2026-11-11 — Added this CLAUDE.md + SessionStart `git pull` hook so sessions on any computer stay in sync.
 - 2026-11-10 — "سلف المكتب للمزاد" card is clickable → list of cars with outstanding auction advance.
 - 2026-11-09 — Containers: pick any cars from any port, move between containers, shipping company (Atlantic Express, MTL).
