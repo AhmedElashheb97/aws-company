@@ -1,4445 +1,2396 @@
 <!doctype html>
-
 <html lang="ar" dir="rtl">
-
 <head>
-
 <meta charset="utf-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>AWS COMPANY</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-
 <link rel="icon" type="image/png" href="favicon.png">
-
 <link rel="apple-touch-icon" href="icon-180.png">
-
 <style>
-
 :root{
-
   --bg:#FBF6F1; --surface:#FFFFFF; --surface-2:#FFF8F2;
-
   --ink:#120A04; --muted:#4A3A2D; --line:#E2D2C3; --line-2:#EDE1D5;
-
   --brand:#E8701A; --brand-d:#C2570C; --brand-soft:#FFEEDF; --brand-softer:#FFF6EE;
-
   --ok:#2F855A; --ok-soft:#E6F4EC; --bad:#C53030; --bad-soft:#FDECEC;
-
   --info:#2B6CB0; --info-soft:#E8F1FB; --warn:#A8650B; --warn-soft:#FFF4DC;
-
   --radius:12px; --shadow:0 1px 2px rgba(80,40,10,.06),0 4px 14px rgba(80,40,10,.05);
-
 }
-
 *{box-sizing:border-box}
-
 html,body{margin:0}
-
 body{background:var(--bg);color:var(--ink);font-family:"Tajawal","Segoe UI",Tahoma,Arial,sans-serif;font-size:14.5px;line-height:1.55}
-
 button,input,select,textarea{font:inherit;color:inherit}
-
 .num{direction:ltr;unicode-bidi:isolate;display:inline-block;font-variant-numeric:tabular-nums}
 
-
-
 /* side menu */
-
 :root{--side:250px}
-
 .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;white-space:nowrap}
-
 .logo img{height:36px;width:auto;display:block}
-
 #login .logo img{height:64px}
-
 .pubh .logo img{height:70px}
-
 #side{position:fixed;top:0;bottom:0;inset-inline-start:0;width:var(--side);background:var(--surface);border-inline-end:1px solid var(--line);
-
   display:flex;flex-direction:column;gap:14px;padding:18px 14px;z-index:20;overflow-y:auto}
-
 #side .brand{display:flex;flex-direction:column;align-items:center;gap:4px;padding:2px 0 10px;border-bottom:1px solid var(--line-2)}
-
 #side .brand img{height:52px;width:auto}
-
 #side .brand span{font-weight:800;font-size:15px;letter-spacing:.3px}
-
 #side .newcar{width:100%;justify-content:center;padding:11px 14px;border-radius:12px;box-shadow:0 4px 12px rgba(232,112,26,.28)}
-
 #nav{display:flex;flex-direction:column;gap:4px}
-
 #nav a,.sbtn{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;color:var(--muted);text-decoration:none;font-weight:700;cursor:pointer;
-
   border:0;background:transparent;width:100%;text-align:start;transition:background .15s,color .15s}
-
 #nav a .ic,.sbtn .ic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:#F6EEE6;color:#7A5A40;flex:none;transition:background .15s,color .15s}
-
 #nav a svg,.sbtn svg{width:19px;height:19px}
-
 #nav a:hover,.sbtn:hover{background:var(--brand-softer);color:var(--ink)}
-
 #nav a.on{background:linear-gradient(160deg,#FFF1E4,#FFE4CC);color:#A2440A}
-
 #nav a.on .ic{background:var(--brand);color:#fff;box-shadow:0 4px 10px rgba(232,112,26,.35)}
-
 #nav a .ext{margin-inline-start:auto;opacity:.5;width:14px;height:14px}
-
 #side .navlbl{font-size:12px;font-weight:700;color:var(--muted);padding:0 12px;letter-spacing:.3px}
-
 #side .foot{margin-top:auto;display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--line-2);padding-top:10px}
-
 #cloud .em{display:block;font-size:12.5px;color:var(--muted);padding:2px 12px 6px;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right}
-
 .sbtn.out{color:var(--bad)} .sbtn.out .ic{background:var(--bad-soft);color:var(--bad)}
-
 main{max-width:1320px;margin-inline-start:var(--side);padding:24px 28px 60px}
-
 @media (max-width:900px){
-
   #side{position:sticky;inset:auto;top:0;width:auto;height:auto;flex-direction:row;align-items:center;gap:8px;padding:8px 10px;border-inline-end:0;border-bottom:1px solid var(--line);overflow:visible}
-
   #side .brand{border:0;padding:0;flex-direction:row}
-
   #side .brand img{height:30px} #side .brand span,#side .navlbl,#cloud .em{display:none}
-
   #nav{position:fixed;bottom:0;left:0;right:0;flex-direction:row;justify-content:space-around;gap:0;background:var(--surface);
-
     border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(80,40,10,.06);z-index:30}
-
   #nav a{flex-direction:column;gap:3px;padding:2px 4px;font-size:11.5px;width:auto;flex:1;align-items:center;white-space:nowrap;background:transparent !important}
-
   #nav a .ic{width:40px;height:30px;border-radius:99px;background:transparent} #nav a .ext{display:none}
-
   .sbtn{width:auto;padding:4px;font-size:0;gap:0} .sbtn .ic{width:36px;height:36px}
-
   #side .foot{margin:0 0 0 auto;flex-direction:row;border:0;padding:0;gap:2px;margin-inline-start:auto}
-
   #cloud{display:flex}
-
   #side .newcar{width:auto;padding:9px 14px;box-shadow:none}
-
   main{margin:0;padding:16px 12px 90px}
-
   #toast{bottom:84px}
-
 }
-
-
 
 /* buttons */
-
 .btn{border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:9px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:background .15s,border-color .15s}
-
 .btn:hover{background:var(--brand-softer);border-color:#F2CFAF}
-
 .btn.pri{background:var(--brand);border-color:var(--brand);color:#fff}
-
 .btn.pri:hover{background:var(--brand-d);border-color:var(--brand-d)}
-
 .btn.ghost{background:transparent;border-color:transparent}
-
 .btn.ghost:hover{background:var(--brand-softer)}
-
 .btn.danger{color:var(--bad)}
-
 .btn.danger:hover{background:var(--bad-soft);border-color:#F3C2C2}
-
 .btn.sm{padding:4px 9px;font-size:13px;border-radius:7px}
-
 .btn:disabled{opacity:.5;cursor:not-allowed}
 
-
-
 /* cards & layout */
-
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
-
 .pad{padding:18px}
-
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-
 .sp{flex:1}
-
 h1{font-size:22px;margin:0}
-
 h2{font-size:17px;margin:0}
-
 h3{font-size:15px;margin:0}
-
 .muted{color:var(--muted)}
-
 .small{font-size:12.5px}
-
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:18px}
-
 .kpi{padding:14px 16px}
-
 .kpi .l{color:var(--muted);font-size:13px;font-weight:600}
-
 .kpi .v{font-size:24px;font-weight:700;margin-top:4px}
-
 .kpi.hl{background:linear-gradient(160deg,#FFF3E8,#FFE6D1);border-color:#F6D2B2}
-
 .kpi.hl .v{color:var(--brand-d)}
-
 .kpi.click{cursor:pointer}
-
 .kpi.click:hover{border-color:var(--brand)}
-
 .kpi.sel{outline:2px solid var(--brand);outline-offset:-1px}
 
-
-
 /* badges */
-
 .bdg{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap}
-
 .bdg.buy{background:var(--warn-soft);color:var(--warn)}
-
 .bdg.ship{background:var(--info-soft);color:var(--info)}
-
 .bdg.done{background:var(--ok-soft);color:var(--ok)}
-
 .bdg.loc{background:var(--brand-soft);color:var(--brand-d)}
-
 .bdg.exp{background:#F3EEE9;color:var(--muted)}
-
 .bdg.recv{background:var(--ok-soft);color:var(--ok)}
-
 .bdg.bad{background:var(--bad-soft);color:var(--bad)}
 
-
-
 /* table */
-
 .tbl{width:100%;border-collapse:collapse}
-
 .tbl th{font-size:12.5px;color:var(--muted);font-weight:700;text-align:start;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--surface-2);white-space:nowrap}
-
 .tbl td{padding:10px 12px;border-bottom:1px solid var(--line-2);vertical-align:middle}
-
 .tbl tr:last-child td{border-bottom:0}
-
 .tbl tr.click{cursor:pointer}
-
 .tbl tr.click:hover td{background:var(--brand-softer)}
-
 .tblwrap{overflow-x:auto}
-
 .empty{padding:40px;text-align:center;color:var(--muted)}
 
-
-
 /* toolbar */
-
 .tabs{display:inline-flex;background:#F4EBE2;border-radius:10px;padding:3px;gap:2px}
-
 .tabs button{border:0;background:transparent;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:600;color:var(--muted)}
-
 .tabs button.on{background:var(--surface);color:var(--brand-d);box-shadow:0 1px 3px rgba(0,0,0,.08)}
-
 .inp{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:8px 11px;width:100%;outline:none}
-
 .inp:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(232,112,26,.15)}
-
 .search{max-width:300px}
 
-
-
 /* car detail */
-
 .chead{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-bottom:16px}
-
 .info{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px 20px}
-
 .info .l{font-size:12px;color:var(--muted);font-weight:600}
-
 .info .v{font-weight:600;word-break:break-word}
-
 .steps{display:flex;gap:0;overflow-x:auto;padding:4px 0}
-
 .step{flex:1;min-width:92px;text-align:center;cursor:pointer;position:relative;padding-top:30px;font-size:12.5px;font-weight:600;color:var(--muted)}
-
 .step::before{content:"";position:absolute;top:11px;left:50%;width:100%;height:3px;background:var(--line)}
-
 .step:first-child::before{display:none}
-
 .step .dot{position:absolute;top:2px;left:50%;transform:translateX(-50%);width:21px;height:21px;border-radius:50%;background:var(--surface);border:3px solid var(--line);z-index:1}
-
 .step.past .dot,.step.cur .dot{background:var(--brand);border-color:var(--brand)}
-
 .step.past::before,.step.cur::before{background:var(--brand)}
-
 .step.cur{color:var(--brand-d)}
-
 .step.cur .dot{box-shadow:0 0 0 4px rgba(232,112,26,.2)}
-
 .step:hover{color:var(--ink)}
-
 .fin{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-
 .fin .s{padding:5px 14px;border-radius:99px;background:#F3EEE9;color:var(--muted);font-weight:700;font-size:13px}
-
 .fin .s.on{background:var(--brand);color:#fff}
-
 .fin .s.ok{background:var(--ok-soft);color:var(--ok)}
-
 .fin .arr{color:#C9B6A5}
-
 .stages{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
-
 .stage{overflow:hidden}
-
 .stage .top{padding:14px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);background:var(--surface-2)}
-
 .stage.current .top{background:linear-gradient(160deg,#FFF1E4,#FFE7D3)}
-
 .stage.current{border-color:#F3C9A3}
-
 .stage .n{width:28px;height:28px;border-radius:8px;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:700}
-
 .stage.dim .n{background:#D8C8BA}
-
 .stage .body{padding:12px 18px 16px}
-
 .ln{display:flex;justify-content:space-between;gap:10px;padding:5px 0;font-size:14px}
-
 .ln.sub{color:var(--muted);font-size:13px;padding-right:12px}
-
 .ln.tot{border-top:1px dashed var(--line);margin-top:6px;padding-top:9px;font-weight:700}
-
 .ln.rem{font-size:17px;font-weight:700}
-
 .ln.rem.zero{color:var(--ok)}
-
 .ln.rem.due{color:var(--bad)}
-
 .sec{font-size:12px;font-weight:700;color:var(--brand-d);margin:12px 0 2px;letter-spacing:.2px}
-
 .profit{margin-top:12px;padding:11px 13px;border-radius:10px;background:var(--brand-softer);border:1px solid #F6DEC8}
-
 .profit.recv{background:var(--ok-soft);border-color:#C7E6D3}
-
 .profit .pv{font-size:19px;font-weight:700}
-
 .profit.loss{background:var(--bad-soft);border-color:#F3C2C2}
-
 .ppos{color:var(--ok)} .pneg{color:var(--bad)}
-
 .vinln{margin-top:3px;letter-spacing:.4px}
-
 td.num{display:table-cell}   /* .num is inline-block; on a table cell that breaks the row background */
-
 .pcell{white-space:nowrap}
-
 .ptot{font-size:18px;font-weight:800;line-height:1.2}
-
 .pchips{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-top:6px}
-
 .pchip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px 2px 8px;border-radius:99px;font-size:13.5px;font-weight:700;background:var(--ok-soft);color:#1F6340}
-
 .pchip i{font-style:normal;font-weight:600;font-size:12px;opacity:.75;min-width:26px}
-
 .pchip.pneg{background:var(--bad-soft);color:var(--bad)}
-
 .pchipc{display:inline-block;width:12px;height:12px;border-radius:4px;background:var(--pc);vertical-align:-1px}
-
 .gport{margin-bottom:16px;overflow:hidden;border-top:4px solid var(--pc)}
-
 .gph{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 18px;background:linear-gradient(180deg,color-mix(in srgb,var(--pc) 12%,#fff),#fff)}
-
 .gst{padding:8px 18px 2px;font-weight:800;color:var(--muted);font-size:14px;border-top:1px solid var(--line-2)}
-
 .gcars{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px;padding:8px 18px 14px}
-
 .gcar{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:var(--surface);transition:border-color .15s,background .15s}
-
 .gcar:hover{border-color:var(--brand);background:var(--brand-softer)}
-
 .gtx{flex:1;min-width:0;line-height:1.5} .gtx b{display:block}
-
 .aflist{display:flex;flex-direction:column;gap:6px;max-height:46vh;overflow-y:auto}
-
 .afrow{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border:1px solid var(--line);border-radius:10px;cursor:pointer}
-
 .afrow:has(input:checked){border-color:var(--brand);background:var(--brand-softer)}
-
 .afrow input{accent-color:var(--brand);margin-top:5px;width:17px;height:17px}
-
 b.click{cursor:pointer} b.click:hover{color:var(--brand-d)}
-
 .seg{display:inline-flex;background:#F4EBE2;border-radius:10px;padding:3px;gap:3px}
-
 .seg button{border:0;background:transparent;min-width:46px;padding:7px 12px;border-radius:8px;cursor:pointer;font-weight:800;font-size:16px;color:var(--muted)}
-
 .seg button.on{background:var(--brand);color:#fff;box-shadow:0 2px 6px rgba(232,112,26,.35)}
-
 .logl{display:flex;flex-direction:column}
-
 .logi{padding:12px 18px;border-bottom:1px solid var(--line-2)}
-
 .logi:last-child{border-bottom:0}
-
 .logh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-
 .logh b.click{cursor:pointer} .logh b.click:hover{color:var(--brand-d);text-decoration:underline}
-
 .logi ul{margin:6px 0 0;padding-inline-start:20px;font-size:14.5px;line-height:1.75}
-
 .logi li::marker{color:var(--brand)}
-
 .lold{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(0,0,0,.25)}
-
 .lnew{font-weight:800}
-
 .pwarn{margin-top:5px;font-size:12.5px;font-weight:700;color:#8B1E1E;background:var(--bad-soft);border-radius:8px;padding:2px 8px;display:inline-block}
-
 .paycost{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px}
-
 .kpi .pchips{flex-direction:row;flex-wrap:wrap;margin-top:8px}
-
 .pst{font-size:12.5px;color:var(--muted);margin-top:5px}
-
 .note{padding:10px 13px;border-radius:10px;background:var(--warn-soft);color:#7A4A06;font-size:13px;margin-top:10px}
-
 .note.info{background:var(--info-soft);color:#1E4E80}
-
 .note.bad{background:var(--bad-soft);color:#8B1E1E}
-
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 
-
-
 /* modal */
-
 .mbg{position:fixed;inset:0;background:rgba(42,29,19,.45);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:100;overflow-y:auto}
-
 .modal{background:var(--surface);border-radius:14px;width:100%;max-width:560px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
-
 .modal.wide{max-width:860px}
-
 .modal .mh{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
-
 .modal .mb{padding:18px 20px}
-
 .modal .mf{padding:14px 20px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-start;background:var(--surface-2);border-radius:0 0 14px 14px}
-
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 14px}
-
 .grid.g3{grid-template-columns:repeat(3,1fr)}
-
 .f label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:4px}
-
 .f.full{grid-column:1/-1}
-
 .fsec{grid-column:1/-1;font-weight:700;color:var(--brand-d);border-bottom:1px solid var(--line);padding-bottom:5px;margin-top:6px}
-
 .hint{font-size:12px;color:var(--muted);margin-top:3px}
-
 .choice{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-
 .choice label{border:2px solid var(--line);border-radius:11px;padding:12px;cursor:pointer;display:flex;gap:9px;align-items:flex-start}
-
 .choice label:has(input:checked){border-color:var(--brand);background:var(--brand-softer)}
-
 .choice input{accent-color:var(--brand);margin-top:4px}
-
 .big{border:2px solid var(--line);border-radius:12px;padding:16px;cursor:pointer;background:var(--surface);text-align:start}
-
 .big:hover{border-color:var(--brand);background:var(--brand-softer)}
-
 .big b{display:block;font-size:16px;margin-bottom:3px}
 
-
-
 /* profits */
-
 .bars .br{display:grid;grid-template-columns:90px 1fr 110px;gap:10px;align-items:center;padding:5px 0;font-size:13.5px}
-
 .bars .track{height:12px;background:#F4EBE2;border-radius:99px;overflow:hidden}
-
 .bars .fill{height:100%;background:linear-gradient(90deg,#F59A4A,var(--brand));border-radius:99px}
 
-
-
 /* map */
-
 .mapgrid{display:grid;grid-template-columns:1fr 360px;gap:16px}
-
 .map svg{width:100%;height:auto;display:block}
-
 .map path{stroke:#fff;stroke-width:.8;cursor:pointer;transition:opacity .15s}
-
 .map path:hover{opacity:.75}
-
 .map path.sel{stroke:var(--ink);stroke-width:2}
-
 .map text{font-size:9px;fill:#3a2a1d;pointer-events:none;font-weight:600}
-
 .legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12.5px}
-
 .legend span{display:inline-flex;align-items:center;gap:5px}
-
 .legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
 
-
-
 /* car photos */
-
 .carcell{display:flex;align-items:center;gap:10px}
-
 .thumb{width:66px;height:48px;border-radius:8px;object-fit:cover;background:var(--brand-soft);flex:none;display:flex;align-items:center;justify-content:center;font-size:20px}
-
 .carinfo{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start}
-
 .photo{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;display:block;background:var(--brand-soft)}
-
 .gal{display:flex;gap:6px;overflow-x:auto;margin-top:8px;padding-bottom:4px}
-
 .gal img{width:64px;height:48px;object-fit:cover;border-radius:6px;cursor:pointer;flex:none;border:1px solid var(--line)}
-
 .gal img:hover{outline:2px solid var(--brand)}
-
 .imgprev{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-
 .imgprev img{width:150px;height:104px;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:var(--brand-soft)}
-
 .inrow{display:flex;gap:6px;align-items:center}
-
 .inrow .inp{flex:1;min-width:0}
-
 a.lnk{color:var(--brand-d);text-decoration:none;font-weight:600}
-
 a.lnk:hover{text-decoration:underline}
-
 @media (max-width:900px){ .carinfo{grid-template-columns:1fr} }
 
-
-
 #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:200}
-
 #toast.on{opacity:1}
-
 #print{display:none}
-
 #login{position:fixed;inset:0;z-index:300;background:linear-gradient(160deg,#FFF3E8,#FBF6F1 55%);display:none;align-items:center;justify-content:center;padding:16px}
-
 #login.on{display:flex}
-
 #login .box{width:100%;max-width:380px;padding:28px}
-
 #login .logo{justify-content:center;margin-bottom:6px;font-size:20px}
-
 #login .err{color:var(--bad);font-size:13px;min-height:20px;margin-top:8px}
-
 .xbox{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:14px}
-
 .xroute:not(:empty){margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--info-soft);color:#1E4E80;font-size:14px;line-height:1.8}
-
 #xRows{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-
 .xrow{display:grid;grid-template-columns:minmax(0,1fr) 92px 178px 112px 142px 34px;gap:6px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px}
-
 .xrow.reloc{border-color:#9DC3EA;background:#F5FAFF}
-
 .xrow .inp{padding:7px 9px}
-
 .xinv{grid-column:1/-1;display:flex;gap:6px;align-items:center;color:var(--muted)}
-
 .xtot:not(:empty){margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)}
-
 @keyframes flash{0%,100%{box-shadow:0 0 0 0 rgba(232,112,26,0)}30%,70%{box-shadow:0 0 0 5px rgba(232,112,26,.45);border-color:var(--brand)}}
-
 .flash{animation:flash .6s ease 3}
-
 @media (max-width:900px){ .xrow{grid-template-columns:1fr 1fr} .xrow [data-k="desc"]{grid-column:1/-1} }
-
 body.pub #side{display:none}
-
 body.pub main{margin:0 auto}
-
 .pubw{max-width:900px;margin:0 auto}
-
 .pubh{text-align:center;margin:10px 0 16px}
-
 .pubh .logo{font-size:22px;margin-bottom:4px}
 
-
-
 /* readability: bigger, darker text on screen */
-
 @media screen{
-
   body{font-size:17px}
-
   .btn.sm{font-size:14.5px}
-
   h1{font-size:25px} h2{font-size:19px} h3{font-size:17px}
-
   .small,.tbl th,.f label,.step,.legend{font-size:14px}
-
   .kpi .l,.ln.sub,.fin .s,.note{font-size:14.5px}
-
   .kpi .v{font-size:27px}
-
   .bdg,.info .l,.sec,.hint{font-size:13.5px}
-
   .ln{font-size:16px} .ln.rem{font-size:19px} .profit .pv{font-size:21px}
-
   .bars .br{font-size:15px}
-
   .info .v,.tbl td{font-weight:600}
-
   .bdg.buy{color:#7A4705} .bdg.ship{color:#1A4A80} .bdg.done,.bdg.recv{color:#1F6340}
-
   .bdg.loc,.kpi.hl .v,.sec,.fsec,nav a.on,a.lnk{color:#A2440A}
-
 }
-
-
 
 @media (max-width:900px){
-
   .stages,.mapgrid{grid-template-columns:1fr}
-
   .grid.g3{grid-template-columns:repeat(2,1fr)}
-
 }
-
 @media (max-width:600px){
-
   .grid,.grid.g3,.choice{grid-template-columns:1fr}
-
 }
-
 @media print{
-
   body{background:#fff}
-
   body > *:not(#print){display:none !important}
-
   #print{display:block;padding:10px;font-size:13px}
-
   #print table{width:100%;border-collapse:collapse;margin:8px 0}
-
   #print td,#print th{border:1px solid #ccc;padding:6px 8px;text-align:start}
-
   #print th{background:#f6f0ea}
-
   #print h1{color:#C2570C}
-
 }
 
+/* ===== look 2: airy white, floating top bar, hero banner, tinted cards ===== */
+@media screen{
+:root{
+  --bg:#F4F6F8; --surface:#FFFFFF; --surface-2:#F8FAFB;
+  --ink:#111827; --muted:#5B6676; --line:#E5E9EE; --line-2:#EFF2F5;
+  --brand:#F26A1B; --brand-d:#D9530A; --brand-soft:#FFEDE0; --brand-softer:#FFF7F1;
+  --ok:#0E9F6E; --ok-soft:#E3F7EE; --bad:#DC2F2F; --bad-soft:#FDECEC;
+  --info:#2563EB; --info-soft:#E8F0FE; --warn:#B45309; --warn-soft:#FEF3D7;
+  --radius:20px; --shadow:0 1px 2px rgba(17,24,39,.04),0 6px 20px rgba(17,24,39,.05);
+}
+body{background:var(--bg)}
+.card{border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+
+/* ---------- buttons ---------- */
+.btn{border:1px solid var(--line);background:#fff;padding:9px 16px;border-radius:12px;font-weight:700;box-shadow:0 1px 2px rgba(17,24,39,.05);transition:transform .12s,box-shadow .15s,border-color .15s}
+.btn:hover{background:#fff;border-color:#CDD4DD;box-shadow:0 4px 12px rgba(17,24,39,.08);transform:translateY(-1px)}
+.btn.pri{background:var(--brand);border-color:var(--brand);color:#fff;box-shadow:0 6px 16px rgba(242,106,27,.28)}
+.btn.pri:hover{background:var(--brand-d);border-color:var(--brand-d)}
+.btn.ghost{box-shadow:none}
+.btn.danger{color:var(--bad);background:var(--bad-soft);border-color:transparent;box-shadow:none}
+.btn.sm{padding:6px 12px;border-radius:10px}
+
+/* ---------- hero ---------- */
+.hero{position:relative;overflow:hidden;border-radius:26px;padding:26px 30px 22px;margin-bottom:26px;color:#fff;
+  background:radial-gradient(700px 320px at 12% 0%,rgba(242,106,27,.55),transparent 60%),linear-gradient(120deg,#1A1F27 0%,#242B36 55%,#3A2A20 100%);
+  box-shadow:0 18px 40px rgba(17,24,39,.22)}
+.hero::after{content:"";position:absolute;left:-90px;top:-120px;width:420px;height:420px;border-radius:50%;border:1px dashed rgba(255,255,255,.18)}
+.hero .hd{font-size:13.5px;color:#C4CBD6}
+.hero h1{font-size:32px;font-weight:800;margin:2px 0 4px}
+.hero h1 b{color:#FF9A57}
+.hero .hs{color:#C4CBD6;font-size:14.5px}
+.hero .hk{position:absolute;left:30px;top:26px;display:flex;gap:8px;z-index:1}
+.hero .hk span{background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.16);border-radius:99px;padding:6px 14px;font-weight:800;font-size:14px}
+.hero .hk i{font-style:normal;font-weight:600;color:#FFB580;margin-inline-end:6px;font-size:12px}
+.hero .ha{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:20px;position:relative;z-index:1}
+.hero .ha em{font-style:normal;color:#C4CBD6;font-size:13.5px;margin-inline-end:4px}
+.hero .ha span{border:1px solid rgba(255,255,255,.26);background:rgba(255,255,255,.07);border-radius:99px;padding:6px 14px;font-size:14px;font-weight:700}
+.hero .ha span.click{cursor:pointer}
+.hero .ha span.click:hover{background:rgba(255,255,255,.16)}
+.hero .ha span.ok{border-color:rgba(110,231,183,.5);color:#A7F3D0}
+.sech{display:flex;align-items:center;gap:8px;font-weight:800;margin:0 4px 12px}
+.sech::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 4px rgba(242,106,27,.18)}
+.sech small{margin-inline-start:auto;color:var(--muted);font-weight:500;font-size:13.5px}
+
+/* ---------- KPI cards ---------- */
+.kpis{gap:16px;margin-bottom:26px}
+.kpi{padding:18px 20px 18px;position:relative;overflow:hidden;border-top:3px solid var(--kc,#CBD2DC);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--kc,#CBD2DC) 9%,#fff),#fff 60%)}
+.kpi:nth-child(1){--kc:#64748B} .kpi:nth-child(2){--kc:#DC2F2F} .kpi:nth-child(3){--kc:#2563EB} .kpi:nth-child(4){--kc:#F26A1B}
+.kpi.hl{border-color:var(--line);border-top-color:var(--kc)}
+.kpi .kic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;float:inline-start;margin-inline-end:10px;margin-top:-4px;
+  background:#fff;border:1px solid color-mix(in srgb,var(--kc) 30%,#fff);color:var(--kc);box-shadow:0 2px 6px rgba(17,24,39,.06)}
+.kpi .kic svg{width:19px;height:19px}
+.kpi .l{color:var(--ink);font-weight:800;line-height:30px}
+.kpi .v{font-size:32px;font-weight:800;letter-spacing:-.3px;clear:both;padding-top:10px}
+.kpi.hl .v{color:var(--brand-d)}
+.kpi.click{transition:transform .12s,box-shadow .15s}
+.kpi.click:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(17,24,39,.1)}
+
+/* ---------- badges / table / tabs / inputs ---------- */
+.bdg{padding:4px 11px;border-radius:99px;font-weight:700}
+.bdg.loc{background:#EEF1F5;color:#334155}
+.tbl th{background:var(--surface-2);border-bottom:1px solid var(--line);padding:12px;color:#64748B}
+.tbl td{padding:13px 12px;border-bottom:1px solid var(--line-2)}
+.tbl tr.click:hover td{background:var(--surface-2)}
+.thumb{border-radius:12px;background:#EEF1F5}
+.tabs,.seg{background:#EEF1F5;border-radius:12px;padding:4px}
+.tabs button{border-radius:9px;padding:7px 16px;font-weight:700}
+.tabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(17,24,39,.12)}
+.tabs button.on .small{color:var(--brand-d)}
+.inp{border-radius:12px;padding:10px 13px;border-color:var(--line);background:#fff}
+.inp:focus{border-color:var(--brand);box-shadow:0 0 0 4px rgba(242,106,27,.14)}
+.search{background:var(--surface-2)}
+
+/* ---------- car page ---------- */
+.step .dot{border-color:#D5DBE4} .step::before{background:#E5E9EE}
+.fin .s{background:#EEF1F5} .fin .arr{color:#B4BDCB}
+.stage{border-top:3px solid #CBD2DC}
+.stage .top{background:linear-gradient(180deg,#F5F7F9,#fff);border-bottom:1px solid var(--line-2)}
+.stage.current{border-color:var(--line);border-top-color:var(--brand)}
+.stage.current .top{background:linear-gradient(180deg,#FFF1E6,#fff)}
+.stage .n{border-radius:10px} .stage.dim .n{background:#CBD2DC}
+.ln.tot{border-top:1px dashed #D5DBE4}
+.profit{border-radius:14px;background:var(--surface-2);border-color:var(--line)}
+.note{border-radius:12px}
+.gcar,.afrow,.xrow,.paycost,.xbox{border-radius:14px}
+.bars .track{background:#EEF1F5}
+.photo{border-radius:16px}
+.mbg{background:rgba(17,24,39,.5);backdrop-filter:blur(4px)}
+.modal{border-radius:22px;box-shadow:0 30px 80px rgba(17,24,39,.3)}
+.modal .mf{border-radius:0 0 22px 22px;background:var(--surface-2)}
+.choice label,.big{border-radius:14px}
+#login{background:radial-gradient(900px 500px at 15% 0%,rgba(242,106,27,.45),transparent 60%),linear-gradient(120deg,#1A1F27,#242B36)}
+#login .box{border-radius:24px;padding:32px}
+#toast{border-radius:12px;background:#1A1F27}
+.bdg.loc{color:#334155} .sec,.fsec,a.lnk,.kpi.hl .v{color:var(--brand-d)}
+}
+
+/* ---------- desktop: floating top bar instead of the side menu ---------- */
+@media screen and (min-width:901px){
+  #side{position:sticky;top:12px;inset-inline-start:auto;bottom:auto;width:auto;margin:12px 16px 0;flex-direction:row;align-items:center;gap:6px;
+    padding:8px 14px;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:visible;z-index:20}
+  #side .brand{flex-direction:row;border:0;padding:0;gap:10px}
+  #side .brand img{height:38px}
+  #side .brand span{display:none}
+  #side .navlbl{display:none}
+  #nav{flex-direction:row;gap:0;margin:0 auto;min-width:0}
+  #nav a{width:auto;padding:8px 9px;gap:6px;font-size:14.5px;border-radius:12px;white-space:nowrap;position:relative}
+  #nav a .ic{width:22px;height:22px;background:transparent;color:inherit;box-shadow:none}
+  #nav a svg{width:18px;height:18px}
+  #nav a:hover{background:var(--surface-2)}
+  #nav a.on{background:transparent;color:var(--brand-d)}
+  #nav a.on .ic{background:transparent;color:var(--brand);box-shadow:none}
+  #nav a.on::after{content:"";position:absolute;inset-inline:12px;bottom:0;height:3px;border-radius:3px;background:var(--brand)}
+  #nav a .ext{display:none}
+  #side .newcar{order:5;width:auto;padding:9px 14px;border-radius:12px;flex:none}
+  #side .foot{order:6;margin:0;flex-direction:row;align-items:center;border:0;padding:0;gap:2px}
+  .sbtn{width:auto;padding:4px;font-size:0;gap:0}
+  .sbtn .ic{width:38px;height:38px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
+  #cloud{display:flex;align-items:center;font-size:14px}
+  #cloud .em{display:none}
+  main{margin:0 auto;max-width:1320px;padding:22px 28px 60px}
+}
+
+/* ---------- phones ---------- */
+@media screen and (max-width:900px){
+  #side{margin:8px 8px 0;top:8px;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+  #nav{left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom));border:1px solid var(--line);border-radius:20px;padding:6px 2px;box-shadow:0 10px 30px rgba(17,24,39,.16)}
+  #nav a{font-size:10.5px;min-width:0;padding:2px 1px}
+  #nav a[target]{display:none}
+  #nav a.on{color:var(--brand-d)}
+  #nav a[data-v=map],#nav a[data-v=log]{font-size:0}
+  #nav a[data-v=map]::after{content:"المواني";font-size:10.5px}
+  #nav a[data-v=log]::after{content:"السجل";font-size:10.5px}
+  main{padding:14px 12px 104px}
+  .hero{padding:18px 18px 16px;border-radius:22px;margin-bottom:18px}
+  .hero h1{font-size:24px}
+  .hero .hk{position:static;margin-bottom:10px;flex-wrap:wrap}
+  .hero .ha{margin-top:14px} .hero .ha span{font-size:13px;padding:5px 11px}
+  .kpis{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-bottom:18px}
+  .kpi{padding:14px}
+  .kpi .kic{width:32px;height:32px;border-radius:10px;margin-inline-end:8px}
+  .kpi .l{font-size:13px;line-height:1.35;min-height:32px;display:flex;align-items:center}
+  .kpi .v{font-size:22px}
+  #toast{bottom:100px}
+}
 </style>
-
 </head>
-
 <body>
-
 <aside id="side">
-
   <div class="brand"><img src="logo.png" alt="AWS"><span id="officeName">مكتب السيارات</span></div>
-
   <button class="btn pri newcar" onclick="carForm()" title="سيارة جديدة">＋ <b>سيارة جديدة</b></button>
-
   <div class="navlbl">القائمة</div>
-
   <nav id="nav">
-
     <a data-v="cars"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span>السيارات</a>
-
     <a data-v="customers"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>الزبائن</a>
-
     <a data-v="profits"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>الأرباح</a>
-
     <a data-v="containers"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="1.5"/><path d="M6 9v7"/><path d="M10 9v7"/><path d="M14 9v7"/><path d="M18 9v7"/></svg></span>الحاويات</a>
-
     <a data-v="map"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.1 6.3 9.9 4.2a2 2 0 0 0-1.8 0L3.6 6.4A1 1 0 0 0 3 7.3v12.1a1 1 0 0 0 1.4.9l3.7-1.8a2 2 0 0 1 1.8 0l4.2 2.1a2 2 0 0 0 1.8 0l4.5-2.2a1 1 0 0 0 .6-.9V5.4a1 1 0 0 0-1.4-.9l-3.7 1.8a2 2 0 0 1-1.8 0z"/><path d="M15 6v15"/><path d="M9 3v15"/></svg></span>خريطة المواني</a>
-
     <a data-v="log"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg></span>سجل التعديلات</a>
-
     <a href="./#track" target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.99-5.54 10.19-7.4 11.8a1 1 0 0 1-1.2 0C9.54 20.19 4 14.99 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span>صفحة التتبع<svg class="ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a>
-
   </nav>
-
   <div class="foot">
-
     <button class="sbtn" onclick="openSettings()"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span>الإعدادات</button>
-
     <div id="cloud"></div>
-
   </div>
-
 </aside>
-
 <main id="app"></main>
-
 <div id="modalRoot"></div>
-
 <div id="toast"></div>
-
 <div id="print"></div>
-
 <div id="login">
-
   <form class="card box" onsubmit="event.preventDefault();doLogin()">
-
     <div class="logo" style="flex-direction:column;gap:6px"><img src="logo.png" alt="AWS"><span>AWS COMPANY</span></div>
-
     <div class="muted small" style="text-align:center;margin-bottom:18px">سجّل الدخول للوصول للبيانات</div>
-
     <div class="f" style="margin-bottom:12px"><label>البريد الإلكتروني</label><input class="inp" id="lgEmail" type="email" required style="direction:ltr"></div>
-
     <div class="f"><label>كلمة المرور</label><input class="inp" id="lgPass" type="password" required style="direction:ltr"></div>
-
     <div class="err" id="lgErr"></div>
-
     <button class="btn pri" style="width:100%;justify-content:center;margin-top:6px" id="lgBtn">دخول</button>
-
   </form>
-
 </div>
 
-
-
 <script src="ports-data.js"></script>
-
 <script src="firebase-config.js"></script>
-
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
 <script>
-
 /* ===================== data ===================== */
-
 const KEY = 'car_office_v1';
-
 const P = window.AWS_PORTS || {ports:[], yards:[], states:[], markup:{tow:0, ocean_per_car:0}};
-
 const LOC = ['تم الشراء','تم السداد','نقل داخلي','مستودع','في البحر','وصلت','تسلمت'];
-
 const STG = {buy:'شراء', ship:'شحن', done:'مكتملة'};
-
 const STGN = {buy:'المرحلة 1: الشراء', ship:'المرحلة 2: الشحن'};
-
 const METHODS = ['نقدي','حوالة مصرفية','تحويل','صك','أخرى'];
-
 const PORT_COLORS = {SAV:'#F2994A',HOU:'#E9C46A',NYC:'#6FA8DC',CHI:'#A58BD6',LAX:'#7BC47F',SEA:'#5BBFB5',HNL:'#E68AB8'};
 
-
-
 let db = load();
-
 let ui = {view:'cars', carId:null, filter:'all', q:'', month:thisMonth(), allMonths:false, drill:'recv', mapState:null};
 
-
-
 function load(){
-
   let d; try{ d = JSON.parse(localStorage.getItem(KEY)); }catch(e){}
-
   d = d || {};
-
   d.cars = d.cars || [];
-
   d.customers = d.customers || [];
-
   d.settings = Object.assign({officeName:'AWS COMPANY', officeFee:0, wirePct:1.5, perContainer:4}, d.settings||{});
-
   return d;
-
 }
-
 /* storage: Firebase (Firestore) when firebase-config.js is filled in, otherwise this browser only */
-
 const FBC = window.FIREBASE_CONFIG || {};
-
 const USE_FB = !!(window.firebase && FBC.apiKey && !/PASTE|ضع/.test(FBC.apiKey));
-
 let fs = null, fbAuth = null, unsub = [];
-
 const plain = o => JSON.parse(JSON.stringify(o));
-
 function fbErr(e){ console.error(e); toast('تعذر الحفظ في السحابة: ' + (e.code || e.message)); }
-
 function save(c){
-
   if(!USE_FB){ try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){ toast('تعذر الحفظ في المتصفح!'); } return; }
-
   if(c){ logCar(shadow.cars[c.id], c); fs.collection('cars').doc(c.id).set(plain(c)).catch(fbErr); }
-
 }
-
 function saveSettingsStore(){ if(USE_FB){ logSettings(); fs.collection('meta').doc('settings').set(plain(db.settings)).catch(fbErr); } else save(); }
-
 function removeCar(id){ const old = shadow.cars[id]; db.cars = db.cars.filter(c => c.id !== id); if(USE_FB){ if(old) addLog('car', id, carName(old), 'حذف', [`حذف السيارة${old.vin ? ' — ' + old.vin : ''}${old.customer ? ' — ' + old.customer : ''}`]); fs.collection('cars').doc(id).delete().catch(fbErr); } else save(); }
-
 function saveCust(cu){ if(!USE_FB) return save(); logCust(shadow.customers[cu.id], cu); fs.collection('customers').doc(cu.id).set(plain(cu)).catch(fbErr); }
-
 function saveContainer(ct, changes){
-
   if(!USE_FB) return save();
-
   if(changes && changes.length) addLog('container', ct.id, 'حاوية ' + (ct.no || ''), shadow.containers && shadow.containers[ct.id] ? 'تعديل' : 'إضافة', changes);
-
   fs.collection('containers').doc(ct.id).set(plain(ct)).catch(fbErr);
-
 }
-
 function removeCust(id){ const old = shadow.customers[id]; db.customers = db.customers.filter(x => x.id !== id); if(USE_FB){ if(old) addLog('customer', id, old.name, 'حذف', ['حذف الزبون']); fs.collection('customers').doc(id).delete().catch(fbErr); } else save(); }
 
-
-
 /* ---------- change log: who changed what, and when ---------- */
-
 const shadow = {cars:{}, customers:{}, containers:{}, settings:null};   // last copy seen from the cloud, to compare against
-
 const $t = n => '$' + r2(n).toLocaleString('en-US', {maximumFractionDigits:2});
-
 function addLog(kind, ref, title, action, changes){
-
   if(!USE_FB || !fbAuth || !fbAuth.currentUser || !changes.length) return;
-
   fs.collection('log').add({at:new Date().toISOString(), by:fbAuth.currentUser.email || '', kind, ref, title:title || '', action, changes}).catch(e => console.error('log', e));
-
 }
-
 const CAR_F = {customer:'الزبون', vin:'رقم الهيكل', year:'السنة', make:'النوع', lot:'رقم اللوت', auction:'المزاد', date:'تاريخ الشراء',
-
   buyPrice:'سعر الشراء', auctionFees:'رسوم المزاد', officeFee:'عمولة المكتب', wirePct:'عمولة الحوالة %', yard:'الساحة', port:'ميناء الساحة',
-
   relocPort:'نقل لميناء آخر', perContainer:'سيارات في الحاوية', towCharge:'السحب على الزبون', oceanCharge:'البحري على الزبون',
-
   shipWirePct:'عمولة حوالة الشحن %', towCost:'السحب الفعلي', oceanCost:'البحري الفعلي', notes:'الملاحظات', img:'الصورة', link:'رابط السيارة',
-
   loc:'المكان', stage:'المرحلة', lock1:'قفل المرحلة 1', lock2:'قفل المرحلة 2', manualShip:'نقل يدوي للشحن', containerNo:'رقم الحاوية', booking:'رقم الحجز'};
-
 const MONEY_F = new Set(['buyPrice','auctionFees','officeFee','towCharge','oceanCharge','towCost','oceanCost']);
-
 function fmtF(k, v){
-
   if(v === '' || v == null || v === false) return '—';
-
   if(k === 'loc') return LOC[v] || v;
-
   if(k === 'stage') return STG[v] || v;
-
   if(k === 'yard') return P.yards[v] ? P.yards[v].n + ', ' + P.yards[v].s : v;
-
   if(k === 'port' || k === 'relocPort') return pName(v);
-
   if(k === 'img') return 'صورة';
-
   if(k === 'manualShip') return 'نعم';
-
   if(MONEY_F.has(k)) return $t(v);
-
   if(k === 'notes' || k === 'link') return String(v).slice(0, 40) + (String(v).length > 40 ? '…' : '');
-
   return String(v);
-
 }
-
 const who = p => p === 'office' ? 'على المكتب' : 'على الزبون';
-
 function diffList(a, b, label, describe, fields){
-
   const out = [], A = new Map((a || []).map(x => [x.id, x])), B = new Map((b || []).map(x => [x.id, x]));
-
   B.forEach((x, id) => { if(!A.has(id)) out.push(`${label} جديد${label === 'دفعة' ? 'ة' : ''}: ${describe(x)}`); });
-
   A.forEach((x, id) => { if(!B.has(id)) out.push(`حذف ${label}: ${describe(x)}`); });
-
   B.forEach((x, id) => { const o = A.get(id); if(!o) return;
-
     const ch = fields.filter(([f]) => String(o[f] ?? '') !== String(x[f] ?? '')).map(([f, n, fm]) => `${n}: ${fm ? fm(o[f]) : (o[f] || '—')} ← ${fm ? fm(x[f]) : (x[f] || '—')}`);
-
     if(ch.length) out.push(`تعديل ${label} (${describe(o)}): ${ch.join('، ')}`);
-
   });
-
   return out;
-
 }
-
 function logCar(o, c){
-
   if(!o){ addLog('car', c.id, carName(c), 'إضافة', [`سيارة جديدة${c.vin ? ' — ' + c.vin : ''}${c.customer ? ' — الزبون ' + c.customer : ''}`]); return; }
-
   const ch = [];
-
   Object.keys(CAR_F).forEach(k => { if(String(o[k] ?? '') !== String(c[k] ?? '') && !(o[k] == null && (c[k] === '' || c[k] === false)) && !(c[k] == null && (o[k] === '' || o[k] === false)))
-
     ch.push(`${CAR_F[k]}: ${fmtF(k, o[k])} ← ${fmtF(k, c[k])}`); });
-
   const ap = x => x ? `${x.by === 'office' ? 'المكتب' : 'الزبون'} ${x.date || ''}` : '—';
-
   if(JSON.stringify(o.auctionPaid || null) !== JSON.stringify(c.auctionPaid || null)) ch.push(`سداد المزاد: ${ap(o.auctionPaid)} ← ${ap(c.auctionPaid)}`);
-
   ch.push(...diffList(o.payments, c.payments, 'دفعة', p => `${$t(p.amount)} — ${STG[p.stage] || ''} — ${p.date || ''}`,
-
     [['amount','المبلغ',$t], ['date','التاريخ'], ['stage','المرحلة',v => STG[v] || v], ['method','الطريقة']]));
-
   ch.push(...diffList(o.expenses, c.expenses, 'مصروف', e => `${e.desc || 'مصروف'} ${$t(e.amount)} (${who(e.payer)})`,
-
     [['desc','الوصف'], ['amount','المبلغ',$t], ['payer','على مين',who], ['stage','المرحلة',v => STG[v] || v], ['date','التاريخ']]));
-
   ch.push(...diffList(o.refunds, c.refunds, 'مبلغ راجع', r => `${$t(r.amount)}${r.returned ? ' (رجع)' : ''}`, [['amount','المبلغ',$t], ['returned','رجع للزبون']]));
-
   addLog('car', c.id, carName(c), 'تعديل', ch);
-
 }
-
 function logCust(o, cu){
-
   if(!o){ addLog('customer', cu.id, cu.name, 'إضافة', ['زبون جديد' + (cu.phone ? ' — ' + cu.phone : '')]); return; }
-
   const F = {name:'الاسم', phone:'الهاتف', phone2:'هاتف ثاني', city:'المدينة', notes:'ملاحظات'};
-
   addLog('customer', cu.id, cu.name, 'تعديل', Object.keys(F).filter(k => String(o[k] ?? '') !== String(cu[k] ?? '')).map(k => `${F[k]}: ${o[k] || '—'} ← ${cu[k] || '—'}`));
-
 }
-
 function logSettings(){
-
   const o = shadow.settings || {}, s = db.settings, F = {officeName:'اسم المكتب', officeFee:'عمولة المكتب الافتراضية', wirePct:'عمولة الحوالة الافتراضية %', perContainer:'سيارات في الحاوية'};
-
   addLog('settings', 'settings', 'الإعدادات', 'تعديل', Object.keys(F).filter(k => String(o[k] ?? '') !== String(s[k] ?? '')).map(k => `${F[k]}: ${o[k] ?? '—'} ← ${s[k] ?? '—'}`));
-
 }
-
 async function replaceAll(d){
-
   if(!USE_FB){ localStorage.setItem(KEY, JSON.stringify(d)); db = load(); return; }
-
   const ops = [];
-
   for(const col of ['cars','customers']){ (await fs.collection(col).get()).forEach(doc => ops.push(b => b.delete(doc.ref))); }
-
   d.cars.forEach(c => ops.push(b => b.set(fs.collection('cars').doc(c.id), plain(c))));
-
   (d.customers || []).forEach(cu => ops.push(b => b.set(fs.collection('customers').doc(cu.id), plain(cu))));
-
   if(d.settings) ops.push(b => b.set(fs.collection('meta').doc('settings'), plain(d.settings)));
-
   for(let i = 0; i < ops.length; i += 400){ const b = fs.batch(); ops.slice(i, i + 400).forEach(f => f(b)); await b.commit(); }
-
 }
-
 function setCloud(t){ const el = $('#cloud'); if(el) el.innerHTML = t; }
 
-
-
 function initFirebase(){
-
   firebase.initializeApp(FBC);
-
   fbAuth = firebase.auth(); fs = firebase.firestore();
-
   fs.enablePersistence({synchronizeTabs:true}).catch(() => {});
-
   db = {cars:[], customers:[], settings:load().settings};
-
   fbAuth.onAuthStateChanged(user => {
-
     unsub.forEach(f => f()); unsub = [];
-
     if(!user){ $('#login').classList.add('on'); setCloud(''); return; }
-
     $('#login').classList.remove('on');
-
     setCloud(`<span class="em" title="${esc(user.email)}">${esc(user.email)}</span>
-
       <button class="sbtn out" onclick="fbAuth.signOut()"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg></span>خروج</button>`);
-
     let first = true;
-
     unsub.push(fs.collection('cars').onSnapshot(snap => {
-
       db.cars = snap.docs.map(d => Object.assign({expenses:[], payments:[], refunds:[]}, d.data()));
-
       shadow.cars = Object.fromEntries(snap.docs.map(d => [d.id, Object.assign({expenses:[], payments:[], refunds:[]}, d.data())]));
-
       render();
-
       clearTimeout(syncTracking._t); syncTracking._t = setTimeout(syncTracking, 1500);
-
       if(first){ first = false; offerUpload(snap.empty); }
-
     }, fbErr));
-
     unsub.push(fs.collection('customers').onSnapshot(snap => { db.customers = snap.docs.map(d => d.data()); shadow.customers = Object.fromEntries(snap.docs.map(d => [d.id, d.data()])); render(); }, fbErr));
-
     unsub.push(fs.collection('meta').doc('settings').onSnapshot(d => { if(d.exists){ db.settings = Object.assign(db.settings, d.data()); shadow.settings = d.data(); render(); } }, fbErr));
-
     unsub.push(fs.collection('containers').onSnapshot(snap => {
-
       db.containers = snap.docs.map(d => d.data()); shadow.containers = Object.fromEntries(snap.docs.map(d => [d.id, d.data()])); render();
-
     }, e => console.error('containers', e)));
-
     unsub.push(fs.collection('log').orderBy('at', 'desc').limit(500).onSnapshot(snap => {
-
       db.log = snap.docs.map(d => Object.assign({id:d.id}, d.data()));
-
       if(ui.view === 'log' || ui.view === 'car' || ui.view === 'customer') render();
-
     }, e => console.error('log', e)));
-
   });
-
 }
-
 function doLogin(){
-
   const btn = $('#lgBtn'); btn.disabled = true; $('#lgErr').textContent = '';
-
   fbAuth.signInWithEmailAndPassword($('#lgEmail').value.trim(), $('#lgPass').value)
-
     .catch(e => { $('#lgErr').textContent = /invalid|wrong|not-found/.test(e.code) ? 'البريد أو كلمة المرور غير صحيحة' : 'تعذر الدخول: ' + e.code; })
-
     .finally(() => btn.disabled = false);
-
 }
-
 /* first time on Firebase: if this browser still has local data and the cloud is empty, offer to upload it */
-
 function offerUpload(cloudEmpty){
-
   let local; try{ local = JSON.parse(localStorage.getItem(KEY)); }catch(e){}
-
   if(!cloudEmpty || !local || !local.cars || !local.cars.length) return;
-
   ask(`فيه ${local.cars.length} سيارة محفوظة في هذا المتصفح من قبل. نرفعهم لـ Firebase؟`, () => {
-
     replaceAll(local).then(() => { localStorage.removeItem(KEY); toast('تم رفع البيانات للسحابة'); }).catch(fbErr);
-
   }, 'رفع');
-
 }
-
-
 
 /* ===================== helpers ===================== */
-
 const $ = s => document.querySelector(s);
-
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-
 const r2 = n => Math.round(+((+n || 0) * 100).toFixed(6)) / 100;   // toFixed first so 14.475 rounds to 14.48
-
 const N = v => (v === '' || v == null || isNaN(+v)) ? 0 : +v;
-
 function today(){ const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
-
 function thisMonth(){ return today().slice(0,7); }
-
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
 function money(n){
-
   n = r2(n); const neg = n < 0;
-
   const s = '$' + Math.abs(n).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:2});
-
   return `<span class="num">${neg ? '−' : ''}${s}</span>`;
-
 }
-
 function dt(s){ return `<span class="num">${esc(s)}</span>`; }
-
 function monthName(m){ if(!m) return ''; const [y,mm] = m.split('-'); return new Date(+y, +mm-1, 1).toLocaleDateString('ar-LY-u-nu-latn', {month:'long', year:'numeric'}); }
-
 function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('on'), 2200); }
-
 function carName(c){ return [c.year, c.make].filter(Boolean).join(' ') || 'سيارة بدون اسم'; }
-
 function getCar(id){ return db.cars.find(c => c.id === id); }
-
 function expLabel(e){ return e.kind === 'fine' ? 'غرامة' : 'مصروف'; }
-
 function getCust(id){ return db.customers.find(x => x.id === id); }
-
 function carThumb(c){ return c.img ? `<img class="thumb" src="${esc(c.img)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=&quot;thumb&quot;>🚗</div>'">` : `<div class="thumb">🚗</div>`; }
-
 function portById(id){ return P.ports.find(p => p.id === id); }
-
 function yardLabel(y){ return `${y.n}, ${y.s} — ${y.a}`; }
-
 const YARD_IDX = {}; P.yards.forEach((y,i) => YARD_IDX[yardLabel(y)] = i);
 
-
-
 function quote(yi, pid, k){
-
   const y = P.yards[yi], res = {};
-
   if(y){ res.towCost = y.tow; res.towCharge = y.tow == null ? null : y.tow + (P.markup.tow||0); }
-
   const port = portById(pid || (y && y.p));
-
   if(port && port.ocean[k]){ const per = port.ocean[k] / k; res.oceanCost = r2(per); res.oceanCharge = r2(per + (P.markup.ocean_per_car||0)); }
-
   return res;
-
 }
-
-
 
 /* ===================== financial engine ===================== */
-
 function calc(c){
-
   const ex = (payer, st) => c.expenses.filter(e => e.payer === payer && e.stage === st).reduce((s,e) => s + N(e.amount), 0);
-
   const pay = st => c.payments.filter(p => p.stage === st).reduce((s,p) => s + N(p.amount), 0);
-
   const base = N(c.buyPrice) + N(c.auctionFees);
-
   const wire = r2(base * N(c.wirePct) / 100);
-
   const custExp1 = ex('customer','buy'), offExp1 = ex('office','buy');
-
   const req1 = r2(base + N(c.officeFee) + wire + custExp1);
-
   const auctionByCust = c.auctionPaid && c.auctionPaid.by === 'customer' ? base : 0;
-
   const payments1 = pay('buy');
-
   const paid1 = r2(payments1 + auctionByCust);
-
   const rem1 = r2(req1 - paid1);
-
   const profit1 = r2(N(c.officeFee) + wire - offExp1);
 
-
-
   const custExp2 = ex('customer','ship'), offExp2 = ex('office','ship');
-
   const shipCharge = N(c.towCharge) + N(c.oceanCharge);
-
   const wire2 = r2((shipCharge + custExp2) * N(c.shipWirePct) / 100);   // optional transfer commission on shipping
-
   const req2 = r2(shipCharge + custExp2 + wire2);
-
   const paid2 = r2(pay('ship'));
-
   const rem2 = r2(req2 - paid2);
-
   const actual = N(c.towCost) + N(c.oceanCost);
-
   const profit2 = r2(shipCharge + wire2 - actual - offExp2);
 
-
-
   const advance = (c.auctionPaid && c.auctionPaid.by === 'office' && !c.lock1) ? Math.min(base, Math.max(rem1,0)) : 0;
-
   const refundDue = r2((c.refunds||[]).filter(x => !x.returned).reduce((s,x) => s + N(x.amount), 0));
-
   return {base, wire, custExp1, offExp1, req1, auctionByCust, payments1, paid1, rem1, profit1,
-
           custExp2, offExp2, shipCharge, wire2, req2, paid2, rem2, actual, profit2, advance, refundDue};
-
 }
-
-
 
 /* moves the car between financial stages based on money; locks/unlocks profits */
-
 function sync(c){
-
   const k = calc(c), EPS = 0.004;
-
   if(!c.lock1 && k.req1 > 0 && k.rem1 <= EPS) c.lock1 = today();
-
   else if(c.lock1 && k.rem1 > EPS) c.lock1 = null;
 
-
-
   if(!c.lock2 && k.req2 > 0 && k.rem2 <= EPS && c.stage !== 'buy') c.lock2 = today();
-
   else if(c.lock2 && k.rem2 > EPS) c.lock2 = null;
 
-
-
   if(c.lock1 && c.stage === 'buy') c.stage = 'ship';
-
   // stage 2 may have been fully paid while stage 1 just finished
-
   if(!c.lock2 && k.req2 > 0 && k.rem2 <= EPS && c.stage === 'ship') c.lock2 = today();
 
-
-
   if(c.lock1 && c.lock2) c.stage = 'done';
-
   else if(c.stage === 'done') c.stage = 'ship';
-
   if(c.stage === 'ship' && !c.lock1 && !c.manualShip) c.stage = 'buy';
-
 }
-
 function commit(c){ if(c) sync(c); save(c); render(); }
 
-
-
 /* ===================== router / render ===================== */
-
 function go(view, carId){ ui.view = view; ui.carId = carId || null; window.scrollTo(0,0); render(); }
-
 document.getElementById('nav').addEventListener('click', e => { const a = e.target.closest('a[data-v]'); if(a) go(a.dataset.v); });
 
-
-
 function render(){
-
   $('#officeName').textContent = db.settings.officeName || 'مكتب السيارات';
-
   document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.v === ui.view || ((ui.view === 'car' || ui.view === 'group') && a.dataset.v === 'cars') || (ui.view === 'customer' && a.dataset.v === 'customers') || (ui.view === 'container' && a.dataset.v === 'containers')));
-
   const app = $('#app');
-
   if(ui.view === 'car'){ const c = getCar(ui.carId); app.innerHTML = c ? viewCar(c) : (ui.view = 'cars', viewCars()); }
-
   else if(ui.view === 'customer'){ const cu = getCust(ui.carId); app.innerHTML = cu ? viewCustomer(cu) : (ui.view = 'customers', viewCustomers()); }
-
   else if(ui.view === 'customers') app.innerHTML = viewCustomers();
-
   else if(ui.view === 'profits') app.innerHTML = viewProfits();
-
   else if(ui.view === 'group') app.innerHTML = viewGroup();
-
   else if(ui.view === 'containers') app.innerHTML = viewContainers();
-
   else if(ui.view === 'container'){ const ct = getCt(ui.carId); app.innerHTML = ct ? viewContainer(ct) : (ui.view = 'containers', viewContainers()); }
-
   else if(ui.view === 'log'){ const f = document.activeElement && document.activeElement.id === 'lq'; app.innerHTML = viewLog(); if(f){ const e = $('#lq'); e.focus(); e.setSelectionRange(e.value.length, e.value.length); } }
-
   else if(ui.view === 'map') app.innerHTML = viewMap();
-
   else app.innerHTML = viewCars();
-
 }
-
-
 
 /* ---------- change log ---------- */
-
 const ACT_CLS = {'إضافة':'done', 'تعديل':'ship', 'حذف':'bad'};
-
 function logTime(at){ const d = new Date(at); return isNaN(d) ? '' : d.toLocaleString('en-GB', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}); }
-
 function logItems(list, showTitle){
-
   return list.map(l => `<div class="logi">
-
     <div class="logh">${showTitle ? `<b class="${l.kind !== 'settings' ? 'click' : ''}" ${l.kind === 'car' ? `onclick="go('car','${l.ref}')"` : l.kind === 'customer' ? `onclick="go('customer','${l.ref}')"` : l.kind === 'container' ? `onclick="go('container','${l.ref}')"` : ''}>${esc(l.title)}</b>` : ''}
-
       <span class="bdg ${ACT_CLS[l.action] || 'exp'}">${esc(l.action)}</span>
-
       <div class="sp"></div><span class="small muted"><span class="num">${esc(logTime(l.at))}</span> · ${esc((l.by || '').split('@')[0])}</span></div>
-
     <ul>${(l.changes || []).map(x => `<li>${logLine(x)}</li>`).join('')}</ul></div>`).join('');
-
 }
-
 /* keep $ amounts and dates left-to-right inside Arabic, and show "old ← new" as grey → bold */
-
 function logLine(x){
-
   const ltr = s => esc(s).replace(/−?\$[\d,]+(?:\.\d+)?|\d{4}-\d{2}-\d{2}|[A-Z0-9]{8,17}/g, m => `<bdi dir="ltr">${m}</bdi>`);
-
   const i = x.lastIndexOf(' ← ');
-
   if(i < 0) return ltr(x);
-
   const j = x.lastIndexOf(': ', i);
-
   if(j < 0) return ltr(x);
-
   return `${ltr(x.slice(0, j))}: <span class="lold">${ltr(x.slice(j + 2, i))}</span> ← <span class="lnew">${ltr(x.slice(i + 3))}</span>`;
-
 }
-
 function viewLog(){
-
   const all = db.log || [], q = (ui.lq || '').trim().toLowerCase(), u = ui.lu || '';
-
   const users = [...new Set(all.map(l => l.by).filter(Boolean))];
-
   const list = all.filter(l => (!u || l.by === u) && (!q || [l.title, l.by, ...(l.changes || [])].join(' ').toLowerCase().includes(q)));
-
   return `
-
   <div class="row" style="margin-bottom:16px"><h1>سجل التعديلات</h1><div class="sp"></div>
-
     <span class="small muted">آخر ${all.length} تعديل — مين عدّل شنو ووقتاش</span></div>
-
   <div class="card">
-
     <div class="pad row" style="border-bottom:1px solid var(--line)">
-
       <input class="inp search" id="lq" placeholder="بحث: سيارة، زبون، مبلغ…" value="${esc(ui.lq || '')}" oninput="ui.lq=this.value;render()">
-
       <select class="inp" style="width:auto" onchange="ui.lu=this.value;render()"><option value="">كل المستخدمين</option>${users.map(x => `<option ${x === u ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select>
-
     </div>
-
     ${list.length ? `<div class="logl">${logItems(list, true)}</div>` : `<div class="empty">${all.length ? 'لا توجد نتائج' : 'ما فيش تعديلات مسجلة بعد — أي تعديل من توا وطالع يتسجل هني'}</div>`}
-
   </div>`;
-
 }
-
-
 
 /* ---------- containers: group cars by export port, assign them, split the real cost ---------- */
-
 const shipPort = c => c.relocPort || c.port || '';
-
 const getCt = id => (db.containers || []).find(x => x.id === id);
-
 const ctCars = ct => db.cars.filter(c => c.containerId === ct.id);
-
 const vin6 = c => (c.vin || '').slice(-6);
-
 const PER = 4;   // cars in a full 40ft container
-
 function portChip(p){ return `<span class="pchipc" style="--pc:${PORT_COLORS[p] || '#bbb'}"></span>`; }
-
 function gCar(c){
-
   const y = P.yards[c.yard], ct = c.containerId && getCt(c.containerId);
-
   return `<div class="gcar" onclick="go('car','${c.id}')">${carThumb(c)}
-
     <div class="gtx"><b>${esc(carName(c))}</b>
-
       <div class="small"><span class="num muted">…${esc(vin6(c))}</span> · ${esc(c.customer || '—')}</div>
-
       <div class="small muted">${y ? esc(y.n + ' — ' + y.a) : 'بدون ساحة'}${ct || c.containerNo ? ` · 📦 <span class="num">${esc(ct ? ct.no : c.containerNo)}</span>` : ''}</div></div>
-
     <span class="bdg loc">${LOC[c.loc || 0]}</span></div>`;
-
 }
-
 function viewGroup(){
-
   const pend = db.cars.filter(c => (c.loc || 0) < 4);
-
   const by = {}; pend.forEach(c => { const p = shipPort(c) || '__none'; (by[p] = by[p] || []).push(c); });
-
   const order = [...P.ports.map(p => p.id).filter(id => by[id]), ...(by.__none ? ['__none'] : [])];
-
   const block = p => {
-
     const cars = by[p], n = cars.length;
-
     if(p === '__none') return `<div class="card gport" style="--pc:#bbb"><div class="gph"><h3>بدون ميناء</h3><span class="muted small">افتح السيارة واختار الساحة</span></div>
-
       <div class="gcars">${cars.map(gCar).join('')}</div></div>`;
-
     const wh = cars.filter(c => (c.loc || 0) >= 3).length, full = Math.floor(n / PER), rest = n % PER;
-
     const st = {}; cars.forEach(c => { const s = (P.yards[c.yard] || {}).s || '—'; (st[s] = st[s] || []).push(c); });
-
     return `<div class="card gport" style="--pc:${PORT_COLORS[p] || '#bbb'}">
-
       <div class="gph">${portChip(p)}<h3>${esc(pName(p))}</h3>
-
         <span class="small"><b>${n}</b> سيارة · <b>${wh}</b> منهم وصلت المستودع</span>
-
         <span class="bdg ${full ? 'done' : 'exp'}">${full} حاوية كاملة</span>
-
         ${rest ? `<span class="bdg bad">ناقص ${PER - rest} لحاوية كاملة</span>` : ''}
-
         <div class="sp"></div><button class="btn sm pri" onclick="assignForm('${p}')">حددهم لرقم الحاوية</button></div>
-
       ${Object.keys(st).sort().map(s => `<div class="gst">${esc(s)} <span class="muted">(${st[s].length})</span></div><div class="gcars">${st[s].map(gCar).join('')}</div>`).join('')}
-
     </div>`;
-
   };
-
   return `
-
   <div class="chead"><button class="btn" onclick="go('cars')">→ رجوع</button>
-
     <div style="flex:1"><h1>سيارات تنشحن مع بعض</h1><div class="muted small">السيارات اللي لسه ما انشحنتش، مقسومة حسب ميناء التصدير — كل ${PER} سيارات = حاوية 40 قدم</div></div>
-
     <button class="btn pri" onclick="assignForm('')">＋ حاوية من أي سيارات</button>
-
     <button class="btn" onclick="go('containers')">📦 الحاويات</button></div>
-
   ${order.length ? order.map(block).join('') : `<div class="card empty">كل السيارات انشحنت — ما فيش سيارات تستنى حاوية</div>`}`;
-
 }
-
 /* choose any cars — from any port, any yard — and put them in a container (new number or an existing one).
-
    port: the port block the button came from (its cars are listed first); ctId: adding to an existing container */
-
 const SHIPPERS = ['Atlantic Express', 'MTL'];
-
 function shipperList(){ return [...new Set([...SHIPPERS, ...(db.containers || []).map(x => x.shipper).filter(Boolean)])]; }
-
 function assignForm(port, ctId){
-
   const ct0 = ctId ? getCt(ctId) : null;
-
   const cars = db.cars.filter(c => (c.loc || 0) < 5 && !(ct0 && c.containerId === ct0.id))
-
     .sort((a,b) => (shipPort(a) === port ? 0 : 1) - (shipPort(b) === port ? 0 : 1) || (shipPort(a) || 'z').localeCompare(shipPort(b) || 'z') || (a.loc||0) - (b.loc||0));
-
   const open = (db.containers || []).filter(x => (x.loc ?? 0) < 5);
-
   const row = c => `<label class="afrow" data-q="${esc([carName(c), c.vin, c.customer, pName(shipPort(c)), (P.yards[c.yard] || {}).n, c.containerNo].join(' ').toLowerCase())}">
-
       <input type="checkbox" value="${c.id}" onchange="afCount()">
-
       <span style="flex:1"><b>${esc(carName(c))}</b> <span class="num muted">…${esc(vin6(c))}</span> · ${esc(c.customer || '—')}<br>
-
       <span class="small muted">${shipPort(c) ? portChip(shipPort(c)) + ' ' + esc(pName(shipPort(c))) : 'بدون ميناء'} · ${esc(((P.yards[c.yard] || {}).n) || 'بدون ساحة')} · ${LOC[c.loc || 0]} · محسوبة على حاوية ${+(c.perContainer || 4)}${c.containerNo ? ` · <span style="color:var(--bad)">حالياً في <span class="num">${esc(c.containerNo)}</span></span>` : ''}</span></span></label>`;
-
   openModal(ct0 ? `زيد سيارات للحاوية ${esc(ct0.no)}` : `تحديد حاوية${port ? ' — ' + esc(pName(port)) : ''}`, `<form id="af" onsubmit="event.preventDefault();applyAssign('${port || ''}','${ctId || ''}')">
-
     ${ct0 ? `<input type="hidden" name="no" value="${esc(ct0.no)}"><input type="hidden" name="booking" value=""><input type="hidden" name="shipper" value=""><input type="hidden" name="loc" value="">` : `
-
     <div class="grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
-
       <div class="f"><label>رقم الحاوية</label><input class="inp" name="no" list="ctList" required style="direction:ltr;text-transform:uppercase" placeholder="MSKU1234567" oninput="afPick(this.value)">
-
         <datalist id="ctList">${open.map(x => `<option value="${esc(x.no)}">${esc((x.shipper || '') + ' ' + (x.booking || ''))}</option>`).join('')}</datalist>
-
         <div class="hint" id="afHint">${open.length ? 'رقم جديد أو حاوية مفتوحة' : ''}</div></div>
-
       <div class="f"><label>شركة الشحن</label><input class="inp" name="shipper" list="shipList" value="Atlantic Express"><datalist id="shipList">${shipperList().map(s => `<option value="${esc(s)}">`).join('')}</datalist></div>
-
       <div class="f"><label>رقم الحجز (Booking)</label><input class="inp" name="booking" style="direction:ltr"></div>
-
       <div class="f"><label>المرحلة</label><select class="inp" name="loc"><option value="">— بدون تغيير —</option>${LOC.map((l,i) => `<option value="${i}">${l}</option>`).join('')}</select></div>
-
     </div>`}
-
     <div class="row" style="margin-bottom:8px;gap:8px">
-
       <input class="inp" id="afQ" placeholder="بحث: سيارة، زبون، شاصي، ميناء، ساحة…" oninput="afFilter()" style="flex:1;min-width:200px">
-
       ${port ? `<button type="button" class="btn sm" onclick="afPort('${port}')">حدد سيارات ${esc(pName(port))}</button>` : ''}
-
       <button type="button" class="btn sm" onclick="afNone()">شيل التحديد</button>
-
       <span id="afCnt" class="small"></span></div>
-
     <div class="aflist">${cars.map(row).join('') || '<div class="empty">ما فيش سيارات</div>'}</div>
-
     <div class="hint" style="margin-top:6px">تقدر تختار أي سيارة من أي ميناء أو ساحة. لو السيارة في حاوية ثانية، تنتقل لهذي.</div>
-
   </form>`, `<button class="btn pri" onclick="document.getElementById('af').requestSubmit()">تطبيق</button><button class="btn" onclick="closeModal()">إلغاء</button>`, true);
-
   afCount(); setTimeout(() => { const q = $('#afQ'); if(q && ct0) q.focus(); }, 40);
-
 }
-
 function afFilter(){ const q = $('#afQ').value.trim().toLowerCase(); document.querySelectorAll('#af .afrow').forEach(r => r.style.display = !q || r.dataset.q.includes(q) ? '' : 'none'); }
-
 function afPort(port){ document.querySelectorAll('#af .afrow input').forEach(i => { const c = getCar(i.value); if(c && shipPort(c) === port && !c.containerId) i.checked = true; }); afCount(); }
-
 function afNone(){ document.querySelectorAll('#af .afrow input').forEach(i => i.checked = false); afCount(); }
-
 function afCount(){
-
   const sel = [...document.querySelectorAll('#af .afrow input:checked')].map(i => getCar(i.value)).filter(Boolean), n = sel.length;
-
   const ports = [...new Set(sel.map(shipPort).filter(Boolean))];
-
   $('#afCnt').innerHTML = `<b>${n}</b> محددة${n > PER ? ` <span style="color:var(--bad)">— أكثر من ${PER}!</span>` : ''}${ports.length > 1 ? ` <span style="color:var(--warn)">— من ${ports.length} مواني</span>` : ''}`;
-
 }
-
 function afPick(v){
-
   const ct = (db.containers || []).find(x => (x.no || '').toUpperCase() === v.trim().toUpperCase());
-
   const f = document.getElementById('af');
-
   if(ct){ if(!f.booking.value) f.booking.value = ct.booking || ''; if(ct.shipper) f.shipper.value = ct.shipper; $('#afHint').innerHTML = `حاوية موجودة فيها <b>${ctCars(ct).length}</b> سيارة — تنضاف لها`; }
-
   else $('#afHint').textContent = v.trim() ? 'حاوية جديدة' : '';
-
 }
-
 function applyAssign(port, ctId){
-
   const f = document.getElementById('af'), no = f.no.value.trim().toUpperCase(), booking = f.booking.value.trim(), loc = f.loc.value, shipper = f.shipper.value.trim();
-
   const ids = [...f.querySelectorAll('.afrow input:checked')].map(x => x.value);
-
   if(!no) return; if(!ids.length) return toast('حدد سيارة وحدة على الأقل');
-
   let ct = ctId ? getCt(ctId) : (db.containers || []).find(x => (x.no || '').toUpperCase() === no), isNew = !ct;
-
   if(!ct){
-
     const p0 = port || shipPort(getCar(ids[0])) || '';
-
     ct = {id:uid(), no, booking, shipper, port:p0, shipDate:'', eta:'', loc:loc === '' ? null : +loc, cost:'', shares:{}, created:new Date().toISOString()};
-
     (db.containers = db.containers || []).push(ct);
-
   } else { if(booking) ct.booking = booking; if(shipper) ct.shipper = shipper; if(loc !== '') ct.loc = +loc; }
-
   const names = [], moved = {};
-
   ids.forEach(id => { const c = getCar(id); if(!c) return;
-
     if(c.containerId && c.containerId !== ct.id){ const o = getCt(c.containerId); if(o){ (moved[o.id] = moved[o.id] || []).push(carName(c)); if(o.shares) delete o.shares[c.id]; } }
-
     c.containerId = ct.id; c.containerNo = ct.no; c.booking = ct.booking || '';
-
     const L = loc !== '' ? +loc : ct.loc;
-
     if(L != null && (loc !== '' || (c.loc || 0) < L)){ c.loc = L; c.locAt = Object.assign({}, c.locAt, {[L]: today()}); }
-
     names.push(carName(c)); sync(c); save(c); });
-
   Object.keys(moved).forEach(oid => { const o = getCt(oid); saveContainer(o, [`انتقلت لحاوية ${ct.no}: ${moved[oid].join('، ')}`]); });
-
   saveContainer(ct, [`${isNew ? 'حاوية جديدة' : 'إضافة سيارات'}: ${names.join('، ')}`]);
-
   closeModal(); toast(`تم — ${ids.length} سيارة في الحاوية ${ct.no}`); go('container', ct.id);
-
 }
-
 function containerForm(id){
-
   const ct = id ? getCt(id) : {port:'', loc:null};
-
   openModal(id ? 'تعديل الحاوية' : 'حاوية جديدة', `<form id="ctf" class="grid" onsubmit="event.preventDefault();saveCtForm('${id || ''}')">
-
     ${fld('رقم الحاوية','no',ct.no,'text','required style="direction:ltr;text-transform:uppercase"')}
-
     ${fld('رقم الحجز (Booking)','booking',ct.booking,'text','style="direction:ltr"')}
-
     <div class="f"><label>ميناء التصدير</label><select class="inp" name="port" required><option value="">—</option>${P.ports.map(p => `<option value="${p.id}" ${ct.port === p.id ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></div>
-
     <div class="f"><label>شركة الشحن</label><input class="inp" name="shipper" list="shipList2" value="${esc(ct.shipper || (id ? '' : 'Atlantic Express'))}"><datalist id="shipList2">${shipperList().map(s => `<option value="${esc(s)}">`).join('')}</datalist></div>
-
     ${fld('تاريخ الشحن','shipDate',ct.shipDate,'date')}
-
     ${fld('تاريخ الوصول المتوقع','eta',ct.eta,'date')}
-
   </form>`, `<button class="btn pri" onclick="document.getElementById('ctf').requestSubmit()">حفظ</button><button class="btn" onclick="closeModal()">إلغاء</button>`);
-
 }
-
 function saveCtForm(id){
-
   const d = formData('ctf'); d.no = d.no.trim().toUpperCase();
-
   const dup = (db.containers || []).find(x => (x.no || '').toUpperCase() === d.no && x.id !== id);
-
   if(dup) return toast('فيه حاوية بنفس الرقم');
-
   let ct = id ? getCt(id) : null; const ch = [];
-
   const F = {no:'رقم الحاوية', shipper:'شركة الشحن', booking:'رقم الحجز', port:'الميناء', shipDate:'تاريخ الشحن', eta:'الوصول المتوقع'};
-
   if(ct){ Object.keys(F).forEach(k => { if(String(ct[k] || '') !== String(d[k] || '')) ch.push(`${F[k]}: ${ct[k] || '—'} ← ${d[k] || '—'}`); }); Object.assign(ct, d); }
-
   else { ct = Object.assign({id:uid(), loc:null, cost:'', shares:{}, created:new Date().toISOString()}, d); (db.containers = db.containers || []).push(ct); ch.push('حاوية جديدة'); }
-
   ctCars(ct).forEach(c => { if(c.containerNo !== ct.no || c.booking !== (ct.booking || '')){ c.containerNo = ct.no; c.booking = ct.booking || ''; save(c); } });
-
   saveContainer(ct, ch); closeModal(); go('container', ct.id);
-
 }
-
 /* real cost vs what we priced: customers were charged for a container of X cars; if it ships with fewer, each car costs more */
-
 function ctMath(ct){
-
   const cars = ctCars(ct), Y = cars.length, p = portById(ct.port), oc = p ? p.ocean : {};
-
   const X = Math.max(0, ...cars.map(c => +(c.perContainer || 4)));
-
   const expected = r2(cars.reduce((s,c) => { const k = +(c.perContainer || 4), o = (portById(shipPort(c)) || p || {ocean:{}}).ocean; return s + (o[k] ? o[k] / k : N(c.oceanCost)); }, 0));
-
   const listY = oc[Math.min(4, Math.max(2, Y))] || 0;
-
   const actual = ct.cost !== '' && ct.cost != null ? N(ct.cost) : (Y ? listY : 0);
-
   return {cars, Y, X, expected, actual, real:ct.cost !== '' && ct.cost != null, loss:r2(actual - expected),
-
           charged:r2(cars.reduce((s,c) => s + N(c.oceanCharge), 0)), shares:r2(cars.reduce((s,c) => s + N(c.oceanCost), 0))};
-
 }
-
 function viewContainers(){
-
   const list = (db.containers || []).slice().sort((a,b) => (b.shipDate || b.created || '').localeCompare(a.shipDate || a.created || ''));
-
   const rows = list.map(ct => { const m = ctMath(ct);
-
     return `<tr class="click" onclick="go('container','${ct.id}')">
-
       <td><b class="num">${esc(ct.no)}</b>${ct.booking ? `<div class="small muted">Booking <span class="num">${esc(ct.booking)}</span></div>` : ''}</td>
-
       <td>${esc(ct.shipper || '—')}</td>
-
       <td>${portChip(ct.port)} ${esc(pName(ct.port))}</td>
-
       <td><b>${m.Y}</b> <span class="muted small">/ ${PER}</span>${m.Y && m.Y < m.X ? ` <span class="bdg bad">ناقصة</span>` : ''}</td>
-
       <td><span class="num">${esc(ct.shipDate || '—')}</span></td><td><span class="num">${esc(ct.eta || '—')}</span></td>
-
       <td>${ct.loc != null ? `<span class="bdg loc">${LOC[ct.loc]}</span>` : '<span class="muted">—</span>'}</td>
-
       <td>${m.real ? money(m.actual) : '<span class="muted small">ما تسجلتش</span>'}</td></tr>`; }).join('');
-
   return `
-
   <div class="row" style="margin-bottom:16px"><h1>الحاويات</h1><div class="sp"></div>
-
     <button class="btn" onclick="go('group')">تجميع الحاويات</button><button class="btn pri" onclick="containerForm()">＋ حاوية جديدة</button></div>
-
   <div class="card">${rows ? `<div class="tblwrap"><table class="tbl"><thead><tr><th>رقم الحاوية</th><th>شركة الشحن</th><th>ميناء التصدير</th><th>السيارات</th><th>تاريخ الشحن</th><th>الوصول المتوقع</th><th>المرحلة</th><th>التكلفة الفعلية</th></tr></thead><tbody>${rows}</tbody></table></div>`
-
     : `<div class="empty">ما فيش حاويات بعد — من <b>تجميع الحاويات</b> حدد سيارات ميناء واكتب رقم الحاوية</div>`}</div>`;
-
 }
-
 function viewContainer(ct){
-
   const m = ctMath(ct), p = portById(ct.port);
-
   const rows = m.cars.map(c => `<tr>
-
     <td><div class="carcell">${carThumb(c)}<div><b class="click" onclick="go('car','${c.id}')">${esc(carName(c))}</b><div class="small muted"><span class="num">…${esc(vin6(c))}</span> · ${esc(c.customer || '—')}${shipPort(c) && shipPort(c) !== ct.port ? ` · ${portChip(shipPort(c))} ${esc(pName(shipPort(c)))}` : ''}</div></div></div></td>
-
     <td>${+(c.perContainer || 4)}</td><td>${money(c.oceanCharge)}</td>
-
     <td><input class="inp num shin" data-id="${c.id}" type="number" step="any" value="${esc(c.oceanCost ?? '')}" style="width:110px"> ${ct.shares && ct.shares[c.id] != null ? '<span class="small muted">يدوي</span>' : ''}</td>
-
     <td><span class="bdg loc">${LOC[c.loc || 0]}</span></td>
-
     <td><button class="btn sm danger" onclick="ctRemove('${ct.id}','${c.id}')" title="شيلها من الحاوية">×</button></td></tr>`).join('');
-
   return `
-
   <div class="chead"><button class="btn" onclick="go('containers')">→ رجوع</button>
-
     <div style="flex:1;min-width:220px"><h1>📦 <span class="num">${esc(ct.no)}</span></h1>
-
       <div class="muted">${ct.shipper ? `🚢 <b>${esc(ct.shipper)}</b> · ` : ''}${portChip(ct.port)} ${esc(pName(ct.port))}${ct.booking ? ` · Booking <span class="num">${esc(ct.booking)}</span>` : ''}</div></div>
-
     <div class="actions"><button class="btn" onclick="containerForm('${ct.id}')">تعديل</button><button class="btn danger" onclick="ctDelete('${ct.id}')">حذف</button></div></div>
-
   ${m.Y && m.Y < m.X && m.loss > 0 ? `<div class="note bad" style="margin-bottom:14px">⚠ حسبت على الزبائن حاوية <b>${m.X}</b> سيارات والحاوية فيها <b>${m.Y}</b> — الفرق خسارة عليك <b>${money(m.loss)}</b>${m.real ? '' : ' <span class="small">(حسب جدول الأسعار — سجّل التكلفة الفعلية للدقة)</span>'}</div>` : ''}
-
   <div class="kpis">
-
     <div class="card kpi"><div class="l">السيارات</div><div class="v">${m.Y}<span class="small muted"> / ${PER}</span></div></div>
-
     <div class="card kpi"><div class="l">تاريخ الشحن</div><div class="v" style="font-size:20px"><span class="num">${esc(ct.shipDate || '—')}</span></div></div>
-
     <div class="card kpi"><div class="l">الوصول المتوقع</div><div class="v" style="font-size:20px"><span class="num">${esc(ct.eta || '—')}</span></div></div>
-
     <div class="card kpi"><div class="l">البحري على الزبائن (مجموع)</div><div class="v" style="font-size:20px">${money(m.charged)}</div></div>
-
   </div>
-
   <div class="card pad" style="margin-bottom:16px">
-
     <div class="row" style="margin-bottom:8px"><h3>مرحلة الحاوية</h3><span class="small muted">تتغير معاها كل السيارات اللي فيها</span></div>
-
     <div class="steps">${LOC.map((l,i) => `<div class="step ${ct.loc != null && i < ct.loc ? 'past' : ct.loc === i ? 'cur' : ''}" onclick="ctLoc('${ct.id}',${i})"><span class="dot"></span>${l}</div>`).join('')}</div></div>
-
   <div class="card pad" style="margin-bottom:16px">
-
     <h3 style="margin-bottom:8px">التكلفة الفعلية لشركة الشحن (الحاوية كاملة)</h3>
-
     <div class="inrow" style="max-width:520px"><input class="inp num" id="ctCost" type="number" step="any" value="${esc(ct.cost ?? '')}" placeholder="${p && p.ocean[Math.min(4, Math.max(2, m.Y || 4))] || ''}">
-
       <button class="btn pri" onclick="ctSetCost('${ct.id}')">قسّمها على السيارات بالتساوي</button></div>
-
     <div class="hint">${m.Y ? `كل سيارة: ${m.real ? money(m.actual / m.Y) : '—'} · المتوقع حسب الأسعار: ${money(m.expected)}` : 'زيد سيارات للحاوية أول'}</div>
-
   </div>
-
   <div class="card" style="margin-bottom:16px">
-
     <div class="pad row" style="border-bottom:1px solid var(--line)"><h3>السيارات في الحاوية</h3><div class="sp"></div>
-
       <button class="btn sm pri" onclick="assignForm('${ct.port}','${ct.id}')">＋ زيد سيارات (من أي مكان)</button></div>
-
     ${rows ? `<div class="tblwrap"><table class="tbl"><thead><tr><th>السيارة</th><th>محسوبة على حاوية</th><th>البحري على الزبون</th><th>نصيبها من التكلفة الفعلية</th><th>المكان</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
-
       <div class="pad row"><span class="small">مجموع الأنصبة: <b>${money(m.shares)}</b>${m.real && Math.abs(m.shares - m.actual) > 0.009 ? ` <span style="color:var(--bad)">(الحاوية ${money(m.actual)} — الفرق ${money(m.actual - m.shares)})</span>` : ''}</span><div class="sp"></div>
-
         <button class="btn" onclick="ctSaveShares('${ct.id}')">حفظ الأنصبة اليدوية</button></div>`
-
       : `<div class="empty">الحاوية فاضية</div>`}
-
   </div>
-
   ${(() => { const h = (db.log || []).filter(l => l.kind === 'container' && l.ref === ct.id);
-
     return h.length ? `<div class="card"><div class="pad" style="border-bottom:1px solid var(--line)"><h3>سجل التعديلات على الحاوية</h3></div><div class="logl">${logItems(h.slice(0, 20), false)}</div></div>` : ''; })()}`;
-
 }
-
 function ctLoc(id, i){
-
   const ct = getCt(id), cars = ctCars(ct); if(ct.loc === i) return;
-
   ask(`تغيير مرحلة الحاوية إلى <b>${LOC[i]}</b>؟ تتغير معاها ${cars.length} سيارة.`, () => {
-
     const old = ct.loc; ct.loc = i;
-
     if(i === 4 && !ct.shipDate) ct.shipDate = today();
-
     cars.forEach(c => { c.loc = i; c.locAt = Object.assign({}, c.locAt, {[i]: today()}); sync(c); save(c); });
-
     saveContainer(ct, [`المرحلة: ${old != null ? LOC[old] : '—'} ← ${LOC[i]} (${cars.length} سيارة)`]); render(); toast('تم تحديث المرحلة');
-
   }, 'تغيير');
-
 }
-
 function ctSetCost(id){
-
   const ct = getCt(id), cars = ctCars(ct), v = $('#ctCost').value;
-
   if(v === '' || !cars.length) return toast(cars.length ? 'اكتب التكلفة' : 'الحاوية فاضية');
-
   const tot = r2(N(v)), each = r2(tot / cars.length); let left = tot;
-
   const old = ct.cost; ct.cost = tot; ct.shares = {};
-
   cars.forEach((c, i) => { const s = i === cars.length - 1 ? r2(left) : each; left = r2(left - s); c.oceanCost = s; c.oceanActual = true; sync(c); save(c); });
-
   saveContainer(ct, [`التكلفة الفعلية: ${old !== '' && old != null ? $t(old) : '—'} ← ${$t(tot)} — مقسومة على ${cars.length} (${$t(each)} للسيارة)`]); render(); toast('تم التقسيم');
-
 }
-
 function ctSaveShares(id){
-
   const ct = getCt(id), ch = []; ct.shares = ct.shares || {};
-
   document.querySelectorAll('.shin').forEach(inp => { const c = getCar(inp.dataset.id); if(!c || inp.value === '') return;
-
     const v = r2(N(inp.value)); if(r2(N(c.oceanCost)) === v) return;
-
     ch.push(`${carName(c)}: ${$t(c.oceanCost)} ← ${$t(v)}`); c.oceanCost = v; c.oceanActual = true; ct.shares[c.id] = v; sync(c); save(c); });
-
   if(!ch.length) return toast('ما فيش تغيير');
-
   saveContainer(ct, ch); render(); toast('تم حفظ الأنصبة');
-
 }
-
 function ctAddCar(id){
-
   const ct = getCt(id), c = getCar($('#ctAdd').value); if(!c) return;
-
   c.containerId = ct.id; c.containerNo = ct.no; c.booking = ct.booking || '';
-
   if(ct.loc != null && (c.loc || 0) < ct.loc){ c.loc = ct.loc; c.locAt = Object.assign({}, c.locAt, {[ct.loc]: today()}); }
-
   sync(c); save(c); saveContainer(ct, [`إضافة سيارة: ${carName(c)}`]); render();
-
 }
-
 function ctRemove(id, cid){
-
   const ct = getCt(id), c = getCar(cid);
-
   ask(`شيل ${esc(carName(c))} من الحاوية؟`, () => { c.containerId = null; c.containerNo = ''; c.booking = ''; if(ct.shares) delete ct.shares[cid];
-
     save(c); saveContainer(ct, [`شيل سيارة: ${carName(c)}`]); render(); }, 'شيل');
-
 }
-
 function ctDelete(id){
-
   const ct = getCt(id), cars = ctCars(ct);
-
   ask(`حذف الحاوية ${esc(ct.no)}؟${cars.length ? ` السيارات (${cars.length}) تبقى، بس تنشال منها.` : ''}`, () => {
-
     cars.forEach(c => { c.containerId = null; c.containerNo = ''; c.booking = ''; save(c); });
-
     addLog('container', id, 'حاوية ' + ct.no, 'حذف', ['حذف الحاوية' + (cars.length ? ` وشيل ${cars.length} سيارة منها` : '')]);
-
     db.containers = db.containers.filter(x => x.id !== id); fs.collection('containers').doc(id).delete().catch(fbErr); go('containers');
-
   }, 'حذف');
-
 }
-
-
 
 /* cars where the office paid the auction and the customer hasn't paid it back yet */
-
 function advList(){
-
   const list = db.cars.map(c => ({c, k:calc(c)})).filter(o => o.k.advance > 0.009).sort((a,b) => b.k.advance - a.k.advance);
-
   const tot = list.reduce((s,o) => s + o.k.advance, 0);
-
   openModal('سلف المكتب للمزاد', list.length ? `
-
     <div class="hint" style="margin:0 0 10px">سيارات دفعنا مزادها من عندنا والزبون لسّا ما رجّعهاش. اضغط على أي سيارة تفتحها.</div>
-
     <div class="tblwrap"><table class="tbl"><thead><tr><th>السيارة</th><th>الزبون</th><th>دفعنا للمزاد</th><th>السلفة الباقية</th><th>كل الباقي عليه</th></tr></thead><tbody>
-
     ${list.map(({c,k}) => `<tr class="click" onclick="closeModal();go('car','${c.id}')">
-
       <td><div class="carcell">${carThumb(c)}<div><b>${esc(carName(c))}</b><div class="small muted vinln"><span class="num">${esc(c.vin || c.lot || '')}</span></div></div></div></td>
-
       <td>${esc(c.customer || '—')}${c.phone ? `<div class="small muted"><span class="num">${esc(c.phone)}</span></div>` : ''}</td>
-
       <td>${money(k.base)}<div class="small muted"><span class="num">${esc(c.auctionPaid.date || '')}</span></div></td>
-
       <td><b class="pneg">${money(k.advance)}</b></td>
-
       <td>${money(k.rem1)}</td></tr>`).join('')}
-
     </tbody></table></div>
-
     <div class="row" style="margin-top:10px"><b>${list.length} سيارة</b><div class="sp"></div><span>المجموع: <b class="pneg">${money(tot)}</b></span></div>`
-
     : `<div class="empty">ما فيش سلف — كل الزبائن رجّعوا فلوس المزاد ✓</div>`, '', true);
-
 }
 
-
-
 /* ---------- cars list ---------- */
-
+const KIC = {
+  car:'<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
+  up:'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>'};
+function kic(k){ return `<span class="kic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${KIC[k]}</svg></span>`; }
 function viewCars(){
-
   const m = thisMonth();
-
   let due = 0, due1 = 0, due2 = 0, adv = 0, recv = 0, active = 0;
-
   db.cars.forEach(c => {
-
     const k = calc(c);
-
     if(c.stage !== 'done') active++;
-
     due1 += Math.max(k.rem1,0); due2 += c.stage !== 'buy' ? Math.max(k.rem2,0) : 0;
-
     due += Math.max(k.rem1,0) + (c.stage !== 'buy' ? Math.max(k.rem2,0) : 0);
-
     adv += k.advance;
-
     if(c.lock1 && c.lock1.startsWith(m)) recv += k.profit1;
-
     if(c.lock2 && c.lock2.startsWith(m)) recv += k.profit2;
-
   });
-
   const q = ui.q.trim().toLowerCase();
-
   const list = db.cars.filter(c => (ui.filter === 'all' || c.stage === ui.filter) &&
-
       (!q || [c.customer, c.phone, c.vin, c.lot, c.make, c.year].join(' ').toLowerCase().includes(q)))
-
     .sort((a,b) => (b.created||'').localeCompare(a.created||''));
-
   const cnt = s => db.cars.filter(c => s === 'all' || c.stage === s).length;
-
-
 
   const rows = list.map(c => carRow(c, true)).join('');
 
-
+  const nDue = db.cars.filter(c => { const k = calc(c); return (c.stage === 'buy' ? k.rem1 : c.stage === 'ship' ? k.rem2 : 0) > 0.009; }).length;
+  const nMiss = db.cars.filter(c => payCostMissing(c)).length;
+  const nAdv = db.cars.filter(c => calc(c).advance > 0).length;
+  const nWait = db.cars.filter(c => (c.loc || 0) < 4 && !c.containerId).length;
+  const now = new Date(), hr = now.getHours();
+  const chips = [
+    nDue ? `<span>💵 ${nDue} سيارات عليها باقي</span>` : '',
+    nMiss ? `<span>⚠ ${nMiss} تكلفة دفع ناقصة</span>` : '',
+    nAdv ? `<span class="click" onclick="advList()">💳 ${nAdv} سلف للمزاد ما رجعتش</span>` : '',
+    nWait ? `<span class="click" onclick="go('group')">📦 ${nWait} سيارات تستنى حاوية</span>` : ''].join('');
 
   return `
-
+  <div class="hero">
+    <div class="hk"><span><i>سيارات نشطة</i>${active}</span><span><i>زبائن</i>${db.customers.length}</span></div>
+    <div class="hd">${esc(now.toLocaleDateString('ar-u-nu-latn', {weekday:'long', day:'numeric', month:'long', year:'numeric'}))}</div>
+    <h1>${hr < 12 ? 'صباح الخير' : 'مساء الخير'}، <b>${esc(db.settings.officeName || 'مكتب السيارات')}</b></h1>
+    <div class="hs">استيراد سيارات من المزادات الأمريكية</div>
+    <div class="ha"><em>يحتاج انتباهك</em>${chips || '<span class="ok">✓ كل شي تمام</span>'}</div>
+  </div>
+  <div class="sech">نظرة عامة <small>أرقام المكتب اليوم</small></div>
   <div class="kpis">
-
-    <div class="card kpi"><div class="l">سيارات نشطة</div><div class="v">${active}<span class="small muted"> / ${db.cars.length}</span></div></div>
-
-    <div class="card kpi"><div class="l">المطلوب من الزبائن</div><div class="v" style="color:var(--bad)">${money(due)}</div>${duePills({due1:r2(due1), due2:r2(due2)})}</div>
-
-    <div class="card kpi click" onclick="advList()" title="اضغط تشوف السيارات"><div class="l">سلف المكتب للمزاد</div><div class="v">${money(adv)}</div><div class="small muted">اضغط تشوف السيارات ←</div></div>
-
-    <div class="card kpi hl kpi click" onclick="go('profits')"><div class="l">مكسب مستلم — ${monthName(m)}</div><div class="v">${money(recv)}</div></div>  </div>
-
+    <div class="card kpi">${kic('car')}<div class="l">سيارات نشطة</div><div class="v">${active}<span class="small muted"> / ${db.cars.length}</span></div></div>
+    <div class="card kpi">${kic('users')}<div class="l">المطلوب من الزبائن</div><div class="v" style="color:var(--bad)">${money(due)}</div>${duePills({due1:r2(due1), due2:r2(due2)})}</div>
+    <div class="card kpi click" onclick="advList()" title="اضغط تشوف السيارات">${kic('card')}<div class="l">سلف المكتب للمزاد</div><div class="v">${money(adv)}</div><div class="small muted">اضغط تشوف السيارات ←</div></div>
+    <div class="card kpi hl kpi click" onclick="go('profits')">${kic('up')}<div class="l">مكسب مستلم — ${monthName(m)}</div><div class="v">${money(recv)}</div></div>  </div>
+  <div class="sech">السيارات <small>اضغط على أي سيارة تفتح صفحتها</small></div>
   <div class="card">
-
     <div class="pad row" style="border-bottom:1px solid var(--line)">
-
       <div class="tabs">
-
         ${['all','buy','ship','done'].map(s => `<button class="${ui.filter === s ? 'on' : ''}" onclick="ui.filter='${s}';render()">${s === 'all' ? 'الكل' : STG[s]} <span class="small">(${cnt(s)})</span></button>`).join('')}
-
       </div>
-
       <button class="btn" onclick="go('group')">📦 تجميع الحاويات</button>
-
       <div class="sp"></div>
-
       <input class="inp search" id="q" placeholder="بحث: زبون، VIN، لوت…" value="${esc(ui.q)}" oninput="ui.q=this.value;render();const e=document.getElementById('q');e.focus();e.setSelectionRange(e.value.length,e.value.length)">
-
     </div>
-
     ${list.length ? `<div class="tblwrap"><table class="tbl">
-
       <thead><tr><th>السيارة</th><th>الزبون</th><th>المكان</th><th>المرحلة المالية</th><th>الباقي في المرحلة الحالية</th><th>المكسب</th></tr></thead>
-
       <tbody>${rows}</tbody></table></div>`
-
       : `<div class="empty">${db.cars.length ? 'لا توجد نتائج' : 'لا توجد سيارات بعد — اضغط <b>＋ سيارة جديدة</b> للبدء'}</div>`}
-
   </div>`;
-
 }
-
-
 
 function carRow(c, withCust){
-
   const k = calc(c);
-
   const cur = c.stage === 'buy' ? k.rem1 : c.stage === 'ship' ? k.rem2 : 0;
-
   const debt1 = c.stage !== 'buy' && k.rem1 > 0;
-
   return `<tr class="click" onclick="go('car','${c.id}')">
-
     <td><div class="carcell">${carThumb(c)}<div><b>${esc(carName(c))}</b><div class="small muted"><span class="num">${esc(c.vin || c.lot || '')}</span></div></div></div></td>
-
     ${withCust ? `<td>${esc(c.customer || '—')}<div class="small muted"><span class="num">${esc(c.phone||'')}</span></div></td>` : ''}
-
     <td><span class="bdg loc">${LOC[c.loc||0]}</span></td>
-
     <td><span class="bdg ${c.stage}">${STG[c.stage]}</span></td>
-
     <td>${c.stage === 'done' ? '<span class="muted">—</span>' : `<b style="color:${cur > 0 ? 'var(--bad)' : 'var(--ok)'}">${money(cur)}</b>`}
-
         ${debt1 ? `<div class="small" style="color:var(--bad)">+ دين الشراء ${money(k.rem1)}</div>` : ''}
-
         ${k.refundDue > 0 ? `<div class="small" style="color:var(--info)">راجع للزبون ${money(k.refundDue)}</div>` : ''}</td>
-
     <td class="pcell"><div class="ptot ${pcls(k.profit1 + k.profit2)}">${money(k.profit1 + k.profit2)}</div>
-
         <div class="pchips">
-
           <span class="pchip ${pcls(k.profit1)}" title="${c.lock1 ? 'مستلم' : 'متوقع'}"><i>شراء</i>${money(k.profit1)}${c.lock1 ? ' ✓' : ''}</span>
-
           <span class="pchip ${pcls(k.profit2)}" title="${c.lock2 ? 'مستلم' : 'متوقع'}"><i>شحن</i>${money(k.profit2)}${c.lock2 ? ' ✓' : ''}</span>
-
         </div>
-
         <div class="pst">${c.lock1 && c.lock2 ? 'مستلم' : c.lock1 || c.lock2 ? 'جزء مستلم' : 'متوقع'}</div>
-
         ${payCostMissing(c) ? `<div class="pwarn" title="ما تسجلتش تكلفة الدفع للمزاد — المكسب ممكن أكبر من الحقيقة">⚠ تكلفة الدفع ناقصة</div>` : ''}</td>
-
   </tr>`;
-
 }
-
 const pcls = n => n < 0 ? 'pneg' : 'ppos';   // loss red, profit green
 
-
-
 /* ---------- customers ---------- */
-
 function custStats(cu){
-
   const cars = db.cars.filter(c => c.customerId === cu.id);
-
   let due1 = 0, due2 = 0, refund = 0, active = 0;
-
   cars.forEach(c => { const k = calc(c); due1 += Math.max(k.rem1,0); due2 += c.stage !== 'buy' ? Math.max(k.rem2,0) : 0; refund += k.refundDue; if(c.stage !== 'done') active++; });
-
   due1 = r2(due1); due2 = r2(due2);
-
   return {cars, due:r2(due1 + due2), due1, due2, refund, active};
-
 }
-
 /* remaining per stage as pills: red = still owed, green = paid up */
-
 function duePills(s){
-
   const p = (t, v) => `<span class="pchip ${v > 0.009 ? 'pneg' : 'ppos'}"><i>${t}</i>${v > 0.009 ? money(v) : 'خالص ✓'}</span>`;
-
   return `<div class="pchips">${p('شراء', s.due1)}${p('شحن', s.due2)}</div>`;
-
 }
-
 function viewCustomers(){
-
   const q = (ui.cq || '').trim().toLowerCase();
-
   const all = db.customers.map(cu => ({cu, s:custStats(cu)}));
-
   const list = all.filter(o => !q || [o.cu.name, o.cu.phone, o.cu.city].join(' ').toLowerCase().includes(q))
-
     .sort((a,b) => (a.cu.name||'').localeCompare(b.cu.name||'', 'ar'));
-
   const totDue = all.reduce((s,o) => s + o.s.due, 0), totRef = all.reduce((s,o) => s + o.s.refund, 0);
-
   const tot1 = r2(all.reduce((s,o) => s + o.s.due1, 0)), tot2 = r2(all.reduce((s,o) => s + o.s.due2, 0));
-
   const unlinked = db.cars.filter(c => !c.customerId && c.customer);
-
   const rows = list.map(({cu, s}) => `<tr class="click" onclick="go('customer','${cu.id}')">
-
     <td><b>${esc(cu.name)}</b>${cu.notes ? `<div class="small muted">${esc(cu.notes.slice(0,60))}</div>` : ''}</td>
-
     <td><span class="num">${esc(cu.phone || '—')}</span></td><td>${esc(cu.city || '—')}</td>
-
     <td>${s.cars.length}${s.active ? ` <span class="small muted">(${s.active} نشطة)</span>` : ''}</td>
-
     <td class="pcell"><div class="ptot ${s.due > 0.009 ? 'pneg' : 'ppos'}">${money(s.due)}</div>${duePills(s)}</td>
-
     <td>${s.refund > 0 ? `<span style="color:var(--info)">${money(s.refund)}</span>` : '<span class="muted">—</span>'}</td></tr>`).join('');
-
   return `
-
   <div class="row" style="margin-bottom:16px"><h1>الزبائن</h1><div class="sp"></div><button class="btn pri" onclick="custForm()">＋ زبون جديد</button></div>
-
   <div class="kpis">
-
     <div class="card kpi"><div class="l">عدد الزبائن</div><div class="v">${db.customers.length}</div></div>
-
     <div class="card kpi"><div class="l">المطلوب من الزبائن</div><div class="v" style="color:var(--bad)">${money(totDue)}</div>${duePills({due1:tot1, due2:tot2})}</div>
-
     <div class="card kpi"><div class="l">راجع للزبائن</div><div class="v">${money(totRef)}</div></div>
-
   </div>
-
   ${unlinked.length ? `<div class="note info">فيه ${unlinked.length} سيارة قديمة مكتوب عليها اسم زبون بس مش مربوطة بقائمة الزبائن.
-
     <button class="btn sm" style="margin-right:8px" onclick="linkOldCustomers()">سجّلهم في الزبائن واربطهم</button></div>` : ''}
-
   <div class="card">
-
     <div class="pad row" style="border-bottom:1px solid var(--line)"><div class="sp"></div>
-
       <input class="inp search" id="cq" placeholder="بحث: اسم، هاتف، مدينة…" value="${esc(ui.cq||'')}" oninput="ui.cq=this.value;render();const e=document.getElementById('cq');e.focus();e.setSelectionRange(e.value.length,e.value.length)"></div>
-
     ${list.length ? `<div class="tblwrap"><table class="tbl"><thead><tr><th>الزبون</th><th>الهاتف</th><th>المدينة</th><th>السيارات</th><th>الباقي عليه</th><th>راجع له</th></tr></thead><tbody>${rows}</tbody></table></div>`
-
       : `<div class="empty">${db.customers.length ? 'لا توجد نتائج' : 'لا يوجد زبائن بعد — اضغط <b>＋ زبون جديد</b>'}</div>`}
-
   </div>`;
-
 }
-
 function viewCustomer(cu){
-
   const s = custStats(cu);
-
   const cars = s.cars.slice().sort((a,b) => (b.created||'').localeCompare(a.created||''));
-
   return `
-
   <div class="chead">
-
     <button class="btn" onclick="go('customers')">→ رجوع</button>
-
     <div style="flex:1;min-width:220px"><h1>${esc(cu.name)}</h1>
-
       <div class="muted">${cu.phone ? '<span class="num">' + esc(cu.phone) + '</span>' : ''}${cu.phone2 ? ' · <span class="num">' + esc(cu.phone2) + '</span>' : ''}${cu.city ? ' · ' + esc(cu.city) : ''}</div></div>
-
     <div class="actions">
-
       <button class="btn pri" onclick="carForm('','${cu.id}')">＋ سيارة لهذا الزبون</button>
-
       <button class="btn" onclick="custForm('${cu.id}')">تعديل</button>
-
       <button class="btn danger" onclick="delCust('${cu.id}')">حذف</button>
-
     </div>
-
   </div>
-
   ${cu.notes ? `<div class="note info">${esc(cu.notes)}</div>` : ''}
-
   <div class="kpis">
-
     <div class="card kpi"><div class="l">السيارات</div><div class="v">${s.cars.length}<span class="small muted"> (${s.active} نشطة)</span></div></div>
-
     <div class="card kpi"><div class="l">الباقي عليه</div><div class="v" style="color:${s.due > 0 ? 'var(--bad)' : 'var(--ok)'}">${money(s.due)}</div></div>
-
     <div class="card kpi"><div class="l">باقي الشراء (المرحلة 1)</div><div class="v ${s.due1 > 0.009 ? 'pneg' : 'ppos'}">${s.due1 > 0.009 ? money(s.due1) : 'خالص ✓'}</div></div>
-
     <div class="card kpi"><div class="l">باقي الشحن (المرحلة 2)</div><div class="v ${s.due2 > 0.009 ? 'pneg' : 'ppos'}">${s.due2 > 0.009 ? money(s.due2) : 'خالص ✓'}</div></div>
-
     <div class="card kpi"><div class="l">راجع له</div><div class="v">${money(s.refund)}</div></div>
-
   </div>
-
   <div class="card">
-
     <div class="pad" style="border-bottom:1px solid var(--line)"><h3>سياراته</h3></div>
-
     ${cars.length ? `<div class="tblwrap"><table class="tbl"><thead><tr><th>السيارة</th><th>المكان</th><th>المرحلة المالية</th><th>الباقي في المرحلة الحالية</th><th>المكسب</th></tr></thead><tbody>${cars.map(c => carRow(c, false)).join('')}</tbody></table></div>`
-
       : `<div class="empty">ما عندهش سيارات بعد</div>`}
-
   </div>`;
-
 }
-
 function custForm(id){
-
   const cu = id ? getCust(id) : {};
-
   openModal(id ? 'تعديل الزبون' : 'زبون جديد', `<form id="uf" class="grid" onsubmit="event.preventDefault();saveCustForm('${id||''}')">
-
     ${fld('الاسم','name',cu.name,'text','required','full')}
-
     ${fld('الهاتف','phone',cu.phone,'tel','style="direction:ltr;text-align:right"')}
-
     ${fld('هاتف آخر','phone2',cu.phone2,'tel','style="direction:ltr;text-align:right"')}
-
     ${fld('المدينة / العنوان','city',cu.city,'text','','full')}
-
     <div class="f full"><label>ملاحظات</label><textarea class="inp" name="notes" rows="2">${esc(cu.notes||'')}</textarea></div>
-
   </form>`, `<button class="btn pri" onclick="document.getElementById('uf').requestSubmit()">حفظ</button><button class="btn" onclick="closeModal()">إلغاء</button>`);
-
 }
-
 function saveCustForm(id){
-
   const d = formData('uf'); d.name = d.name.trim(); if(!d.name) return;
-
   let cu = id ? getCust(id) : null;
-
   if(cu){
-
     Object.assign(cu, d);
-
     db.cars.filter(c => c.customerId === cu.id).forEach(c => { c.customer = cu.name; c.phone = cu.phone; save(c); });
-
   } else { cu = Object.assign({id:uid(), created:new Date().toISOString()}, d); db.customers.push(cu); }
-
   saveCust(cu); closeModal();
-
   if(!id) go('customer', cu.id); else render();
-
   toast('تم حفظ الزبون');
-
 }
-
 function delCust(id){
-
   if(db.cars.some(c => c.customerId === id)) return toast('ما تقدرش تحذف زبون عنده سيارات — احذف سياراته أو انقلها لزبون آخر أولاً');
-
   ask('حذف هذا الزبون؟', () => { removeCust(id); go('customers'); toast('تم الحذف'); }, 'حذف');
-
 }
-
 /* cars saved before the customers list existed: group them by name + phone into customers */
-
 function linkOldCustomers(){
-
   const map = {};
-
   db.cars.filter(c => !c.customerId && c.customer).forEach(c => {
-
     const key = c.customer.trim() + '|' + (c.phone||'').trim();
-
     let cu = map[key] || db.customers.find(x => x.name === c.customer.trim() && (x.phone||'') === (c.phone||'').trim());
-
     if(!cu){ cu = {id:uid(), created:new Date().toISOString(), name:c.customer.trim(), phone:(c.phone||'').trim(), phone2:'', city:'', notes:''}; db.customers.push(cu); saveCust(cu); }
-
     map[key] = cu; c.customerId = cu.id; save(c);
-
   });
-
   render(); toast('تم ربط السيارات بالزبائن');
-
 }
-
-
 
 /* ---------- car detail ---------- */
-
 function ln(label, val, cls=''){ return `<div class="ln ${cls}"><span>${label}</span><b>${val}</b></div>`; }
 
-
-
 function viewCar(c){
-
   const k = calc(c);
-
   const y = P.yards[c.yard], port = portById(c.relocPort || c.port);
-
   const isCur1 = c.stage === 'buy', isCur2 = c.stage === 'ship';
-
   const exp1c = c.expenses.filter(e => e.stage === 'buy' && e.payer === 'customer');
-
   const exp2c = c.expenses.filter(e => e.stage === 'ship' && e.payer === 'customer');
 
-
-
   const s1status = c.lock1 ? `<span class="bdg done">✓ اكتملت ${dt(c.lock1)}</span>` : isCur1 ? `<span class="bdg buy">المرحلة الحالية</span>` : `<span class="bdg bad">نُقلت يدوياً — فيها باقي</span>`;
-
   const s2status = c.lock2 ? `<span class="bdg done">✓ اكتملت ${dt(c.lock2)}</span>` : isCur2 ? `<span class="bdg ship">المرحلة الحالية</span>` : `<span class="bdg exp">لم تبدأ</span>`;
 
-
-
   const auctionBox = c.auctionPaid
-
     ? `<div class="note ${c.auctionPaid.by === 'office' ? '' : 'info'}">
-
         ${c.auctionPaid.by === 'office'
-
           ? `💳 المكتب سدد للمزاد (${money(k.base)}) بتاريخ ${dt(c.auctionPaid.date)} — مسجلة سلفة على الزبون ضمن الباقي.`
-
           : `✓ الزبون سدد للمزاد مباشرة (${money(k.base)}) بتاريخ ${dt(c.auctionPaid.date)} — تبقى عليه العمولات والمصاريف.`}
-
         <a href="#" onclick="auctionForm('${c.id}');return false" style="color:inherit;margin-right:6px">تعديل</a></div>`
-
     : `<button class="btn pri" style="width:100%;justify-content:center;margin-top:10px" onclick="auctionForm('${c.id}')">تم السداد للمزاد</button>`;
 
-
-
   const stage1 = `
-
   <div class="card stage ${isCur1 ? 'current' : ''} ${c.lock1 ? '' : ''}">
-
     <div class="top"><div class="n">1</div><h3>الشراء</h3><div class="sp"></div>${s1status}</div>
-
     <div class="body">
-
       <div class="sec">المطلوب من الزبون</div>
-
       ${ln('سعر الشراء في المزاد', money(c.buyPrice))}
-
       ${ln('رسوم المزاد', money(c.auctionFees))}
-
       ${ln('عمولة المكتب', money(c.officeFee))}
-
       ${ln(`عمولة الحوالة (<span class="num">${+N(c.wirePct).toFixed(2)}%</span>)`, money(k.wire))}
-
       ${exp1c.map(e => ln(`${expLabel(e)}: ${esc(e.desc)}`, money(e.amount), 'sub')).join('')}
-
       ${ln('إجمالي المطلوب', money(k.req1), 'tot')}
-
       ${k.auctionByCust ? ln('مدفوع للمزاد من الزبون', money(k.auctionByCust)) : ''}
-
       ${ln('دفعات الزبون', money(k.payments1))}
-
       ${ln('الباقي', money(k.rem1), 'rem ' + (k.rem1 > 0 ? 'due' : 'zero'))}
-
       ${auctionBox}
-
       ${payCostMissing(c) ? `<div class="note bad">⚠ ما سجلتش كم كلفك الدفع للمزاد (بطاقة / PayPal / صرف). المكسب تحت ممكن يكون أكبر من الحقيقة.
-
         <button class="btn sm" style="margin-top:6px" onclick="auctionForm('${c.id}')">سجّل تكلفة الدفع</button></div>` : ''}
-
       <div class="profit ${k.profit1 < 0 ? 'loss' : c.lock1 ? 'recv' : ''}">
-
         <div class="row"><span class="small muted" style="font-weight:700">${k.profit1 < 0 ? 'خسارة المرحلة 1' : 'مكسب المرحلة 1'}</span><div class="sp"></div>
-
           ${c.lock1 ? `<span class="bdg recv">مستلم · ${dt(c.lock1)}</span>` : `<span class="bdg exp">متوقع</span>`}</div>
-
         <div class="pv ${pcls(k.profit1)}">${money(k.profit1)}</div>
-
         <div class="small muted">عمولة المكتب ${money(c.officeFee)} + الحوالة ${money(k.wire)} − مصاريف على المكتب ${money(k.offExp1)}</div>
-
       </div>
-
     </div>
-
   </div>`;
-
-
 
   const stage2 = `
-
   <div class="card stage ${isCur2 ? 'current' : ''} ${c.stage === 'buy' ? 'dim' : ''}">
-
     <div class="top"><div class="n">2</div><h3>الشحن</h3><div class="sp"></div>${s2status}</div>
-
     <div class="body">
-
       <div class="sec">المطلوب من الزبون</div>
-
       ${ln('السحب الداخلي', money(c.towCharge))}
-
       ${ln('الشحن البحري', money(c.oceanCharge))}
-
       ${exp2c.map(e => ln(`${expLabel(e)}: ${esc(e.desc)}`, money(e.amount), 'sub')).join('')}
-
       ${k.wire2 ? ln(`عمولة الحوالة (<span class="num">${+N(c.shipWirePct).toFixed(2)}%</span>)`, money(k.wire2)) : ''}
-
       ${ln('إجمالي المطلوب', money(k.req2), 'tot')}
-
       ${ln('دفعات الزبون', money(k.paid2))}
-
       ${ln('الباقي', money(k.rem2), 'rem ' + (k.rem2 > 0 ? 'due' : 'zero'))}
-
       <div class="sec">تكلفتنا الفعلية (لشركة الشحن)</div>
-
       ${ln('السحب', money(c.towCost), 'sub')}
-
       ${ln('البحري', money(c.oceanCost), 'sub')}
-
       <div class="profit ${k.profit2 < 0 ? 'loss' : c.lock2 ? 'recv' : ''}">
-
         <div class="row"><span class="small muted" style="font-weight:700">${k.profit2 < 0 ? 'خسارة المرحلة 2' : 'مكسب المرحلة 2'}</span><div class="sp"></div>
-
           ${c.lock2 ? `<span class="bdg recv">مستلم · ${dt(c.lock2)}</span>` : `<span class="bdg exp">متوقع</span>`}</div>
-
         <div class="pv ${pcls(k.profit2)}">${money(k.profit2)}</div>
-
         <div class="small muted">شحن من الزبون ${money(k.shipCharge)}${k.wire2 ? ' + الحوالة ' + money(k.wire2) : ''} − دفعناه ${money(k.actual)} − مصاريف على المكتب ${money(k.offExp2)}</div>
-
       </div>
-
       ${c.stage === 'buy' ? `<div class="note info">تبدأ تلقائياً لما يكمل الزبون المرحلة 1.</div>` : ''}
-
     </div>
-
   </div>`;
 
-
-
   const expRows = c.expenses.slice().sort((a,b) => (a.date||'').localeCompare(b.date||'')).map(e => `<tr>
-
     <td>${e.kind === 'fine' ? '<span class="bdg bad">غرامة</span> ' : ''}${esc(e.desc)}</td><td><span class="bdg ${e.stage}">${STG[e.stage]}</span></td>
-
     <td>${e.payer === 'office' ? '<span class="bdg bad">على المكتب</span>' : '<span class="bdg loc">على الزبون</span>'}</td>
-
     <td><b>${money(e.amount)}</b></td><td class="num">${esc(e.date)}</td>
-
     <td style="text-align:end;white-space:nowrap"><button class="btn sm" onclick="expenseForm('${c.id}','${e.id}')">تعديل</button>
-
       <button class="btn sm danger" onclick="delExpense('${c.id}','${e.id}')">حذف</button></td></tr>`).join('');
 
-
-
   const payRows = c.payments.slice().sort((a,b) => (a.date||'').localeCompare(b.date||'')).map(p => `<tr>
-
     <td class="num">${esc(p.date)}</td><td><span class="bdg ${p.stage}">${STG[p.stage]}</span></td>
-
     <td><b>${money(p.amount)}</b></td><td>${esc(p.method)}</td><td class="muted">${esc(p.note)}</td>
-
     <td style="text-align:end;white-space:nowrap"><button class="btn sm" onclick="paymentForm('${c.id}','${p.id}')">تعديل</button>
-
       <button class="btn sm danger" onclick="delPayment('${c.id}','${p.id}')">حذف</button></td></tr>`).join('');
 
-
-
   const refRows = (c.refunds||[]).map(r => `<tr>
-
     <td class="num">${esc(r.date)}</td><td><b>${money(r.amount)}</b></td><td class="muted">${esc(r.note||'')}</td>
-
     <td>${r.returned ? `<span class="bdg done">تم الإرجاع ${dt(r.returned)}</span>` : `<span class="bdg bad">لم يُرجع</span>`}</td>
-
     <td style="text-align:end;white-space:nowrap">${r.returned ? '' : `<button class="btn sm" onclick="markReturned('${c.id}','${r.id}')">تم الإرجاع</button>`}
-
       <button class="btn sm danger" onclick="delRefund('${c.id}','${r.id}')">حذف</button></td></tr>`).join('');
 
-
-
   return `
-
   <div class="chead">
-
     <button class="btn" onclick="go('cars')">→ رجوع</button>
-
     <div style="flex:1;min-width:220px">
-
       <h1>${esc(carName(c))}</h1>
-
       <div class="muted">${c.customerId && getCust(c.customerId) ? `<a class="lnk" href="#" onclick="go('customer','${c.customerId}');return false">${esc(c.customer)}</a>` : esc(c.customer || 'بدون زبون')} ${c.phone ? '· <span class="num">' + esc(c.phone) + '</span>' : ''}</div>
-
     </div>
-
     <div class="actions">
-
       <button class="btn pri" onclick="paymentForm('${c.id}')">＋ دفعة من الزبون</button>
-
       <button class="btn" onclick="expenseForm('${c.id}')">＋ مصروف</button>
-
       <button class="btn" onclick="printInvoice('${c.id}')">🧾 فاتورة الزبون</button>
-
       ${c.vin ? `<button class="btn" onclick="trackLinkForm('${c.id}')">🔗 رابط التتبع</button>` : ''}
-
       <button class="btn" onclick="carForm('${c.id}')">تعديل</button>
-
       <button class="btn danger" onclick="delCar('${c.id}')">حذف</button>
-
     </div>
-
   </div>
-
-
 
   <div class="card pad ${c.img ? 'carinfo' : ''}" style="margin-bottom:16px">
-
     ${c.img ? `<div><img class="photo" id="mainPhoto" src="${esc(c.img)}" referrerpolicy="no-referrer" alt="" onerror="this.outerHTML='<div class=&quot;photo&quot; style=&quot;display:flex;align-items:center;justify-content:center;font-size:40px&quot;>🚗</div>'">
-
       ${(c.photos || []).length > 1 ? `<div class="gal">${c.photos.map(u => `<img src="${esc(u)}" loading="lazy" referrerpolicy="no-referrer" alt="" onclick="const m=document.getElementById('mainPhoto');if(m)m.src=this.src" onerror="this.remove()">`).join('')}</div>` : ''}
-
       ${c.link ? `<a class="lnk small" href="${esc(c.link)}" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px">🔗 فتح صفحة السيارة</a>` : ''}</div>` : ''}
-
     <div>
-
     ${!c.img && c.link ? `<a class="lnk small" href="${esc(c.link)}" target="_blank" rel="noopener" style="display:inline-block;margin-bottom:10px">🔗 فتح صفحة السيارة</a>` : ''}
-
     <div class="info">
-
       <div><div class="l">VIN</div><div class="v num">${esc(c.vin || '—')}</div></div>
-
       <div><div class="l">رقم اللوت</div><div class="v num">${esc(c.lot || '—')}</div></div>
-
       <div><div class="l">المزاد</div><div class="v">${esc(c.auction || '—')}</div></div>
-
       <div><div class="l">الساحة</div><div class="v">${y ? esc(yardLabel(y)) : '—'}</div></div>
-
       <div><div class="l">ميناء الشحن</div><div class="v">${port ? esc(port.name) : '—'}${c.relocPort && c.port ? `<div class="small muted">منقولة من ${esc(pName(c.port))}</div>` : ''}</div></div>
-
       <div><div class="l">تاريخ الشراء</div><div class="v num">${esc(c.date || '—')}</div></div>
-
       ${c.containerId || c.containerNo ? `<div><div class="l">الحاوية</div><div class="v">${c.containerId && getCt(c.containerId) ? `<a class="lnk" href="#" onclick="go('container','${c.containerId}');return false">📦 <span class="num">${esc(c.containerNo)}</span></a>` : `<span class="num">${esc(c.containerNo)}</span>`}${c.booking ? `<div class="small muted">Booking <span class="num">${esc(c.booking)}</span></div>` : ''}</div></div>` : ''}
-
     </div>
-
     ${c.notes ? `<div class="note info" style="margin-top:12px">${esc(c.notes)}</div>` : ''}
-
     </div>
-
   </div>
-
-
 
   <div class="card pad" style="margin-bottom:16px">
-
     <div class="row" style="margin-bottom:8px"><h3>مكان السيارة</h3><span class="small muted">(اضغط لتغييره — منفصل عن المرحلة المالية)</span></div>
-
     <div class="steps">${LOC.map((l,i) => `<div class="step ${i < (c.loc||0) ? 'past' : i === (c.loc||0) ? 'cur' : ''}" onclick="setLoc('${c.id}',${i})"><span class="dot"></span>${l}</div>`).join('')}</div>
-
   </div>
-
-
 
   <div class="card pad row">
-
     <h3>المرحلة المالية</h3>
-
     <div class="fin">
-
       <span class="s ${c.lock1 ? 'ok' : isCur1 ? 'on' : ''}">شراء</span><span class="arr">←</span>
-
       <span class="s ${c.lock2 ? 'ok' : isCur2 ? 'on' : ''}">شحن</span><span class="arr">←</span>
-
       <span class="s ${c.stage === 'done' ? 'ok' : ''}">مكتملة</span>
-
     </div>
-
     <div class="sp"></div>
-
     ${c.stage === 'buy' ? `<button class="btn" onclick="manualShip('${c.id}')">نقل يدوي لمرحلة الشحن</button>` : ''}
-
     ${c.manualShip && !c.lock1 && c.stage === 'ship' ? `<button class="btn" onclick="undoManualShip('${c.id}')">رجوع لمرحلة الشراء</button>` : ''}
-
   </div>
-
   ${k.refundDue > 0 ? `<div class="note info">💵 راجع للزبون: <b>${money(k.refundDue)}</b> — مسجل أسفل الصفحة.</div>` : ''}
-
-
 
   <div class="stages">${stage1}${stage2}</div>
 
-
-
   <div class="card" style="margin-bottom:16px">
-
     <div class="pad row" style="border-bottom:1px solid var(--line)"><h3>المصاريف</h3><span class="small muted">على المكتب: ما تطلعش في فاتورة الزبون وتنقص من المكسب</span><div class="sp"></div><button class="btn sm" onclick="expenseForm('${c.id}')">＋ مصروف</button></div>
-
     ${expRows ? `<div class="tblwrap"><table class="tbl"><thead><tr><th>الوصف</th><th>المرحلة</th><th>على</th><th>المبلغ</th><th>التاريخ</th><th></th></tr></thead><tbody>${expRows}</tbody></table></div>` : `<div class="empty">لا توجد مصاريف</div>`}
-
   </div>
-
-
 
   <div class="card" style="margin-bottom:16px">
-
     <div class="pad row" style="border-bottom:1px solid var(--line)"><h3>دفعات الزبون</h3><div class="sp"></div><button class="btn sm" onclick="paymentForm('${c.id}')">＋ دفعة</button></div>
-
     ${payRows ? `<div class="tblwrap"><table class="tbl"><thead><tr><th>التاريخ</th><th>المرحلة</th><th>المبلغ</th><th>الطريقة</th><th>ملاحظة</th><th></th></tr></thead><tbody>${payRows}</tbody></table></div>` : `<div class="empty">لا توجد دفعات</div>`}
-
   </div>
-
-
 
   ${refRows ? `<div class="card"><div class="pad" style="border-bottom:1px solid var(--line)"><h3>مبالغ راجعة للزبون</h3></div>
-
     <div class="tblwrap"><table class="tbl"><thead><tr><th>التاريخ</th><th>المبلغ</th><th>ملاحظة</th><th>الحالة</th><th></th></tr></thead><tbody>${refRows}</tbody></table></div></div>` : ''}
-
   ${(() => { const h = (db.log || []).filter(l => l.kind === 'car' && l.ref === c.id);
-
     return `<div class="card" style="margin-top:16px"><div class="pad row" style="border-bottom:1px solid var(--line)"><h3>سجل التعديلات على السيارة</h3><span class="small muted">مين عدّل شنو ووقتاش</span></div>
-
       ${h.length ? `<div class="logl">${logItems(h.slice(0, 30), false)}</div>` : `<div class="empty">ما فيش تعديلات مسجلة على هذي السيارة بعد</div>`}</div>`; })()}
-
   `;
-
 }
-
-
 
 /* ---------- profits ---------- */
-
 function profitRows(){
-
   const rows = [];
-
   db.cars.forEach(c => { const k = calc(c);
-
     rows.push({c, stage:'buy', amount:k.profit1, date:c.lock1});
-
     rows.push({c, stage:'ship', amount:k.profit2, date:c.lock2});
-
   });
-
   return rows;
-
 }
-
 function viewProfits(){
-
   const all = profitRows(), m = ui.allMonths ? '' : ui.month;
-
   const recv = all.filter(r => r.date && (!m || r.date.startsWith(m)));
-
   const sum = a => a.reduce((s,r) => s + r.amount, 0);
-
   const sets = {
-
     recv:  {t:'مكسب مستلم', rows:recv},
-
     recv1: {t:'مستلم — مرحلة الشراء', rows:recv.filter(r => r.stage === 'buy')},
-
     recv2: {t:'مستلم — مرحلة الشحن', rows:recv.filter(r => r.stage === 'ship')},
-
   };
-
   const card = (key, hl) => `<div class="card kpi click ${hl ? 'hl' : ''} ${ui.drill === key ? 'sel' : ''}" onclick="ui.drill='${key}';render()">
-
       <div class="l">${sets[key].t}</div><div class="v">${money(sum(sets[key].rows))}</div><div class="small muted">${sets[key].rows.length} مرحلة</div></div>`;
-
   const d = sets[ui.drill] || sets.recv;
-
   const drows = d.rows.slice().sort((a,b) => (b.date||'').localeCompare(a.date||'')).map(r => `<tr class="click" onclick="go('car','${r.c.id}')">
-
       <td><div class="carcell">${carThumb(r.c)}<div><b>${esc(carName(r.c))}</b><div class="small muted vinln"><span class="num">${esc(r.c.vin||r.c.lot||'')}</span></div></div></div></td><td>${esc(r.c.customer||'—')}</td>
-
       <td><span class="bdg ${r.stage}">${STG[r.stage]}</span></td>
-
       <td class="num">${r.date ? esc(r.date) : '<span class="muted">لم تكتمل</span>'}</td>
-
       <td><b class="${pcls(r.amount)}">${money(r.amount)}</b></td></tr>`).join('');
 
-
-
   // last 12 months
-
   const months = []; const now = new Date();
-
   for(let i = 11; i >= 0; i--){ const dt = new Date(now.getFullYear(), now.getMonth() - i, 1); months.push(dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0')); }
-
   const mv = months.map(mm => ({mm, v: sum(all.filter(r => r.date && r.date.startsWith(mm)))}));
-
   const max = Math.max(1, ...mv.map(x => x.v));
 
-
-
   return `
-
   <div class="row" style="margin-bottom:16px">
-
     <h1>الأرباح</h1><div class="sp"></div>
-
     <label class="row small" style="gap:6px"><input type="checkbox" ${ui.allMonths ? 'checked' : ''} onchange="ui.allMonths=this.checked;render()" style="accent-color:var(--brand)"> كل الشهور</label>
-
     <input type="month" class="inp" style="width:auto" value="${ui.month}" ${ui.allMonths ? 'disabled' : ''} onchange="ui.month=this.value||thisMonth();render()">
-
   </div>
-
   <div class="small muted" style="margin:-6px 0 10px">المستلم حسب تاريخ قفل المرحلة${m ? ' — ' + monthName(m) : ''}</div>
-
   <div class="kpis">${card('recv',true)}${card('recv1')}${card('recv2')}</div>
-
   <div class="card" style="margin-bottom:16px">
-
     <div class="pad row" style="border-bottom:1px solid var(--line)"><h3>${d.t}</h3><span class="muted small">— السيارات اللي وراه</span><div class="sp"></div><b>${money(sum(d.rows))}</b></div>
-
     ${drows ? `<div class="tblwrap"><table class="tbl"><thead><tr><th>السيارة</th><th>الزبون</th><th>المرحلة</th><th>تاريخ القفل</th><th>المكسب</th></tr></thead><tbody>${drows}</tbody></table></div>` : `<div class="empty">لا يوجد</div>`}
-
   </div>
-
   <div class="card pad">
-
     <h3 style="margin-bottom:10px">المكسب المستلم — آخر 12 شهر</h3>
-
     <div class="bars">${mv.map(x => `<div class="br" style="cursor:pointer" onclick="ui.month='${x.mm}';ui.allMonths=false;ui.drill='recv';render()"><span class="small">${monthName(x.mm)}</span><div class="track"><div class="fill" style="width:${Math.max(0, x.v/max*100)}%"></div></div><b style="text-align:end">${money(x.v)}</b></div>`).join('')}</div>
-
   </div>`;
-
 }
-
-
 
 /* ---------- map ---------- */
-
 function viewMap(){
-
   const k = db.settings.perContainer || 4;
-
   const sel = ui.mapState;
-
   const paths = P.states.map(s => `<path d="${s.d}" fill="${PORT_COLORS[s.p] || '#ddd'}" class="${sel === s.a ? 'sel' : ''}" onclick="ui.mapState='${s.a}';render()"><title>${esc(s.n)} → ${esc(s.p)}</title></path>`).join('');
-
   const labels = P.states.map(s => s.cx ? `<text x="${s.cx}" y="${s.cy}" text-anchor="middle">${s.a}</text>` : '').join('');
-
   const ports = P.ports.map(p => `<g><circle cx="${p.x}" cy="${p.y}" r="7" fill="#2A1D13" stroke="#fff" stroke-width="2.5"/><text x="${p.x}" y="${p.y - 11}" text-anchor="middle" style="font-size:11px;font-weight:700">${p.id}</text></g>`).join('');
-
   let side;
-
   if(sel){
-
     const st = P.states.find(s => s.a === sel);
-
     const yards = P.yards.map((y,i) => ({y,i})).filter(o => o.y.s === sel);
-
     side = `<div class="row" style="margin-bottom:10px"><h3>${esc(st ? st.n : sel)}</h3><div class="sp"></div><button class="btn sm" onclick="ui.mapState=null;render()">كل المواني</button></div>
-
       <div class="tblwrap"><table class="tbl"><thead><tr><th>الساحة</th><th>ميناء</th><th>سحب (زبون)</th><th>بحري/سيارة</th></tr></thead><tbody>
-
       ${yards.map(o => { const q = quote(o.i, null, k); return `<tr><td>${esc(o.y.n)}<div class="small muted">${o.y.a}</div></td><td>${o.y.p}</td>
-
         <td>${q.towCharge == null ? '<span class="bdg exp">بانتظار السعر</span>' : money(q.towCharge) + `<div class="small muted">تكلفة ${money(q.towCost)}</div>`}</td>
-
         <td>${money(q.oceanCharge)}<div class="small muted">تكلفة ${money(q.oceanCost)}</div></td></tr>`; }).join('') || '<tr><td colspan="4" class="empty">لا توجد ساحات</td></tr>'}
-
       </tbody></table></div>`;
-
   } else {
-
     side = `<h3 style="margin-bottom:10px">الشحن البحري لكل سيارة (للزبون)</h3>
-
       <div class="tblwrap"><table class="tbl"><thead><tr><th>الميناء</th><th>2</th><th>3</th><th>4</th></tr></thead><tbody>
-
       ${P.ports.map(p => `<tr><td><b>${p.id}</b><div class="small muted">${esc(p.name)}</div></td>${[2,3,4].map(n => `<td>${money(p.ocean[n]/n + (P.markup.ocean_per_car||0))}</td>`).join('')}</tr>`).join('')}
-
       </tbody></table></div>
-
       <div class="small muted" style="margin-top:8px">الأعمدة = عدد السيارات في الحاوية. الأسعار شاملة هامش المكتب (سحب +${money(P.markup.tow)}، بحري +${money(P.markup.ocean_per_car)} للسيارة). تحديث الأسعار: ${esc(P.updated||'')}</div>
-
       <div class="small muted" style="margin-top:6px">اضغط على أي ولاية لعرض أسعار السحب من ساحاتها.</div>`;
-
   }
-
   return `<div class="row" style="margin-bottom:14px"><h1>خريطة المواني</h1></div>
-
   <div class="mapgrid">
-
     <div class="card pad map">
-
       <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg">${paths}${labels}${ports}</svg>
-
       <div class="legend" style="margin-top:10px">${P.ports.map(p => `<span><i style="background:${PORT_COLORS[p.id]}"></i>${esc(p.name)}</span>`).join('')}</div>
-
     </div>
-
     <div class="card pad">${side}</div>
-
   </div>`;
-
 }
-
-
 
 /* ===================== modal ===================== */
-
 function openModal(title, body, foot, wide){
-
   $('#modalRoot').innerHTML = `<div class="mbg" onmousedown="if(event.target===this)closeModal()">
-
     <div class="modal ${wide ? 'wide' : ''}"><div class="mh"><h2>${title}</h2><div class="sp"></div><button class="btn ghost sm" onclick="closeModal()">✕</button></div>
-
     <div class="mb">${body}</div>${foot ? `<div class="mf">${foot}</div>` : ''}</div></div>`;
-
   const f = $('#modalRoot input:not([type=hidden]):not([type=radio]):not([type=checkbox]), #modalRoot select'); if(f) setTimeout(() => f.focus(), 30);
-
 }
-
 function closeModal(){ $('#modalRoot').innerHTML = ''; }
-
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
-
 function ask(msg, yes, label='تأكيد'){
-
   window._ask = yes;
-
   openModal('تأكيد', `<div>${msg}</div>`, `<button class="btn pri" onclick="closeModal();window._ask()">${label}</button><button class="btn" onclick="closeModal()">إلغاء</button>`);
-
 }
-
 const fld = (label, name, val, type='text', extra='', cls='') => `<div class="f ${cls}"><label>${label}</label><input class="inp" name="${name}" type="${type}" value="${esc(val ?? '')}" ${type === 'number' ? 'step="any"' : ''} ${extra}></div>`;
-
 const formData = id => Object.fromEntries(new FormData(document.getElementById(id)).entries());
 
-
-
 /* ---------- car form ---------- */
-
 function carForm(id, custId){
-
   const s = db.settings;
-
   const c = id ? getCar(id) : {date:today(), wirePct:s.wirePct, officeFee:s.officeFee, perContainer:s.perContainer, auction:'Copart', customerId:custId||''};
-
   const y = P.yards[c.yard];
-
   const legacy = c.customer && !getCust(c.customerId);
-
   const custs = db.customers.slice().sort((a,b) => (a.name||'').localeCompare(b.name||'', 'ar'));
-
   const body = `<form id="cf" class="grid g3" onsubmit="event.preventDefault();saveCar('${id||''}')">
-
     <div class="fsec">الزبون</div>
-
     <div class="f" style="grid-column:span 2"><label>الزبون</label>
-
       <div class="inrow"><select class="inp" name="customerId" onchange="cfCust()">
-
         <option value="">— اختر الزبون —</option>
-
         ${legacy ? `<option value="__legacy" selected>${esc(c.customer)} (مش مسجل في الزبائن)</option>` : ''}
-
         ${custs.map(cu => `<option value="${cu.id}" ${c.customerId === cu.id ? 'selected' : ''}>${esc(cu.name)}${cu.phone ? ' — ' + esc(cu.phone) : ''}</option>`).join('')}
-
       </select><button type="button" class="btn" onclick="cfNewCust()" style="white-space:nowrap">＋ زبون جديد</button></div>
-
       <div class="hint" id="custHint"></div></div>
-
     ${fld('تاريخ الشراء','date',c.date,'date')}
-
     <div id="cfNew" class="full grid g3" style="display:none;grid-column:1/-1;background:var(--brand-soft);padding:12px;border-radius:12px">
-
       <input type="hidden" name="newOpen" value="">
-
       ${fld('اسم الزبون الجديد','newName','','text')}
-
       ${fld('الهاتف','newPhone','','tel','style="direction:ltr;text-align:right"')}
-
       ${fld('المدينة','newCity','','text')}
-
     </div>
-
     <div class="fsec">السيارة</div>
-
     <div class="f"><label>رقم الهيكل (VIN)</label>
-
       <div class="inrow"><input class="inp" name="vin" value="${esc(c.vin||'')}" maxlength="17" style="direction:ltr;text-transform:uppercase" placeholder="17 خانة" oninput="if(this.value.trim().length===17)vinLookup()"><button type="button" class="btn" onclick="vinLookup(true)" title="جيب اسم السيارة من رقم الهيكل">🔍</button></div>
-
       <div class="hint" id="vinHint">اكتب رقم الهيكل ويطلع اسم السيارة تلقائياً</div></div>
-
     ${fld('السنة','year',c.year,'text','placeholder="2021"')}
-
     ${fld('النوع والموديل','make',c.make,'text','placeholder="Toyota Camry"')}
-
     ${fld('رقم اللوت','lot',c.lot,'text','style="direction:ltr"')}
-
     <div class="f"><label>المزاد</label><select class="inp" name="auction">${['Copart','IAAI','Manheim','أخرى'].map(a => `<option ${c.auction === a ? 'selected' : ''}>${a}</option>`).join('')}</select></div>
-
     <div class="f"></div>
-
     <div class="fsec">صورة السيارة</div>
-
     <div class="f full"><label>رابط السيارة (صفحة المزاد أو رابط الصورة)</label>
-
       <div class="inrow"><input class="inp" name="link" value="${esc(c.link||'')}" style="direction:ltr" placeholder="https://..." onchange="imgFromLink()"><button type="button" class="btn" onclick="imgFromLink(true)" style="white-space:nowrap">جيب الصورة</button></div>
-
       <div class="hint" id="imgHint"></div></div>
-
     <div class="f full"><div class="imgprev">
-
       <img id="imgPrev" src="${esc(c.img||'')}" referrerpolicy="no-referrer" alt="" style="${c.img ? '' : 'display:none'}">
-
       <label class="btn">📷 ارفع صورة من الجهاز<input type="file" accept="image/*" style="display:none" onchange="imgUpload(this)"></label>
-
       <button type="button" class="btn sm danger" id="imgDel" onclick="imgSet('')" style="${c.img ? '' : 'display:none'}">إزالة الصورة</button>
-
       <input type="hidden" name="img" value="${esc(c.img||'')}"></div></div>
-
     <div class="fsec">المرحلة 1: الشراء</div>
-
     ${fld('سعر الشراء ($)','buyPrice',c.buyPrice,'number','oninput="cfWire()"')}
-
     ${fld('رسوم المزاد ($)','auctionFees',c.auctionFees,'number','oninput="cfWire()"')}
-
     ${fld('عمولة المكتب ($)','officeFee',c.officeFee,'number')}
-
     <div class="f">${''}<label>عمولة الحوالة (%)</label><input class="inp" name="wirePct" type="number" step="any" value="${esc(c.wirePct ?? 1.5)}" oninput="cfWire()"><div class="hint" id="wireHint"></div></div>
-
     <div class="fsec">المرحلة 2: الشحن (من خريطة المواني — قابلة للتعديل)</div>
-
     <div class="f full"><label>الساحة</label><input class="inp" name="yard" list="yardsList" value="${y ? esc(yardLabel(y)) : ''}" placeholder="اكتب اسم الساحة أو الولاية… مثلاً Dallas" onchange="cfYard()" style="direction:ltr;text-align:right">
-
       <datalist id="yardsList">${P.yards.map(yy => `<option value="${esc(yardLabel(yy))}">`).join('')}</datalist><div class="hint" id="yardHint"></div></div>
-
     <div class="f"><label>ميناء الساحة</label><select class="inp" name="port" onchange="cfPortChanged()"><option value="">—</option>${P.ports.map(p => `<option value="${p.id}" ${c.port === p.id ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></div>
-
     <div class="f"><label>سيارات في الحاوية</label>
-
       <input type="hidden" name="perContainer" value="${+(c.perContainer||4)}">
-
       <div class="seg" id="pcSeg">${[2,3,4].map(n => `<button type="button" class="${+(c.perContainer||4) === n ? 'on' : ''}" onclick="cfPer(${n})">${n}</button>`).join('')}</div>
-
       <div class="hint" id="perHint"></div></div>
-
     <div class="f"></div>
-
     ${fld('السحب الداخلي — على الزبون ($)','towCharge',c.towCharge,'number')}
-
     ${fld('الشحن البحري — على الزبون ($)','oceanCharge',c.oceanCharge,'number')}
-
     ${fld('عمولة الحوالة على الشحن (%)','shipWirePct',c.shipWirePct || 0,'number')}
-
     ${fld('السحب — دفعناه فعلاً ($)','towCost',c.towCost,'number')}
-
     ${fld('البحري — دفعناه فعلاً ($)','oceanCost',c.oceanCost,'number')}
-
     <div class="f"></div>
-
     <div class="fsec">نقل ومصاريف إضافية</div>
-
     <div class="f full xbox">
-
       <div class="hint" style="margin:0 0 10px">المصاريف اللي على الزبون تنضاف لإجمالي الزبون وتطلع في الفاتورة. هذي تكاليف نمررها للزبون، ما تنحسبش ربح.</div>
-
       <label>نقل السيارة إلى موقع آخر لـ Atlantic Express</label>
-
       <select class="inp" name="relocPort" id="relocSel" onchange="cfReloc()"></select>
-
       <div class="xroute" id="relocHint"></div>
-
       <div id="xRows"></div>
-
       <div class="row" style="margin-top:10px;gap:6px">
-
         <button type="button" class="btn sm" onclick="xQuick('move')">＋ نقل من مكان لمكان</button>
-
         <button type="button" class="btn sm" onclick="xQuick('fedex')">＋ FedEx</button>
-
         <button type="button" class="btn sm" onclick="xQuick('storage')">＋ تخزين</button>
-
         <button type="button" class="btn sm" onclick="xQuick('other')">＋ مصروف آخر</button>
-
       </div>
-
       <div class="xtot" id="xTot"></div>
-
     </div>
-
     <div class="f full"><label>ملاحظات</label><textarea class="inp" name="notes" rows="2">${esc(c.notes||'')}</textarea></div>
-
   </form>`;
-
   openModal(id ? 'تعديل السيارة' : 'سيارة جديدة', body, `<button class="btn pri" onclick="document.getElementById('cf').requestSubmit()">حفظ</button><button class="btn" onclick="closeModal()">إلغاء</button>`, true);
-
   window._cfId = id || ''; vinLookup.last = c.vin || null;
-
   cfWire(); cfCust();
-
   xInit(c); cfPerHint();
-
   const im = $('#imgPrev'); im.onerror = () => { if(im.getAttribute('src')) $('#imgHint').textContent = 'الصورة ما فتحتش من هذا الرابط — جرّب رابط آخر أو ارفعها من الجهاز'; };
-
 }
-
 function cfEl(n){ return document.querySelector(`#cf [name="${n}"]`); }
-
 function cfCust(){
-
   const cu = getCust(cfEl('customerId').value);
-
   $('#custHint').innerHTML = cu ? [cu.phone && `<span class="num">${esc(cu.phone)}</span>`, cu.city && esc(cu.city)].filter(Boolean).join(' · ') : (db.customers.length ? '' : 'ما فيش زبائن مسجلين — اضغط ＋ زبون جديد');
-
   if(cfEl('customerId').value){ $('#cfNew').style.display = 'none'; cfEl('newOpen').value = ''; }
-
 }
-
 function cfNewCust(){
-
   const box = $('#cfNew'), open = box.style.display === 'none';
-
   box.style.display = open ? '' : 'none'; cfEl('newOpen').value = open ? '1' : '';
-
   if(open){
-
     const sel = cfEl('customerId');
-
     if(sel.value === '__legacy'){ const c = getCar(window._cfId); if(c){ cfEl('newName').value = c.customer || ''; cfEl('newPhone').value = c.phone || ''; } }
-
     sel.value = ''; $('#custHint').textContent = ''; cfEl('newName').focus();
-
   }
-
 }
-
 /* VIN → year / make / model from the free NHTSA decoder (works for cars made for the US market) */
-
 async function vinLookup(force){
-
   const el = cfEl('vin'), h = $('#vinHint');
-
   const v = el.value.trim().toUpperCase().replace(/[^A-Z0-9]/g, ''); el.value = v;
-
   if(v.length !== 17){ if(force) h.textContent = `رقم الهيكل لازم يكون 17 خانة (كتبت ${v.length})`; return; }
-
   if(vinLookup.last === v && !force) return; vinLookup.last = v;
-
   h.textContent = 'جاري البحث…';
-
   try{
-
     const r = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/${v}?format=json`);
-
     const x = (await r.json()).Results[0];
-
     if(!x || !x.Make){ h.textContent = 'ما لقيناش بيانات لهذا الرقم — تأكد منه أو اكتب الاسم يدوياً'; return; }
-
     const make = x.Make.split(/\s+/).map(w => w.length <= 3 ? w : w[0] + w.slice(1).toLowerCase()).join(' ');
-
     const name = [make, x.Model, x.Trim && x.Trim.length <= 14 ? x.Trim : ''].filter(Boolean).join(' ');
-
     if(x.ModelYear) cfEl('year').value = x.ModelYear;
-
     cfEl('make').value = name;
-
     h.innerHTML = `✓ <b>${esc(x.ModelYear)} ${esc(name)}</b>${x.BodyClass ? ' · ' + esc(x.BodyClass) : ''}${x.DisplacementL ? ' · <span class="num">' + esc((+x.DisplacementL).toFixed(1)) + 'L</span>' : ''}`;
-
   }catch(e){ vinLookup.last = null; h.textContent = 'تعذر الاتصال بخدمة رقم الهيكل — تأكد من الإنترنت'; }
-
 }
-
 /* car photo: a direct image link, a page link (photo read from the page's preview image), or an upload */
-
 function imgSet(v){
-
   cfEl('img').value = v || '';
-
   const im = $('#imgPrev'); im.style.display = v ? '' : 'none'; if(v) im.src = v; else im.removeAttribute('src');
-
   $('#imgDel').style.display = v ? '' : 'none';
-
 }
-
 function canLoadImage(u){
-
   return new Promise(res => { const i = new Image(); const t = setTimeout(() => res(false), 7000);
-
     i.referrerPolicy = 'no-referrer'; i.onload = () => { clearTimeout(t); res(i.naturalWidth > 40); }; i.onerror = () => { clearTimeout(t); res(false); }; i.src = u; });
-
 }
-
 async function imgFromLink(force){
-
   const u = cfEl('link').value.trim(), h = $('#imgHint');
-
   if(!/^https?:\/\//i.test(u)){ if(force || u) h.textContent = 'الصق رابط يبدأ بـ https://'; return; }
-
   h.textContent = 'جاري جلب الصورة…';
-
   if(await canLoadImage(u)){ imgSet(u); h.textContent = '✓ تمت إضافة الصورة'; return; }
-
   try{
-
     const j = await (await fetch('https://api.microlink.io/?url=' + encodeURIComponent(u))).json();
-
     const im = j.status === 'success' && j.data && j.data.image && j.data.image.url;
-
     if(im && await canLoadImage(im)){ imgSet(im); h.textContent = '✓ تم جلب الصورة من الصفحة'; return; }
-
   }catch(e){}
-
   h.innerHTML = 'ما قدرناش نجيب صورة من هذي الصفحة. افتحها، كليك يمين على صورة السيارة ← <b>نسخ عنوان الصورة</b> (Copy image address) والصقه هنا، أو ارفع الصورة من الجهاز. الرابط يبقى محفوظ.';
-
 }
-
 function imgUpload(inp){
-
   const f = inp.files[0]; if(!f) return;
-
   const rd = new FileReader();
-
   rd.onload = () => { const i = new Image(); i.onload = () => {
-
     const sc = Math.min(1, 900 / Math.max(i.width, i.height));
-
     const cv = document.createElement('canvas'); cv.width = Math.round(i.width * sc); cv.height = Math.round(i.height * sc);
-
     cv.getContext('2d').drawImage(i, 0, 0, cv.width, cv.height);
-
     imgSet(cv.toDataURL('image/jpeg', 0.72)); $('#imgHint').textContent = '✓ تمت إضافة الصورة من الجهاز';
-
   }; i.src = rd.result; };
-
   rd.readAsDataURL(f);
-
 }
-
 function cfWire(){
-
   const b = N(cfEl('buyPrice').value) + N(cfEl('auctionFees').value);
-
   $('#wireHint').innerHTML = `= ${money(b * N(cfEl('wirePct').value) / 100)}`;
-
 }
-
 function cfYard(){
-
   const i = YARD_IDX[cfEl('yard').value];
-
   if(i == null){ $('#yardHint').textContent = cfEl('yard').value ? 'ساحة غير موجودة في الخريطة — أدخل الأسعار يدوياً' : ''; return; }
-
   const y = P.yards[i]; cfEl('port').value = y.p;
-
   const q = quote(i, y.p, +cfEl('perContainer').value);
-
   if(q.towCharge != null){ cfEl('towCharge').value = q.towCharge; cfEl('towCost').value = q.towCost; $('#yardHint').textContent = `ميناء ${y.p} · سحب ${q.towCharge}$ (تكلفة ${q.towCost}$)`; }
-
   else { $('#yardHint').textContent = `ميناء ${y.p} · سعر السحب لهذه الساحة غير متوفر بعد — أدخله يدوياً`; }
-
   cfPortChanged();
-
 }
-
 /* ocean freight is priced from where the car actually ships: the relocation port if chosen, else the yard's port */
-
 function cfOcean(){
-
   const pid = (cfEl('relocPort') && cfEl('relocPort').value) || cfEl('port').value; if(!pid) return;
-
   const n = +cfEl('perContainer').value, q = quote(null, pid, n);
-
   if(q.oceanCharge != null){ cfEl('oceanCharge').value = q.oceanCharge; cfEl('oceanCost').value = q.oceanCost; }
-
   cfPerHint(); xRoute(); xTotals();
-
 }
-
 function cfPer(n){
-
   cfEl('perContainer').value = n;
-
   document.querySelectorAll('#pcSeg button').forEach(b => b.classList.toggle('on', +b.textContent === n));
-
   cfOcean(); cfPerHint();
-
 }
-
 /* per car = (container price + $25 × cars) ÷ cars */
-
 function cfPerHint(){
-
   const h = $('#perHint'); if(!h) return;
-
   const pid = (cfEl('relocPort') && cfEl('relocPort').value) || cfEl('port').value, p = portById(pid), n = +cfEl('perContainer').value;
-
   h.innerHTML = p && p.ocean[n] ? `(<span class="num">$${p.ocean[n].toLocaleString('en-US')}</span> + <span class="num">$${P.markup.ocean_per_car || 0}</span>×${n}) ÷ ${n} = <b>${money(p.ocean[n] / n + (P.markup.ocean_per_car || 0))}</b>` : '';
-
 }
-
-
 
 /* ---------- extra transport & charges inside the car form ---------- */
-
 const pName = id => { const p = portById(id); return p ? p.name : (id || '—'); };
-
 function xInit(c){
-
   window._xRows = (c.expenses || []).map(e => Object.assign({}, e));
-
   const box = $('#cf'); box.addEventListener('input', xTotals); box.addEventListener('change', xTotals);
-
   xPortOptions(c.relocPort || '');
-
   xDraw(); xRoute(); xTotals();
-
 }
-
 function xPortOptions(sel){
-
   const yp = cfEl('port').value;
-
   $('#relocSel').innerHTML = `<option value="">لا — تنشحن من ميناء الساحة</option>` +
-
     P.ports.filter(p => p.id !== yp || p.id === sel).map(p => `<option value="${p.id}" ${p.id === sel ? 'selected' : ''}>${esc(p.name)}</option>`).join('');
-
 }
-
 function cfPortChanged(){
-
   const r = cfEl('relocPort').value, yp = cfEl('port').value;
-
   xPortOptions(r && r !== yp ? r : '');
-
   if(r && r === yp) cfReloc(); else { xRelocDesc(); cfOcean(); }
-
 }
-
 function xRelocRow(){ return window._xRows.find(e => e.reloc); }
-
 function xRelocDesc(){
-
   const row = xRelocRow(), r = cfEl('relocPort').value;
-
   if(row && r){ row.desc = `نقل السيارة من ${pName(cfEl('port').value)} إلى ${pName(r)}`; xDraw(); }
-
 }
-
 function cfReloc(){
-
   const r = cfEl('relocPort').value, yp = cfEl('port').value;
-
   let row = xRelocRow();
-
   if(r && r !== yp){
-
     if(!row){
-
       row = window._xRows.find(e => /^نقل السيارة من /.test(e.desc || ''));   // a transfer line kept from before: reuse it
-
       if(row) row.reloc = true; else { row = xNew({reloc:true}); window._xRows.unshift(row); }
-
     }
-
     xRelocDesc(); xDraw(); cfOcean();
-
     xFocus(row.id, 'amount'); toast('اكتب تكلفة النقل');
-
   } else {
-
     if(r) cfEl('relocPort').value = '';
-
     if(row && !N(row.amount)) window._xRows = window._xRows.filter(e => e !== row);
-
     else if(row) delete row.reloc;      // has an amount: keep it as a normal line so nothing typed is lost
-
     xDraw(); cfOcean();
-
   }
-
 }
-
 function xRoute(){
-
   const r = cfEl('relocPort') && cfEl('relocPort').value, h = $('#relocHint'); if(!h) return;
-
   if(!r){ h.innerHTML = ''; return; }
-
   const yi = YARD_IDX[cfEl('yard').value], y = P.yards[yi], yp = cfEl('port').value;
-
   h.innerHTML = `<div>1. السحب: ${esc(y ? y.n + ', ' + y.s : 'الساحة')} ← ${esc(pName(yp))} (${money(cfEl('towCharge').value)})</div>
-
     <div>2. النقل: ${esc(pName(yp))} ← ${esc(pName(r))} <span class="muted">(اكتبه في السطر تحت)</span></div>
-
     <div>3. البحري من ${esc(pName(r))} (${money(cfEl('oceanCharge').value)})</div>`;
-
 }
-
 function xNew(o){ return Object.assign({id:uid(), desc:'', amount:'', stage:'ship', payer:'customer', date:today(), kind:'expense'}, o); }
-
 function xDraw(){
-
   $('#xRows').innerHTML = window._xRows.map(e => `<div class="xrow ${e.reloc ? 'reloc' : ''}" data-id="${e.id}">
-
     <input class="inp" data-k="desc" value="${esc(e.desc)}" placeholder="الوصف" oninput="xSet(this)">
-
     <input class="inp num" data-k="amount" type="number" step="any" value="${esc(e.amount)}" placeholder="المبلغ $" oninput="xSet(this)">
-
     <select class="inp" data-k="stage" onchange="xSet(this)"><option value="ship" ${e.stage !== 'buy' ? 'selected' : ''}>مع الشحن (المرحلة 2)</option><option value="buy" ${e.stage === 'buy' ? 'selected' : ''}>مع المزاد (المرحلة 1)</option></select>
-
     <select class="inp" data-k="payer" onchange="xSet(this);xDraw()"><option value="customer" ${e.payer !== 'office' ? 'selected' : ''}>على الزبون</option><option value="office" ${e.payer === 'office' ? 'selected' : ''}>على المكتب</option></select>
-
     <input class="inp" data-k="date" type="date" value="${esc(e.date || '')}" oninput="xSet(this)">
-
     <button type="button" class="btn sm danger" onclick="xDel('${e.id}')" title="حذف">×</button>
-
     ${e.payer === 'office' ? `<label class="xinv small"><input type="checkbox" data-k="onInv" ${e.onInv ? 'checked' : ''} onchange="xSet(this)"> يطلع في الفاتورة (على حساب المكتب)</label>` : ''}
-
   </div>`).join('');
-
   xTotals();
-
 }
-
 function xSet(el){
-
   const e = window._xRows.find(x => x.id === el.closest('.xrow').dataset.id); if(!e) return;
-
   const k = el.dataset.k; e[k] = el.type === 'checkbox' ? el.checked : el.value;
-
   xTotals();
-
 }
-
 function xDel(id){
-
   const e = window._xRows.find(x => x.id === id);
-
   window._xRows = window._xRows.filter(x => x.id !== id);
-
   if(e && e.reloc){ cfEl('relocPort').value = ''; cfOcean(); }
-
   xDraw();
-
 }
-
 function xFocus(id, k){ setTimeout(() => { const el = document.querySelector(`.xrow[data-id="${id}"] [data-k="${k}"]`); if(el){ el.focus(); el.scrollIntoView({block:'center', behavior:'smooth'}); } }, 30); }
-
 function xQuick(t){
-
   if(t === 'move'){
-
     const row = xRelocRow();
-
     if(row && cfEl('relocPort').value) return xFocus(row.id, 'amount');
-
     const s = $('#relocSel'); s.scrollIntoView({block:'center', behavior:'smooth'});
-
     s.classList.remove('flash'); void s.offsetWidth; s.classList.add('flash'); setTimeout(() => s.focus(), 300); return;
-
   }
-
   const row = xNew(t === 'fedex' ? {desc:'FedEx للتايتل', amount:45} : t === 'storage' ? {desc:'تخزين', kind:'fine'} : {});
-
   window._xRows.push(row); xDraw();
-
   xFocus(row.id, t === 'other' ? 'desc' : 'amount');
-
 }
-
 function xTotals(){
-
   const el = $('#xTot'); if(!el || !window._xRows) return;
-
   const v = n => N(cfEl(n).value), rows = window._xRows;
-
   const sum = (p, st) => r2(rows.filter(e => (e.payer === 'office' ? 'office' : 'customer') === p && (!st || (e.stage === 'buy' ? 'buy' : 'ship') === st)).reduce((s,e) => s + N(e.amount), 0));
-
   const base = v('buyPrice') + v('auctionFees');
-
   const req1 = r2(base + v('officeFee') + base * v('wirePct') / 100 + sum('customer','buy'));
-
   const ship = v('towCharge') + v('oceanCharge') + sum('customer','ship');
-
   const req2 = r2(ship + ship * v('shipWirePct') / 100);
-
   el.innerHTML = `<div class="row" style="gap:16px">
-
       <span>على الزبون: <b>${money(sum('customer'))}</b></span>
-
       <span class="muted">على المكتب: <b>${money(sum('office'))}</b></span></div>
-
     <div class="row" style="gap:16px;margin-top:4px">
-
       <span>المطلوب من الزبون — المرحلة 1: <b>${money(req1)}</b></span>
-
       <span>المرحلة 2: <b>${money(req2)}</b></span>
-
       <span>الإجمالي: <b style="color:var(--brand-d)">${money(req1 + req2)}</b></span></div>`;
-
 }
-
 function xCollect(){
-
   return (window._xRows || []).filter(e => String(e.desc || '').trim() || N(e.amount)).map(e => {
-
     const o = Object.assign({}, e, {desc:String(e.desc || '').trim() || 'مصروف', amount:r2(N(e.amount)), stage:e.stage === 'buy' ? 'buy' : 'ship',
-
       payer:e.payer === 'office' ? 'office' : 'customer', date:e.date || today(), kind:e.kind === 'fine' ? 'fine' : 'expense'});
-
     if(o.payer !== 'office') delete o.onInv; else o.onInv = !!o.onInv;
-
     if(!o.reloc) delete o.reloc;
-
     return o;
-
   });
-
 }
-
 function saveCar(id){
-
   const d = formData('cf');
-
   const nums = ['buyPrice','auctionFees','officeFee','wirePct','shipWirePct','towCharge','oceanCharge','towCost','oceanCost','perContainer'];
-
   nums.forEach(n => d[n] = N(d[n]));
-
   const yi = YARD_IDX[d.yard]; d.yard = yi == null ? null : yi;
-
   let cu = null;
-
   if(d.newOpen && d.newName.trim()){
-
     cu = {id:uid(), created:new Date().toISOString(), name:d.newName.trim(), phone:d.newPhone.trim(), phone2:'', city:d.newCity.trim(), notes:''};
-
     db.customers.push(cu); saveCust(cu);
-
   } else if(d.customerId && d.customerId !== '__legacy') cu = getCust(d.customerId);
-
   const keepLegacy = !cu && d.customerId === '__legacy';
-
   if(!cu && !keepLegacy){ $('#custHint').innerHTML = '<span style="color:var(--bad)">اختر الزبون أو أضف زبون جديد</span>'; cfEl('customerId').focus(); return; }
-
   ['newOpen','newName','newPhone','newCity'].forEach(k => delete d[k]);
-
   if(cu){ d.customerId = cu.id; d.customer = cu.name; d.phone = cu.phone || ''; } else delete d.customerId;
-
   d.relocPort = d.relocPort && d.relocPort !== d.port ? d.relocPort : '';
-
   d.expenses = xCollect();
-
   let c = id ? getCar(id) : null;
-
   if(c) Object.assign(c, d);
-
   else { c = Object.assign({id:uid(), created:new Date().toISOString(), stage:'buy', loc:0, expenses:[], payments:[], refunds:[], auctionPaid:null, lock1:null, lock2:null, manualShip:false}, d); db.cars.push(c); }
-
   closeModal(); commit(c); if(!id) go('car', c.id); toast('تم الحفظ');
-
 }
-
 function delCar(id){ ask('حذف هذه السيارة وكل دفعاتها ومصاريفها؟ لا يمكن التراجع.', () => { removeCar(id); go('cars'); toast('تم الحذف'); }, 'حذف'); }
 
-
-
 /* ---------- location / stage ---------- */
-
 function setLoc(id, i){ const c = getCar(id); c.loc = i; c.locAt = Object.assign({}, c.locAt, {[i]: today()}); commit(c); }
-
 function manualShip(id){
-
   const c = getCar(id), k = calc(c);
-
   ask(`نقل السيارة لمرحلة الشحن قبل ما يكمل الزبون؟<br><span class="muted small">الباقي من المرحلة 1 (${money(k.rem1)}) يبقى ظاهر كدين عليه، ومكسبها ما يتحسبش مستلم لين يكمل.</span>`,
-
     () => { c.manualShip = true; c.stage = 'ship'; commit(c); toast('انتقلت لمرحلة الشحن'); }, 'نقل');
-
 }
-
 function undoManualShip(id){ const c = getCar(id); c.manualShip = false; c.stage = 'buy'; commit(c); }
 
-
-
 /* ---------- auction paid ---------- */
-
 /* what it really cost the office to pay the auction (card fee, PayPal, FX loss) — the 1.5% charged to the customer is not profit until this is taken off */
-
 const PAY_HOW = ['بطاقة','PayPal','حوالة','صرف عملة','أخرى'];
-
 const isPayCost = e => e.payer === 'office' && e.stage === 'buy' && (e.payCost || /عمولة الدفع|على الدفع|paypal|بطاقة|صرف|card|fx/i.test(e.desc || ''));
-
 const payCostMissing = c => c.auctionPaid && c.auctionPaid.by === 'office' && !c.payCostSet && !c.expenses.some(isPayCost);
-
 function auctionForm(id){
-
   const c = getCar(id), k = calc(c);
-
   const pc = c.expenses.find(e => e.payCost);
-
   openModal('تم السداد للمزاد', `
-
     <div style="margin-bottom:12px">مين دفع للمزاد؟ <span class="muted">(سعر الشراء + الرسوم = ${money(k.base)})</span></div>
-
     <div class="f" style="margin-bottom:12px"><label>تاريخ السداد</label><input class="inp" type="date" id="apDate" value="${c.auctionPaid ? c.auctionPaid.date : today()}"></div>
-
     <div class="paycost">
-
       <div style="font-weight:700;margin-bottom:4px">لو دفعت انت: كم كلفك الدفع؟</div>
-
       <div class="hint" style="margin:0 0 10px">عمولة البطاقة أو PayPal أو خسارة الصرف. تنحسب على المكتب وتنقص من المكسب — الزبون ما يشوفهاش.
-
         عمولة الحوالة اللي خذيناها من الزبون <b>${money(k.wire)}</b>.</div>
-
       <div class="grid g3">
-
         <div class="f"><label>طريقة الدفع</label><select class="inp" id="pcHow">${PAY_HOW.map(m => `<option ${pc && pc.how === m ? 'selected' : ''}>${m}</option>`).join('')}</select></div>
-
         <div class="f"><label>المبلغ اللي خرج منك فعلاً ($)</label><input class="inp" type="number" step="any" id="pcOut" placeholder="${r2(k.base)}" oninput="pcFromOut(${k.base})">
-
           <div class="hint">اختياري — نحسبلك الفرق</div></div>
-
         <div class="f"><label>تكلفة الدفع ($)</label><input class="inp" type="number" step="any" id="pcCost" value="${pc ? esc(pc.amount) : ''}" placeholder="0" oninput="pcHint(${k.wire})">
-
           <div class="hint" id="pcHint"></div></div>
-
       </div>
-
     </div>
-
     <div class="choice">
-
       <button class="big" onclick="setAuction('${id}','office')"><b>أنا (المكتب)</b><span class="small muted">المبلغ يتسجل دين على الزبون (سلفة منا)</span></button>
-
       <button class="big" onclick="setAuction('${id}','customer')"><b>الزبون</b><span class="small muted">سعر الشراء والرسوم يتحسبوا مدفوعين، وتبقى عليه العمولات والمصاريف</span></button>
-
     </div>`,
-
     c.auctionPaid ? `<button class="btn danger" onclick="setAuction('${id}',null)">إلغاء تسجيل السداد</button>` : '');
-
   pcHint(k.wire);
-
 }
-
 function pcFromOut(base){ const v = $('#pcOut').value; if(v === '') return; $('#pcCost').value = r2(Math.max(0, N(v) - base)); pcHint(); }
-
 function pcHint(wire){
-
   if(wire == null) wire = pcHint.w; else pcHint.w = wire;
-
   const cost = N($('#pcCost').value), net = r2(wire - cost);
-
   $('#pcHint').innerHTML = $('#pcCost').value === '' ? '' : `الحوالة ${money(wire)} − التكلفة ${money(cost)} = <b class="${pcls(net)}">${money(net)}</b>`;
-
 }
-
 function setAuction(id, by){
-
   const c = getCar(id);
-
   if(by === 'office' && $('#pcCost')){
-
     const v = $('#pcCost').value, how = $('#pcHow').value;
-
     c.expenses = c.expenses.filter(e => !e.payCost);
-
     if(v !== '' && N(v) > 0) c.expenses.push({id:uid(), payCost:true, how, desc:`عمولة الدفع — ${how}`, amount:r2(N(v)), date:$('#apDate').value || today(), payer:'office', stage:'buy', kind:'expense'});
-
     c.payCostSet = v !== '';          // "0" means: paid with no cost — stop warning
-
   }
-
   if(by !== 'office'){ c.expenses = c.expenses.filter(e => !e.payCost); delete c.payCostSet; }
-
   c.auctionPaid = by ? {by, date: $('#apDate').value || today()} : null;
-
   if(by && (c.loc||0) < 1) c.loc = 1;
-
   closeModal(); commit(c); toast(by ? 'تم تسجيل السداد للمزاد' : 'تم الإلغاء');
-
 }
-
-
 
 /* ---------- payments ---------- */
-
 function paymentForm(id, pid){
-
   const c = getCar(id);
-
   const p = pid ? c.payments.find(x => x.id === pid) : null;
-
   // when editing, the remaining balance is computed without this payment
-
   const k = calc(p ? Object.assign({}, c, {payments: c.payments.filter(x => x.id !== pid)}) : c);
-
   const def = p ? p.stage : c.stage === 'buy' ? 'buy' : 'ship';
-
   openModal(p ? 'تعديل الدفعة' : 'دفعة من الزبون', `<form id="pf" class="grid" onsubmit="event.preventDefault();savePayment('${id}','${pid||''}')">
-
     ${fld('المبلغ ($)','amount',p ? p.amount : '','number','required min="0.01" oninput="pfCheck()"')}
-
     ${fld('التاريخ','date',p ? p.date : today(),'date')}
-
     <div class="f"><label>تنحسب على</label><select class="inp" name="stage" onchange="pfCheck()">
-
       <option value="buy" ${def === 'buy' ? 'selected' : ''}>المرحلة 1: الشراء — الباقي $${r2(k.rem1)}</option>
-
       <option value="ship" ${def === 'ship' ? 'selected' : ''}>المرحلة 2: الشحن — الباقي $${r2(k.rem2)}</option></select>
-
       ${def === 'ship' && k.rem1 > 0 ? `<div class="hint" style="color:var(--bad)">ملاحظة: باقي دين على المرحلة 1 (${money(k.rem1)})</div>` : ''}</div>
-
     <div class="f"><label>طريقة الدفع</label><select class="inp" name="method">${METHODS.map(m => `<option ${p && p.method === m ? 'selected' : ''}>${m}</option>`).join('')}</select></div>
-
     ${fld('ملاحظة','note',p ? p.note : '','text','','full')}
-
     <div class="f full" id="overflow"></div>
-
   </form>`, `<button class="btn pri" onclick="document.getElementById('pf').requestSubmit()">حفظ الدفعة</button><button class="btn" onclick="closeModal()">إلغاء</button>`);
-
   window._pfRem = {buy: k.rem1, ship: k.rem2};
-
   if(p) pfCheck();
-
 }
-
 function pfCheck(){
-
   const f = document.getElementById('pf'); const amt = N(f.amount.value), st = f.stage.value;
-
   const rem = Math.max(0, window._pfRem[st]); const extra = r2(amt - rem); const box = $('#overflow');
-
   if(extra <= 0.004){ box.innerHTML = ''; return; }
-
   const prev = (f.querySelector('input[name=over]:checked') || {}).value;
-
   const canNext = st === 'buy';
-
   const v = prev && (prev !== 'next' || canNext) ? prev : (canNext ? 'next' : 'refund');
-
   box.innerHTML = `<div class="note" style="margin:0 0 8px">الدفعة أكبر من الباقي في المرحلة بـ <b>${money(extra)}</b>. الزيادة:</div>
-
     <div class="choice">
-
       ${canNext ? `<label><input type="radio" name="over" value="next" ${v === 'next' ? 'checked' : ''}><span><b>تنحط في المرحلة الجاية</b><div class="small muted">تتحسب دفعة على الشحن</div></span></label>` : ''}
-
       <label><input type="radio" name="over" value="refund" ${v === 'refund' ? 'checked' : ''}><span><b>تتسجل راجع للزبون</b><div class="small muted">مبلغ مستحق نرجعه له</div></span></label>
-
     </div>`;
-
 }
-
 function savePayment(id, pid){
-
   const c = getCar(id), d = formData('pf');
-
   const amt = r2(N(d.amount)); if(amt <= 0) return;
-
   if(pid) c.payments = c.payments.filter(x => x.id !== pid);   // editing: replace the old payment, keep its id
-
   const k = calc(c); const rem = Math.max(0, d.stage === 'buy' ? k.rem1 : k.rem2);
-
   const base = {date:d.date || today(), method:d.method, note:d.note};
-
   const newId = pid || uid();
-
   if(amt > rem + 0.004){
-
     const extra = r2(amt - rem);
-
     if(rem > 0) c.payments.push(Object.assign({id:newId, stage:d.stage, amount:rem}, base));
-
     if(d.over === 'next' && d.stage === 'buy'){
-
       c.payments.push(Object.assign({id:uid(), stage:'ship', amount:extra}, base, {note:(d.note ? d.note + ' — ' : '') + 'زيادة من مرحلة الشراء'}));
-
     } else {
-
       c.refunds = c.refunds || [];
-
       c.refunds.push({id:uid(), amount:extra, date:base.date, note:(d.note || 'زيادة في دفعة') + ' (' + base.method + ')', returned:null});
-
     }
-
   } else c.payments.push(Object.assign({id:newId, stage:d.stage, amount:amt}, base));
-
   const before = c.stage;
-
   closeModal(); commit(c);
-
   toast(c.stage !== before ? (c.stage === 'done' ? 'اكتملت السيارة ✓ — المكسب مستلم' : c.stage === 'ship' ? 'اكتملت المرحلة 1 ✓ — انتقلت للشحن' : 'تم التعديل') : pid ? 'تم تعديل الدفعة' : 'تم تسجيل الدفعة');
-
 }
-
 function delPayment(cid, pid){ ask('حذف هذه الدفعة؟', () => { const c = getCar(cid); c.payments = c.payments.filter(p => p.id !== pid); commit(c); }, 'حذف'); }
-
 function markReturned(cid, rid){ const c = getCar(cid); const r = c.refunds.find(x => x.id === rid); r.returned = today(); commit(c); }
-
 function delRefund(cid, rid){ ask('حذف هذا المبلغ الراجع؟', () => { const c = getCar(cid); c.refunds = c.refunds.filter(x => x.id !== rid); commit(c); }, 'حذف'); }
 
-
-
 /* ---------- expenses ---------- */
-
 function expenseForm(cid, eid){
-
   const c = getCar(cid);
-
   const e = eid ? c.expenses.find(x => x.id === eid) : {date:today(), payer:'customer', stage:c.stage === 'buy' ? 'buy' : 'ship'};
-
   openModal(eid ? 'تعديل مصروف' : 'مصروف جديد', `<form id="ef" class="grid" onsubmit="event.preventDefault();saveExpense('${cid}','${eid||''}')">
-
     ${fld('الوصف','desc',e.desc,'text','required placeholder="مثلاً: غرامة تأخير، تخزين، تصليح…"','full')}
-
     ${fld('المبلغ ($)','amount',e.amount,'number','required')}
-
     ${fld('التاريخ','date',e.date,'date')}
-
     <div class="f full"><label>النوع</label><div class="choice">
-
       <label><input type="radio" name="kind" value="expense" ${e.kind !== 'fine' ? 'checked' : ''}><span><b>مصروف</b></span></label>
-
       <label><input type="radio" name="kind" value="fine" ${e.kind === 'fine' ? 'checked' : ''}><span><b>غرامة</b><div class="small muted">تخزين، تأخير، رسوم جزائية…</div></span></label>
-
     </div></div>
-
     <div class="f full"><label>على مين؟</label><div class="choice">
-
       <label><input type="radio" name="payer" value="customer" ${e.payer === 'customer' ? 'checked' : ''}><span><b>على الزبون</b><div class="small muted">ينزاد على حسابه ويطلع في الفاتورة</div></span></label>
-
       <label><input type="radio" name="payer" value="office" ${e.payer === 'office' ? 'checked' : ''}><span><b>على المكتب</b><div class="small muted">ينقص من المكسب</div></span></label>
-
     </div>
-
     <label class="small" style="display:flex;gap:6px;align-items:center;margin-top:8px"><input type="checkbox" name="onInv" value="1" ${e.onInv ? 'checked' : ''}> لو على المكتب: يطلع في الفاتورة (على حساب المكتب — ما ينحسبش على الزبون)</label></div>
-
     <div class="f full"><label>المرحلة</label><div class="choice">
-
       <label><input type="radio" name="stage" value="buy" ${e.stage === 'buy' ? 'checked' : ''}><span><b>شراء</b></span></label>
-
       <label><input type="radio" name="stage" value="ship" ${e.stage === 'ship' ? 'checked' : ''}><span><b>شحن</b></span></label>
-
     </div></div>
-
   </form>`, `<button class="btn pri" onclick="document.getElementById('ef').requestSubmit()">حفظ</button><button class="btn" onclick="closeModal()">إلغاء</button>`);
-
 }
-
 function saveExpense(cid, eid){
-
   const c = getCar(cid), d = formData('ef');
-
   const data = {desc:d.desc, amount:r2(N(d.amount)), date:d.date || today(), payer:d.payer, stage:d.stage, kind:d.kind === 'fine' ? 'fine' : 'expense', onInv:d.payer === 'office' && d.onInv === '1'};
-
   if(eid) Object.assign(c.expenses.find(x => x.id === eid), data);
-
   else c.expenses.push(Object.assign({id:uid()}, data));
-
   closeModal(); commit(c); toast('تم حفظ المصروف');
-
 }
-
 function delExpense(cid, eid){ ask('حذف هذا المصروف؟', () => { const c = getCar(cid); c.expenses = c.expenses.filter(x => x.id !== eid); commit(c); }, 'حذف'); }
 
-
-
 /* ---------- invoice (no office expenses) ---------- */
-
 function printInvoice(id){
-
   const c = getCar(id), k = calc(c);
-
   const row = (a, b) => `<tr><td>${a}</td><td style="direction:ltr;text-align:left">${b}</td></tr>`;
-
   const $$ = n => '$' + r2(n).toLocaleString('en-US', {maximumFractionDigits:2});
-
   const ce = st => c.expenses.filter(e => (e.payer === 'customer' || e.onInv) && e.stage === st).map(e => e.payer === 'customer'
-
       ? row((e.kind === 'fine' ? 'غرامة: ' : '') + esc(e.desc), $$(e.amount))
-
       : row(esc(e.desc) + ' <i>(على حساب المكتب — ما ينحسبش عليك)</i>', '<s>' + $$(e.amount) + '</s> $0')).join('');
-
   $('#print').innerHTML = `
-
     <div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="AWS" style="height:56px"><h1>${esc(db.settings.officeName)}</h1></div>
-
     <div>فاتورة الزبون — التاريخ: ${today()}</div>
-
     <p><b>الزبون:</b> ${esc(c.customer||'')} ${c.phone ? ' — ' + esc(c.phone) : ''}<br>
-
        <b>السيارة:</b> ${esc(carName(c))} ${c.vin ? ' — VIN: ' + esc(c.vin) : ''} ${c.lot ? ' — Lot: ' + esc(c.lot) : ''}</p>
-
     <h3>المرحلة 1: الشراء</h3>
-
     <table>${row('سعر الشراء في المزاد', $$(c.buyPrice))}${row('رسوم المزاد', $$(c.auctionFees))}${row('عمولة المكتب', $$(c.officeFee))}${row('عمولة الحوالة (' + +N(c.wirePct).toFixed(2) + '%)', $$(k.wire))}${ce('buy')}
-
       <tr><th>الإجمالي</th><th style="direction:ltr;text-align:left">${$$(k.req1)}</th></tr>
-
       ${k.auctionByCust ? row('مدفوع للمزاد مباشرة', $$(k.auctionByCust)) : ''}${row('المدفوع', $$(k.payments1))}
-
       <tr><th>الباقي</th><th style="direction:ltr;text-align:left">${$$(k.rem1)}</th></tr></table>
-
     ${c.stage !== 'buy' || k.paid2 > 0 ? `<h3>المرحلة 2: الشحن</h3>
-
     <table>${row('السحب الداخلي', $$(c.towCharge))}${row('الشحن البحري', $$(c.oceanCharge))}${ce('ship')}${k.wire2 ? row('عمولة الحوالة (' + +N(c.shipWirePct).toFixed(2) + '%)', $$(k.wire2)) : ''}
-
       <tr><th>الإجمالي</th><th style="direction:ltr;text-align:left">${$$(k.req2)}</th></tr>${row('المدفوع', $$(k.paid2))}
-
       <tr><th>الباقي</th><th style="direction:ltr;text-align:left">${$$(k.rem2)}</th></tr></table>` : ''}
-
     <h3>الدفعات</h3>
-
     <table><tr><th>التاريخ</th><th>المرحلة</th><th>الطريقة</th><th>المبلغ</th></tr>
-
       ${c.payments.map(p => `<tr><td>${esc(p.date)}</td><td>${STG[p.stage]}</td><td>${esc(p.method)}</td><td style="direction:ltr;text-align:left">${$$(p.amount)}</td></tr>`).join('') || '<tr><td colspan="4">—</td></tr>'}</table>
-
     <h3>إجمالي الباقي على الزبون: <span style="direction:ltr;display:inline-block">${$$(Math.max(0,k.rem1) + (c.stage !== 'buy' ? Math.max(0,k.rem2) : 0))}</span></h3>
-
     ${c.vin ? `<p>تتبّع سيارتك: <span style="direction:ltr;display:inline-block">${esc(trackUrl(c.vin))}</span></p>` : ''}`;
-
   window.print();
-
 }
-
-
 
 /* ---------- customer tracking (public page by VIN) ---------- */
-
 const PUB = new URLSearchParams(location.search).has('vin') || location.hash === '#track';
-
 const vinKey = v => String(v || '').trim().toUpperCase();
-
 function trackUrl(vin){
-
   const base = /^(localhost|127\.)/.test(location.hostname) ? 'https://aws-company.vercel.app/' : location.origin + location.pathname;
-
   return base + '?vin=' + encodeURIComponent(vinKey(vin));
-
 }
-
 /* what the customer may see — no costs, no office profit */
-
 function trkSnap(c){
-
   const k = calc(c), port = portById(c.relocPort || c.port);
-
   const ce = st => c.expenses.filter(e => (e.payer === 'customer' || e.onInv) && e.stage === st).map(e => e.payer === 'customer'
-
     ? {t:(e.kind === 'fine' ? 'غرامة: ' : '') + (e.desc || 'مصروف'), a:r2(e.amount)}
-
     : {t:(e.desc || 'مصروف') + ' — على حساب المكتب', a:r2(e.amount), free:true});
-
   const s1 = [{t:'سعر الشراء في المزاد', a:r2(c.buyPrice)}, {t:'رسوم المزاد', a:r2(c.auctionFees)}, {t:'عمولة المكتب', a:r2(c.officeFee)},
-
               {t:`عمولة الحوالة (${+N(c.wirePct).toFixed(2)}%)`, a:k.wire}, ...ce('buy')];
-
   const s2 = [{t:'السحب الداخلي', a:r2(c.towCharge)}, {t:'الشحن البحري', a:r2(c.oceanCharge)}, ...ce('ship')];
-
   if(k.wire2) s2.push({t:`عمولة الحوالة (${+N(c.shipWirePct).toFixed(2)}%)`, a:k.wire2});
-
   const showShip = c.stage !== 'buy' || k.paid2 > 0;
-
   return {
-
     vin: vinKey(c.vin), title: carName(c), lot: c.lot || '', auction: c.auction || '', port: port ? port.name : '', container: c.containerNo || '',
-
     customer: c.customer || '', office: db.settings.officeName || 'AWS COMPANY',
-
     loc: c.loc || 0, locAt: c.locAt || {}, img: c.img || '', photos: (c.photos || []).slice(0, 12),
-
     s1: {items: s1.filter(x => x.a), req: k.req1, paid: k.paid1, rem: k.rem1, done: !!c.lock1},
-
     s2: showShip ? {items: s2.filter(x => x.a), req: k.req2, paid: k.paid2, rem: k.rem2, done: !!c.lock2} : null,
-
     pays: c.payments.slice().sort((a,b) => (a.date||'').localeCompare(b.date||'')).map(p => ({date:p.date || '', stage:p.stage, a:r2(p.amount)})),
-
   };
-
 }
-
 const hstr = t => { let h = 5381; for(let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
-
 let trkBusy = false;
-
 /* keep tracking/{VIN} in step with the cars: write what changed, remove VINs that no longer exist */
-
 async function syncTracking(){
-
   if(!USE_FB || PUB || trkBusy || !fbAuth.currentUser) return;
-
   trkBusy = true;
-
   try{
-
     let seen = {}; try{ seen = JSON.parse(localStorage.getItem('trk_h') || '{}'); }catch(e){}
-
     const now = {};
-
     for(const c of db.cars){
-
       const v = vinKey(c.vin); if(v.length < 5) continue;
-
       const snap = trkSnap(c), h = hstr(JSON.stringify(snap)); now[v] = h;
-
       if(seen[v] !== h){ snap.updated = new Date().toISOString(); await fs.collection('tracking').doc(v).set(snap); }
-
     }
-
     for(const v of Object.keys(seen)) if(!now[v]) await fs.collection('tracking').doc(v).delete().catch(() => {});
-
     try{ localStorage.setItem('trk_h', JSON.stringify(now)); }catch(e){}
-
   }catch(e){ console.error('tracking sync', e); }
-
   finally{ trkBusy = false; }
-
 }
-
 function waPhone(p){ p = String(p || '').replace(/\D/g, ''); if(p.startsWith('00')) p = p.slice(2); if(p.startsWith('0')) p = '218' + p.slice(1); return p; }
-
 function trackMsg(c){ return `السلام عليكم ${c.customer || ''}\nرابط تتبع سيارتك ${carName(c)}:\n${trackUrl(c.vin)}\n\n${db.settings.officeName || ''}`; }
-
 function trackLinkForm(id){
-
   const c = getCar(id), u = trackUrl(c.vin), ph = waPhone(c.phone);
-
   syncTracking();
-
   openModal('رابط التتبع', `
-
     <div class="hint" style="margin-bottom:8px">الزبون يفتح الرابط ويشوف مكان سيارته وصورها وفاتورته والباقي عليه — بدون تكاليفنا أو مكسبنا.</div>
-
     <div class="inrow"><input class="inp num" id="trkU" value="${esc(u)}" readonly style="direction:ltr" onclick="this.select()">
-
       <button class="btn" onclick="copyText($('#trkU').value)">نسخ</button></div>`,
-
     `${ph ? `<a class="btn pri" target="_blank" rel="noopener" href="https://wa.me/${ph}?text=${encodeURIComponent(trackMsg(c))}">إرسال واتساب للزبون</a>` : ''}
-
      <a class="btn" target="_blank" rel="noopener" href="${esc(u)}">فتح الصفحة</a><button class="btn" onclick="closeModal()">إغلاق</button>`);
-
 }
-
 function copyText(t){ (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast('تم نسخ الرابط'), () => prompt('انسخ الرابط:', t)); }
 
-
-
 function renderPublic(){
-
   document.body.classList.add('pub');
-
   const q = vinKey(new URLSearchParams(location.search).get('vin'));
-
   $('#app').innerHTML = `<div class="pubw">
-
     <div class="pubh"><div class="logo" style="justify-content:center;flex-direction:column;gap:6px"><img src="logo.png" alt="AWS"><span>AWS COMPANY</span></div>
-
       <div class="muted">تتبّع سيارتك برقم الهيكل (VIN)</div></div>
-
     <form class="card pad inrow" onsubmit="event.preventDefault();pubSearch()" style="margin-bottom:14px">
-
       <input class="inp num" id="pv" placeholder="أدخل رقم الهيكل — 17 خانة" maxlength="17" value="${esc(q)}" style="direction:ltr;text-align:center;font-size:18px;letter-spacing:1px" oninput="this.value=this.value.toUpperCase()">
-
       <button class="btn pri">تتبّع</button></form>
-
     <div id="pres"></div></div>`;
-
   if(q) pubSearch();
-
 }
-
 async function pubSearch(){
-
   const vin = vinKey($('#pv').value), out = $('#pres'); if(!vin) return;
-
   out.innerHTML = `<div class="card empty">جاري البحث...</div>`;
-
   let d = null; try{ const s = await fs.collection('tracking').doc(vin).get(); d = s.exists ? s.data() : null; }catch(e){ console.error(e); }
-
   if(!d){ out.innerHTML = `<div class="card empty">ما لقيناش سيارة بهذا الرقم. تأكد من رقم الهيكل (17 خانة) أو تواصل مع المكتب.</div>`; return; }
-
   try{ history.replaceState(null, '', location.pathname + '?vin=' + encodeURIComponent(vin)); }catch(e){}
-
   const stage = (s, n, title) => !s ? '' : `<div class="card stage"><div class="top"><div class="n">${n}</div><h3>${title}</h3><div class="sp"></div>
-
       ${s.rem <= 0.009 ? '<span class="bdg done">✓ خالص</span>' : '<span class="bdg bad">فيها باقي</span>'}</div><div class="body">
-
       ${s.items.map(x => x.free ? ln(esc(x.t), `<s class="muted">${money(x.a)}</s> ${money(0)}`, 'sub') : ln(esc(x.t), money(x.a))).join('')}${ln('الإجمالي', money(s.req), 'tot')}${ln('المدفوع', money(s.paid))}
-
       ${ln(s.rem > 0.009 ? 'الباقي' : 'الحالة', s.rem > 0.009 ? money(s.rem) : 'خالص ✓', 'rem ' + (s.rem > 0.009 ? 'due' : 'zero'))}</div></div>`;
-
   const photos = [...new Set([d.img, ...(d.photos || [])].filter(Boolean))];
-
   const due = Math.max(0, N(d.s1 && d.s1.rem)) + Math.max(0, N(d.s2 && d.s2.rem));
-
   out.innerHTML = `
-
     <div class="card pad ${photos.length ? 'carinfo' : ''}" style="margin-bottom:14px">
-
       ${photos.length ? `<div><img class="photo" id="mainPhoto" src="${esc(photos[0])}" referrerpolicy="no-referrer" alt="">
-
         ${photos.length > 1 ? `<div class="gal">${photos.map(u => `<img src="${esc(u)}" loading="lazy" referrerpolicy="no-referrer" alt="" onclick="$('#mainPhoto').src=this.src" onerror="this.remove()">`).join('')}</div>` : ''}</div>` : ''}
-
       <div><h1>${esc(d.title)}</h1><div class="muted" style="margin-bottom:12px">${esc(d.customer)}</div>
-
         <div class="info">
-
           <div><div class="l">VIN</div><div class="v num">${esc(d.vin)}</div></div>
-
           ${d.lot ? `<div><div class="l">رقم اللوت</div><div class="v num">${esc(d.lot)}</div></div>` : ''}
-
           ${d.auction ? `<div><div class="l">المزاد</div><div class="v">${esc(d.auction)}</div></div>` : ''}
-
           ${d.port ? `<div><div class="l">ميناء الشحن</div><div class="v">${esc(d.port)}</div></div>` : ''}
-
           ${d.container ? `<div><div class="l">رقم الحاوية</div><div class="v num">${esc(d.container)}</div></div>` : ''}
-
           <div><div class="l">آخر تحديث</div><div class="v num">${esc((d.updated || '').slice(0,10))}</div></div>
-
         </div>
-
         <div class="kpi card ${due > 0.009 ? '' : 'hl'}" style="margin-top:14px;box-shadow:none">
-
           <div class="l">${due > 0.009 ? 'الباقي عليك' : 'الحساب'}</div><div class="v ${due > 0.009 ? 'pneg' : 'ppos'}">${due > 0.009 ? money(due) : 'خالص ✓'}</div></div>
-
       </div></div>
-
     <div class="card pad" style="margin-bottom:14px"><h3 style="margin-bottom:8px">مكان السيارة الآن: <span style="color:var(--brand-d)">${esc(LOC[d.loc] || '')}</span></h3>
-
       <div class="steps">${LOC.map((l,i) => `<div class="step ${i < d.loc ? 'past' : i === d.loc ? 'cur' : ''}" style="cursor:default"><span class="dot"></span>${l}${d.locAt && d.locAt[i] && i <= d.loc ? `<div class="small muted"><span class="num">${esc(d.locAt[i])}</span></div>` : ''}</div>`).join('')}</div></div>
-
     <div class="stages">${stage(d.s1, 1, 'الشراء')}${stage(d.s2, 2, 'الشحن')}</div>
-
     ${(d.pays || []).length ? `<div class="card" style="margin-bottom:14px"><div class="pad"><h3>الدفعات المستلمة</h3></div><div class="tblwrap"><table class="tbl">
-
       <thead><tr><th>التاريخ</th><th>المرحلة</th><th>المبلغ</th></tr></thead><tbody>
-
       ${d.pays.map(p => `<tr><td class="num">${esc(p.date)}</td><td><span class="bdg ${p.stage}">${STG[p.stage] || ''}</span></td><td><b>${money(p.a)}</b></td></tr>`).join('')}</tbody></table></div></div>` : ''}
-
     <div class="muted small" style="text-align:center">${esc(d.office || '')} — شكراً لثقتكم</div>`;
-
 }
-
-
 
 /* ---------- settings / backup ---------- */
-
 function openSettings(){
-
   const s = db.settings;
-
   openModal('الإعدادات', `<form id="sf" class="grid" onsubmit="event.preventDefault();saveSettings()">
-
     ${fld('اسم المكتب','officeName',s.officeName,'text','','full')}
-
     ${fld('عمولة المكتب الافتراضية ($)','officeFee',s.officeFee,'number')}
-
     ${fld('عمولة الحوالة الافتراضية (%)','wirePct',s.wirePct,'number')}
-
     <div class="f"><label>سيارات في الحاوية (افتراضي)</label><select class="inp" name="perContainer">${[2,3,4].map(n => `<option ${+s.perContainer === n ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
-
     <div class="fsec">النسخ الاحتياطي</div>
-
     <div class="f full"><div class="hint" style="margin-bottom:8px">${USE_FB ? 'البيانات محفوظة في Firebase وتتزامن بين كل الأجهزة. النسخة الاحتياطية للاحتياط فقط.' : 'البيانات محفوظة في هذا المتصفح على هذا الجهاز. خذ نسخة احتياطية بانتظام.'}</div>
-
       <div class="row"><button type="button" class="btn" onclick="exportData()">⬇ تصدير نسخة</button>
-
       <label class="btn">⬆ استيراد نسخة<input type="file" accept=".json" style="display:none" onchange="importData(this)"></label></div></div>
-
     ${USE_FB ? `<div class="fsec">البرنامج القديم</div>
-
     <div class="f full"><div class="hint" style="margin-bottom:8px">جيب السيارات والزبائن والغرامات من AWS-CARS (بدون الدفعات).</div>
-
       <div class="row"><button type="button" class="btn" onclick="oldImportForm()">📥 استيراد من AWS-CARS</button></div></div>` : ''}
-
   </form>`, `<button class="btn pri" onclick="document.getElementById('sf').requestSubmit()">حفظ</button><button class="btn" onclick="closeModal()">إلغاء</button>`);
-
 }
-
 function saveSettings(){
-
   const d = formData('sf');
-
   Object.assign(db.settings, {officeName:d.officeName, officeFee:N(d.officeFee), wirePct:N(d.wirePct), perContainer:+d.perContainer});
-
   saveSettingsStore(); closeModal(); render(); toast('تم حفظ الإعدادات');
-
 }
-
 function exportData(){
-
   const a = document.createElement('a');
-
   a.href = URL.createObjectURL(new Blob([JSON.stringify(db, null, 1)], {type:'application/json'}));
-
   a.download = `car-office-backup-${today()}.json`; a.click();
-
 }
-
 function importData(inp){
-
   const f = inp.files[0]; if(!f) return;
-
   f.text().then(t => { let d; try{ d = JSON.parse(t); }catch(e){ return toast('ملف غير صالح'); }
-
     if(!d || !Array.isArray(d.cars)) return toast('ملف غير صالح');
-
     ask(`استبدال البيانات الحالية بـ ${d.cars.length} سيارة من الملف؟`, () => { replaceAll(d).then(() => { if(!USE_FB) render(); toast('تم الاستيراد'); }).catch(fbErr); }, 'استبدال');
-
   });
-
 }
-
-
 
 /* ---------- one-time import from the old program (Firebase project aws-cars): cars, their customers and fines — no payments ---------- */
-
 const OLD_CFG = {apiKey:'AIzaSyBUZNvDoSTtD_kXswnN0RWGc91mpxrKvCU', authDomain:'aws-cars.firebaseapp.com', projectId:'aws-cars',
-
   storageBucket:'aws-cars.firebasestorage.app', messagingSenderId:'297393137387', appId:'1:297393137387:web:31d81b675a5526e5cfc0ae'};
-
 let oldApp = null, oldPlan = null;
-
 function oldImportForm(){
-
   closeModal();
-
   openModal('استيراد من AWS-CARS', `
-
     <div class="muted small" style="margin-bottom:12px">سجّل الدخول بحسابك في البرنامج القديم. نجيبوا السيارات وزبائنها والغرامات اللي عليها — الدفعات ما تتنقلش.
-
       السيارة اللي سبق استوردتها تتحدّث وما تتكررش.</div>
-
     <div id="oiLogin" class="grid">
-
       <div class="f full"><label>البريد الإلكتروني</label><input class="inp" id="oiEmail" type="email" style="direction:ltr"></div>
-
       <div class="f full"><label>كلمة المرور</label><input class="inp" id="oiPass" type="password" style="direction:ltr" onkeydown="if(event.key==='Enter')oldImport('pass')"></div>
-
     </div>
-
     <div class="small" id="oiErr" style="color:var(--bad);min-height:18px;margin-top:6px"></div>
-
     <div id="oiOut"></div>`,
-
     `<span id="oiBtns"><button class="btn pri" onclick="oldImport('pass')">دخول وقراءة البيانات</button>
-
      <button class="btn" onclick="oldImport('google')">دخول بحساب Google</button></span>
-
      <button class="btn" onclick="closeModal()">إلغاء</button>`);
-
 }
-
 const oiTitle = s => String(s || '').trim().split(/\s+/).map(w => /^[A-Z0-9-]{1,3}$/.test(w) || /[a-z]/.test(w) ? w : w.charAt(0) + w.slice(1).toLowerCase()).join(' ');
-
 function oiLoc(s){
-
   s = String(s || '').toUpperCase();
-
   if(/DELIVER|RECEIV|HANDED|COMPLETE|CLOSED/.test(s)) return 6;
-
   if(/ARRIV|DESTIN|CUSTOMS|DISCHARG|LIBYA/.test(s)) return 5;
-
   if(/SHIP|SEA|VESSEL|LOAD|OCEAN|SAIL/.test(s)) return 4;
-
   if(/WAREHOUSE/.test(s)) return 3;
-
   if(/INLAND|TRANSIT|TOW|PICK/.test(s)) return 2;
-
   if(/PAID/.test(s) && !/PENDING/.test(s)) return 1;
-
   return 0;
-
 }
-
 const OI_FINE = /storage|late|fine|penalt|relist|غرام|تخزين|تأخير|أرضية/i;
-
 const OI_ITEM = {late_fee:'غرامة تأخير', storage:'تخزين', other:'رسوم أخرى', relist:'إعادة عرض'};
-
 function oiCar(v, vi, custId, cust){
-
   const f = v.fin || {}, mk = P.markup || {};
-
   const yardIdx = P.yards.findIndex(y => y.s === v.yard_state && y.n.toLowerCase() === String(v.yard || '').toLowerCase());
-
   const base = N(f.bid_price) + N(f.auction_fees);
-
   const tc = N(f.transfer_commission);
-
   // the old program charged one % on the purchase (paid with stage 1) and the same % on shipping + shipping extras (paid later)
-
   const pct = N(((v.transfers || []).find(t => t.cust_pct) || {}).cust_pct) || 1.5;
-
   const shipBase = N(f.inland_shipping) + N(f.ocean_shipping) + (v.extras || []).filter(x => x.st !== 1).reduce((s, x) => s + N(x.a), 0);
-
   let wirePct = pct, shipWirePct = pct;
-
   if(Math.abs(r2(base * pct / 100) + r2(shipBase * pct / 100) - tc) > 0.03){
-
     // e.g. the % was also taken on a stage-1 fine: shipping keeps its %, stage 1 keeps the rest of the old amount
-
     const w1 = r2(tc - r2(shipBase * pct / 100));
-
     if(w1 >= 0 && base > 0) wirePct = Math.round(w1 / base * 100 * 1e6) / 1e6;
-
     else { wirePct = base > 0 ? Math.round(tc / base * 100 * 1e6) / 1e6 : 1.5; shipWirePct = 0; }
-
   }
-
   const actual = N(vi && vi.shipping_cost_actual);
-
   let oceanCost = Math.max(0, N(f.ocean_shipping) - N(mk.ocean_per_car)), towCost, estimated = false;
-
   if(actual > 0){ towCost = r2(actual - oceanCost); if(towCost < 0){ towCost = 0; oceanCost = actual; } }
-
   else { towCost = Math.max(0, N(f.inland_shipping) - N(mk.tow)); estimated = true; }
-
   const auctionTr = (v.transfers || []).filter(t => t.purpose === 'auction');
-
   const by = v.auction_paid_by === 'office' || v.auction_paid_by === 'customer' ? v.auction_paid_by : (auctionTr.length ? 'office' : null);
-
   const date = v.purchase_date || String(v.created_at || '').slice(0,10) || today();
-
   const expenses = [];
-
   (v.extras || []).forEach((x, i) => expenses.push({id:'old_x' + i, desc:x.d || 'رسوم', amount:r2(N(x.a)), date, payer:'customer',
-
     stage:x.st === 1 ? 'buy' : 'ship', kind:OI_FINE.test(x.d || '') || x.st === 1 ? 'fine' : 'expense'}));
-
   if(N(f.other_fees) > 0) expenses.push({id:'old_of', desc:'رسوم أخرى', amount:r2(N(f.other_fees)), date, payer:'customer', stage:'buy', kind:'expense'});
-
   // fines the office paid to the auction (late fee, storage…) — not charged to the customer in the old program
-
   (v.transfers || []).filter(t => t.purpose && t.purpose !== 'auction').forEach(t => (t.items || []).forEach((it, i) => {
-
     if(!N(it.a)) return;
-
     expenses.push({id:'old_t' + t.id + '_' + i, desc:[OI_ITEM[it.k] || it.k || 'رسوم', t.payee, it.note || t.notes].filter(Boolean).join(' — '),
-
       amount:r2(N(it.a)), date:t.date || date, payer:'office', stage:'buy', kind:'fine'});
-
   }));
-
   // what the office really paid to move the money (PayPal / card fees, FX loss, invoice gaps) — borne by the office, not the customer
-
   const tcost = (vi && vi.tcost) || {}, tcostd = (vi && vi.tcostd) || {};
-
   const OI_PAYM = {paypal:'PayPal', card:'بطاقة', wire:'حوالة', zelle:'Zelle', cash:'نقدي'};
-
   Object.keys(tcost).forEach(tid => {
-
     const amt = r2(N(tcost[tid])); if(!amt) return;
-
     const d = tcostd[tid] || {}, tr = (v.transfers || []).find(t => t.id === tid) || {};
-
     const fine = amt > 0 && OI_FINE.test(d.note || '');
-
     const m = d.method || tr.method;
-
     const desc = [amt < 0 ? 'استرجاع على الدفع' : fine ? 'تخزين / تأخير' : 'عمولة الدفع', m && m !== 'other' ? (OI_PAYM[m] || m) : '', tr.payee, d.note].filter(Boolean).join(' — ');
-
     expenses.push({id:'old_c' + tid, desc, amount:amt, date:tr.date || String(d.at || '').slice(0,10) || date, payer:'office',
-
       stage:tr.purpose && /ship|tow|ocean|freight/i.test(tr.purpose) ? 'ship' : 'buy', kind:fine ? 'fine' : 'expense'});
-
   });
-
   const notes = [v.notes, v.engine && 'المحرك: ' + v.engine, v.color && 'اللون: ' + v.color,
-
     v.container_number && 'الحاوية: ' + v.container_number, v.booking_number && 'الحجز: ' + v.booking_number,
-
     estimated && '(تكلفة الشحن الفعلية مش مسجلة في البرنامج القديم — مقدّرة)'].filter(Boolean).join(' · ');
-
   return {
-
     id:v.id, created:v.created_at || new Date().toISOString(), customerId:custId, customer:cust ? cust.name : '', phone:cust ? cust.phone : '',
-
     date, year:String(v.year || ''), make:[oiTitle(v.make), oiTitle(v.model)].filter(Boolean).join(' '), vin:v.vin || '', lot:v.lot_number || '',
-
     auction:['Copart','IAAI','Manheim'].includes(v.auction_name) ? v.auction_name : (v.auction_name ? 'أخرى' : 'Copart'),
-
     yard:yardIdx >= 0 ? yardIdx : null, port:v.us_port || '', perContainer:N(v.cars_per_container) || db.settings.perContainer || 4,
-
     buyPrice:N(f.bid_price), auctionFees:N(f.auction_fees), officeFee:N(f.office_commission), wirePct, shipWirePct,
-
     towCharge:N(f.inland_shipping), oceanCharge:N(f.ocean_shipping), towCost, oceanCost,
-
     notes, loc:oiLoc(v.status), auctionPaid:by ? {by, date:v.auction_paid_date || (auctionTr[0] && auctionTr[0].date) || date} : null,
-
     expenses, oldImported:today()
-
   };
-
 }
-
 async function oldImport(mode){
-
   const err = $('#oiErr'), out = $('#oiOut'); err.textContent = '';
-
   try{
-
     if(!oldApp) oldApp = firebase.initializeApp(OLD_CFG, 'old');
-
     const au = oldApp.auth(), ofs = oldApp.firestore();
-
     if(!au.currentUser){
-
       if(mode === 'google') await au.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-
       else await au.signInWithEmailAndPassword($('#oiEmail').value.trim(), $('#oiPass').value);
-
     }
-
     out.innerHTML = '<div class="muted">جاري قراءة البيانات…</div>';
-
     const [vs, cs, ps] = await Promise.all([ofs.collection('vehicles').get(), ofs.collection('customers').get(), ofs.collection('payments').get()]);
-
     const payByCar = {};
-
     ps.forEach(d => { const p = Object.assign({id:d.id}, d.data()); if(p.vehicle_id && !p.deleted) (payByCar[p.vehicle_id] = payByCar[p.vehicle_id] || []).push(p); });
-
     const vi = {}; let viOk = true;
-
     try{ (await ofs.collection('vinternal').get()).forEach(d => vi[d.id] = d.data()); }catch(e){ viOk = false; }
-
     out.innerHTML = '<div class="muted">جاري قراءة الصور…</div>';
-
     const photos = await oldPhotos(vs.docs.map(d => d.data().vin));
-
     const oldCust = {}; cs.forEach(d => oldCust[d.id] = Object.assign({id:d.id}, d.data()));
-
     const digits = p => String(p || '').replace(/\D/g, '').slice(-9);
-
     const custs = new Map(), cars = [];
-
     vs.forEach(d => {
-
       const v = Object.assign({id:d.id}, d.data()); if(v.deleted) return;
-
       const oc = oldCust[v.customer_id];
-
       let cu = null;
-
       if(oc){
-
         cu = getCust(oc.id) || (digits(oc.phone) && db.customers.find(x => digits(x.phone) === digits(oc.phone))) || custs.get(oc.id);
-
         if(!cu) cu = {id:oc.id, created:oc.created_at || new Date().toISOString(), name:oc.full_name || oc.name || 'زبون', phone:oc.phone || '',
-
           phone2:oc.alternate_phone || '', city:oc.city || '', notes:[oc.notes, oc.code && 'كود: ' + oc.code].filter(Boolean).join(' · '), _new:true};
-
         custs.set(oc.id, cu);
-
       }
-
       const car = oiCar(v, vi[v.id], cu ? cu.id : '', cu);
-
       if(photos[v.vin]) car.photos = photos[v.vin];
-
       oiPayments(car, payByCar[v.id] || []);
-
       cars.push(car);
-
     });
-
     oldPlan = {cars, custs:[...new Set(custs.values())].filter(c => c._new)};
-
     const fines = cars.reduce((s, c) => s + c.expenses.filter(e => e.kind === 'fine').length, 0);
-
     const npay = cars.reduce((s, c) => s + c.oldPayments.length, 0);
-
     const fees = cars.flatMap(c => c.expenses.filter(e => String(e.id).startsWith('old_c')));
-
     const upd = cars.filter(c => getCar(c.id)).length;
-
     $('#oiLogin').style.display = 'none'; $('#oiBtns').innerHTML = `<button class="btn pri" onclick="oldImportRun()">استيراد ${cars.length} سيارة</button>`;
-
     out.innerHTML = `<div class="note info" style="margin:0 0 10px">لقينا <b>${cars.length}</b> سيارة${upd ? ` (منهم ${upd} موجودين — يتحدّثوا)` : ''}، و<b>${oldPlan.custs.length}</b> زبون جديد، و<b>${fines}</b> غرامة، و<b>${npay}</b> دفعة للمرحلة 1، و<b>${fees.length}</b> عمولة دفع على المكتب (${money(fees.reduce((s,e) => s + e.amount, 0))}).${viOk ? '' : '<br>⚠ حسابك ما عندهش صلاحية الأرباح في القديم، فتكلفة الشحن الفعلية تكون مقدّرة.'}</div>
-
       <div class="tblwrap" style="max-height:300px;overflow:auto"><table class="tbl"><thead><tr><th>السيارة</th><th>الزبون</th><th>المكان</th><th>دفعات المرحلة 1</th><th>غرامات</th></tr></thead><tbody>
-
       ${cars.map(c => { const t = Object.assign({stage:'buy', refunds:[], payments:c.oldPayments}, c, {payments:c.oldPayments}); const k = calc(t);
-
         return `<tr><td><b>${esc(carName(c))}</b><div class="small muted vinln"><span class="num">${esc(c.vin)}</span></div></td><td>${esc(c.customer || '—')}</td><td><span class="bdg loc">${LOC[c.loc]}</span></td>
-
         <td>${money(c.oldPayments.reduce((s,p) => s + p.amount, 0))} <span class="small muted">من ${money(k.req1)}</span>
-
           ${k.rem1 <= 0.004 ? '<div class="small" style="color:var(--ok)">✓ تكمل المرحلة 1</div>' : `<div class="small" style="color:var(--bad)">باقي ${money(k.rem1)}</div>`}
-
           ${c.skippedPay > 0 ? `<div class="small" style="color:var(--info)">${money(c.skippedPay)} زيادة عن المرحلة 1 — ما تنقلتش</div>` : ''}</td>
-
         <td>${c.expenses.filter(e => e.kind === 'fine').map(e => `<div class="small">${esc(e.desc)} ${money(e.amount)} <span class="muted">(${e.payer === 'office' ? 'على المكتب' : 'على الزبون'})</span></div>`).join('') || '<span class="muted">—</span>'}</td></tr>`; }).join('')}
-
       </tbody></table></div>`;
-
   }catch(e){
-
     console.error(e); out.innerHTML = '';
-
     err.textContent = /invalid|wrong|not-found|user-not/.test(e.code || '') ? 'البريد أو كلمة المرور غلط' :
-
       e.code === 'permission-denied' ? 'هذا الحساب ما عندهش صلاحية يقرأ بيانات البرنامج القديم' :
-
       /popup/.test(e.code || '') ? 'نافذة Google انقفلت أو انمنعت — جرّب البريد وكلمة المرور' : 'تعذر: ' + (e.code || e.message);
-
   }
-
 }
-
 /* old payments → stage-1 payments only, up to what stage 1 still needs; anything beyond is reported, not imported */
-
 const OI_METHOD = {cash_usd:'نقدي', cash:'نقدي', cash_lyd:'نقدي', bank:'حوالة مصرفية', transfer:'تحويل', wire:'حوالة مصرفية', cheque:'صك', check:'صك'};
-
 function oiPayments(car, list){
-
   const total = r2(list.reduce((s, p) => s + N(p.amount_usd != null ? p.amount_usd : p.amount), 0));
-
   // in the old program "customer paid the auction" meant the customer's money went through the office — it's inside these payments
-
   if(car.auctionPaid && car.auctionPaid.by === 'customer' && total >= N(car.buyPrice) + N(car.auctionFees) - 0.01) car.auctionPaid.by = 'office';
-
   const own = (getCar(car.id) || {}).payments || [];
-
   const tmp = Object.assign({stage:'buy', refunds:[], payments:own.filter(p => !String(p.id).startsWith('old_') && p.stage === 'buy')}, car);
-
   let room = Math.max(0, calc(tmp).rem1);
-
   car.oldPayments = []; car.skippedPay = 0;
-
   list.slice().sort((a,b) => String(a.date).localeCompare(String(b.date))).forEach(p => {
-
     const usd = r2(N(p.amount_usd != null ? p.amount_usd : p.amount));
-
     const take = r2(Math.min(usd, room)); room = r2(room - take);
-
     if(take > 0) car.oldPayments.push({id:'old_p' + p.id, stage:'buy', amount:take, date:p.date || String(p.created_at || '').slice(0,10),
-
       method:OI_METHOD[p.method] || 'أخرى',
-
       note:[p.ref, p.receipt_notes, p.currency && p.currency !== 'USD' ? `${p.amount} ${p.currency} بسعر ${p.rate}` : ''].filter(Boolean).join(' · ')});
-
     car.skippedPay = r2(car.skippedPay + usd - take);
-
   });
-
 }
-
-
 
 /* the old program kept each car's photos in tracking/{VIN}.images (readable without signing in) */
-
 async function oldPhotos(vins){
-
   if(!oldApp) oldApp = firebase.initializeApp(OLD_CFG, 'old');
-
   const ofs = oldApp.firestore(), res = {};
-
   await Promise.all([...new Set(vins.filter(Boolean))].map(async vin => {
-
     try{
-
       const d = await ofs.collection('tracking').doc(vin).get();
-
       const imgs = d.exists ? (d.data().images || []) : [];
-
       const order = s => s === 'auction' ? 0 : 1;
-
       const list = imgs.filter(x => x && x.src).sort((a,b) => order(a.stage) - order(b.stage) || String(a.at).localeCompare(String(b.at))).map(x => x.src);
-
       if(list.length) res[vin] = [...new Set(list)];
-
     }catch(e){}
-
   }));
-
   return res;
-
 }
-
 function applyOldPhotos(c, list){
-
   if(!list || !list.length) return;
-
   const own = c.img && !(c.photos || []).includes(c.img) && !list.includes(c.img);   // a photo picked by hand here wins
-
   c.photos = list;
-
   if(!own) c.img = list[0];
-
 }
-
 async function syncOldPhotos(){
-
   const map = await oldPhotos(db.cars.map(c => c.vin));
-
   let n = 0;
-
   for(const c of db.cars){ if(map[c.vin]){ applyOldPhotos(c, map[c.vin]); save(c); n++; } }
-
   render(); return n;
-
 }
-
 async function oldImportRun(){
-
   if(!oldPlan) return;
-
   $('#oiBtns').innerHTML = '<span class="muted">جاري الاستيراد…</span>';
-
   const ops = [];
-
   oldPlan.custs.forEach(cu => { delete cu._new; db.customers.push(cu); ops.push(b => b.set(fs.collection('customers').doc(cu.id), plain(cu))); });
-
   oldPlan.cars.forEach(n => {
-
     let c = getCar(n.id);
-
     const oldPays = n.oldPayments || []; delete n.oldPayments; delete n.skippedPay;
-
     if(c){ // keep what was added here (payments, refunds, photo, own expenses); refresh the rest
-
       const own = (c.expenses || []).filter(e => !String(e.id).startsWith('old_'));
-
       // keep changes made here to imported expenses (e.g. a fine moved onto the office)
-
       n.expenses.forEach(e => { const prev = (c.expenses || []).find(x => x.id === e.id); if(prev) Object.assign(e, {payer:prev.payer, kind:prev.kind, stage:prev.stage}); });
-
       const ownPays = (c.payments || []).filter(p => !String(p.id).startsWith('old_'));
-
       Object.assign(c, n, {expenses:own.concat(n.expenses), payments:oldPays.concat(ownPays), created:c.created, loc:Math.max(c.loc || 0, n.loc)});
-
     } else { c = Object.assign({stage:'buy', payments:oldPays, refunds:[], lock1:null, lock2:null, manualShip:false}, n); db.cars.push(c); }
-
     applyOldPhotos(c, n.photos);
-
     const hadLock = c.lock1; sync(c);
-
     // stage 1 closed by old payments: profit was received on the last payment's date, not today
-
     if(c.lock1 && !hadLock && oldPays.length && !c.payments.some(p => p.stage === 'buy' && !String(p.id).startsWith('old_')))
-
       c.lock1 = oldPays.map(p => p.date).filter(Boolean).sort().pop() || c.lock1; ops.push(b => b.set(fs.collection('cars').doc(c.id), plain(c)));
-
   });
-
   try{
-
     for(let i = 0; i < ops.length; i += 400){ const b = fs.batch(); ops.slice(i, i + 400).forEach(f => f(b)); await b.commit(); }
-
     const n = oldPlan.cars.length; oldPlan = null; closeModal(); go('cars'); toast(`تم استيراد ${n} سيارة`);
-
     if(oldApp) oldApp.auth().signOut();
-
   }catch(e){ fbErr(e); $('#oiBtns').innerHTML = `<button class="btn pri" onclick="oldImportRun()">إعادة المحاولة</button>`; }
-
 }
-
-
 
 if(PUB && USE_FB){ firebase.initializeApp(FBC); fs = firebase.firestore(); renderPublic(); }
-
 else {
-
   if(USE_FB) initFirebase();
-
   else setCloud('<span title="البيانات في هذا المتصفح فقط — عبّي firebase-config.js للربط">💾 محلي</span>');
-
   render();
-
 }
-
 </script>
-
 </body>
-
-</html> 
+</html>

@@ -25,7 +25,9 @@ on every computer. The user works from more than one computer; this file + git i
 ## Stack & where things live
 
 - One static file: `index.html` (vanilla JS, RTL Arabic, font **Tajawal** from Google Fonts,
-  orange theme, side menu on desktop / bottom tab bar on phones). Plus `firebase-config.js`,
+  orange accent on a light grey/white theme, floating top bar on desktop / bottom tab bar on phones;
+  the cars page opens with a dark welcome banner + "يحتاج انتباهك" chips). The new look lives in the last block of the `<style>` tag
+  ("look 2") and overrides the older rules above it — edit there for visual changes. Plus `firebase-config.js`,
   `ports-data.js` (ports, yards, ocean & towing prices from Atlantic Express), `logo.png`, `favicon.png`, `icon-180.png`.
 - **GitHub:** `AhmedElashheb97/aws-company` (private), branch `main`.
 - **Live site:** https://aws-company.vercel.app (Vercel project `aws-company`, team `ahmed-7513`,
@@ -81,6 +83,12 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
+- 2026-11-11 — New look (Ahmed approved from before/after screenshots, inspired by a dashboard he sent): floating top bar instead of
+  the side menu, welcome banner with attention chips (cars with balance due, missing payment cost, auction advances, cars waiting
+  for a container), tinted KPI cards with icons, section titles, new buttons. Visual only — `calc`/`sync` untouched. On phones the
+  tab labels are shortened ("المواني", "السجل") and the tracking-page link is hidden from the bottom bar. Tracking page (`#track`) not
+  re-checked under the new theme. Also: Ahmed's GitHub upload f219b1a was the same code with every line double-spaced; restored the
+  clean file before applying the design.
 - 2026-11-11 — Reverted commit 3948fa7 ("Update index.html", uploaded by Ahmed by hand on GitHub, removed ~1370 lines) at his request;
   `index.html` is back to the c0238c8 version. The reverted version is still in git history if he wants parts of it back.
 - 2026-11-11 — Added this CLAUDE.md + SessionStart `git pull` hook so sessions on any computer stay in sync.
