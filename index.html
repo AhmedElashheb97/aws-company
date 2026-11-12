@@ -1074,6 +1074,9 @@ const KIC = {
   card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
   up:'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>'};
 function kic(k){ return `<span class="kic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${KIC[k]}</svg></span>`; }
+/* opens the external auction-fees calculator in a new tab (no data is sent to it) */
+const FEE_CALC_URL = 'https://www.auctionfeescalculator.com/';
+function feeCalc(){ window.open(FEE_CALC_URL, '_blank', 'noopener'); }
 function viewCars(){
   const m = thisMonth();
   let due = 0, due1 = 0, due2 = 0, adv = 0, recv = 0, active = 0;
@@ -1126,6 +1129,7 @@ function viewCars(){
         ${['all','buy','ship','done'].map(s => `<button class="${ui.filter === s ? 'on' : ''}" onclick="ui.filter='${s}';render()">${s === 'all' ? 'الكل' : STG[s]} <span class="small">(${cnt(s)})</span></button>`).join('')}
       </div>
       <button class="btn" onclick="go('group')">📦 تجميع الحاويات</button>
+      <button class="btn" onclick="feeCalc()" title="يفتح موقع حاسبة رسوم المزاد في تبويب جديد">🧮 حاسبة رسوم المزاد</button>
       <div class="sp"></div>
       <input class="inp search" id="q" placeholder="بحث: زبون، VIN، لوت…" value="${esc(ui.q)}" oninput="ui.q=this.value;render();const e=document.getElementById('q');e.focus();e.setSelectionRange(e.value.length,e.value.length)">
     </div>
@@ -1584,7 +1588,7 @@ function carForm(id, custId){
       <input type="hidden" name="img" value="${esc(c.img||'')}"></div></div>
     <div class="fsec">المرحلة 1: الشراء</div>
     ${fld('سعر الشراء ($)','buyPrice',c.buyPrice,'number','oninput="cfWire()"')}
-    ${fld('رسوم المزاد ($)','auctionFees',c.auctionFees,'number','oninput="cfWire()"')}
+    <div class="f"><label>رسوم المزاد ($) <a class="lnk" href="javascript:feeCalc()" style="font-weight:700">🧮 احسبها</a></label><input class="inp" name="auctionFees" type="number" step="any" value="${esc(c.auctionFees ?? '')}" oninput="cfWire()"></div>
     ${fld('عمولة المكتب ($)','officeFee',c.officeFee,'number')}
     <div class="f">${''}<label>عمولة الحوالة (%)</label><input class="inp" name="wirePct" type="number" step="any" value="${esc(c.wirePct ?? 1.5)}" oninput="cfWire()"><div class="hint" id="wireHint"></div></div>
     <div class="fsec">المرحلة 2: الشحن (من خريطة المواني — قابلة للتعديل)</div>

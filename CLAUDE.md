@@ -94,6 +94,9 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
+- 2026-11-12 — "🧮 حاسبة رسوم المزاد" button on the cars toolbar + "🧮 احسبها" link beside "رسوم المزاد" in the car form: both just
+  open https://www.auctionfeescalculator.com/ in a new tab (`feeCalc()`); he copies the number back by hand. Ahmed wanted a simple
+  helper button, not auto-fill. The site has no known public API and was unreachable from the cloud session, so nothing is fetched from it.
 - 2026-11-12 — Drive backup is installed and running: Ahmed ran `setup` in his Apps Script project; first real backup wrote
   `car-office-backup-2026-11-12.json` (15 cars, 3 customers, 0 containers, 17 log entries) and the daily ~03:00 trigger is on.
   The backup login's password was changed the same day; if it changes again, `BACKUP_PASSWORD` in Script properties must be updated.
