@@ -94,6 +94,9 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
+- 2026-11-12 — Drive backup is installed and running: Ahmed ran `setup` in his Apps Script project; first real backup wrote
+  `car-office-backup-2026-11-12.json` (15 cars, 3 customers, 0 containers, 17 log entries) and the daily ~03:00 trigger is on.
+  The backup login's password was changed the same day; if it changes again, `BACKUP_PASSWORD` in Script properties must be updated.
 - 2026-11-12 — Added `backup/drive-backup.gs`: daily Firestore → Google Drive backup via Google Apps Script (see "Daily backup"
   section). Logic tested only against a mock of Google's services; NOT yet run for real — Ahmed still has to install it
   (paste, Script properties, run `setup`). Left undone: app import does not restore containers/log.
