@@ -34,6 +34,8 @@ on every computer. The user works from more than one computer; this file + git i
   auto-deploys on push). Vercel sometimes misses a push — if the new code isn't live after ~1 min,
   push an empty commit (`git commit --allow-empty -m Redeploy && git push`).
 - **Local preview:** `.claude/launch.json` → `serve.ps1` on port 8766 (local only, gitignored).
+- **`api/fees.js`** = the only server-side code: a Vercel serverless function (`POST /api/fees`) that forwards fee quotes to
+  `https://api.auctionfeescalculator.com`. Does not run under a plain static server — local testing needs a server that mounts it.
 - **Firebase project `aws-company`** (Firestore + Auth email/password, compat SDK 10.12.2).
   Collections: `cars`, `customers`, `containers`, `meta/settings`, `log`, `tracking`.
 - **Firestore rules** = `firestore.rules` in the repo. Publishing needs the Firebase console
@@ -94,9 +96,12 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
-- 2026-11-12 — "🧮 حاسبة رسوم المزاد" button on the cars toolbar + "🧮 احسبها" link beside "رسوم المزاد" in the car form: both just
-  open https://www.auctionfeescalculator.com/ in a new tab (`feeCalc()`); he copies the number back by hand. Ahmed wanted a simple
-  helper button, not auto-fill. The site has no known public API and was unreachable from the cloud session, so nothing is fetched from it.
+- 2026-11-12 — Built-in auction fees calculator (Ahmed did not want a link to the outside site). "🧮 حاسبة رسوم المزاد" on the cars
+  toolbar opens a window; "🧮 احسبها" beside "رسوم المزاد" in the car form opens the same calculator inline, prefilled with the buy
+  price and auction, with a button that copies the fee into the field (never automatic). Numbers come from the free, keyless API of
+  auctionfeescalculator.com (docs: docs.auctionfeescalculator.com) through our own Vercel function `api/fees.js` (their API has no CORS
+  headers, so the browser cannot call it directly). Only bid amount + options are sent. Options are remembered in localStorage
+  (`aws_fee_calc_v1`). Their towing-to-port estimate is NOT used. `calc`/`sync` untouched.
 - 2026-11-12 — Drive backup is installed and running: Ahmed ran `setup` in his Apps Script project; first real backup wrote
   `car-office-backup-2026-11-12.json` (15 cars, 3 customers, 0 containers, 17 log entries) and the daily ~03:00 trigger is on.
   The backup login's password was changed the same day; if it changes again, `BACKUP_PASSWORD` in Script properties must be updated.

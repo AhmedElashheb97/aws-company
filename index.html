@@ -416,6 +416,17 @@ body{background:var(--bg)}
 .bdg.loc{color:#334155} .sec,.fsec,a.lnk,.kpi.hl .v{color:var(--brand-d)}
 }
 
+/* auction fees calculator */
+@media screen{
+.fcout:not(:empty){margin-top:14px}
+.fcres{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.fcres > div{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line-2)}
+.fcres > div:last-child{border-bottom:0}
+.fcres .fee{background:var(--brand-softer)} .fcres .fee b{font-size:22px;font-weight:800;color:var(--brand-d)}
+.fcres .tot{background:var(--surface-2);font-weight:800}
+#fcInline:not(:empty){grid-column:1/-1}
+#fcInline:empty{display:none}
+}
 /* profits page: total in the list header + money column */
 @media screen{
 .ptotal{display:flex;align-items:center;gap:12px;padding:8px 16px;border-radius:14px;background:var(--ok-soft);color:#0B7A55;border:1px solid #BFEBD6}
@@ -1074,9 +1085,71 @@ const KIC = {
   card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
   up:'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>'};
 function kic(k){ return `<span class="kic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${KIC[k]}</svg></span>`; }
-/* opens the external auction-fees calculator in a new tab (no data is sent to it) */
-const FEE_CALC_URL = 'https://www.auctionfeescalculator.com/';
-function feeCalc(){ window.open(FEE_CALC_URL, '_blank', 'noopener'); }
+/* ---------- auction fees calculator ----------
+   Numbers come from the free API of auctionfeescalculator.com through our own /api/fees (Vercel function, see api/fees.js).
+   Only the bid amount and the chosen options are sent. Standalone window from the cars toolbar; inside the car form it is an
+   inline box under "رسوم المزاد" with a button that copies the result into the field (nothing is filled automatically). */
+const FC_OPT = {
+  copart: {pay:[['secured','مضمون: حوالة / كاش'],['unsecured','غير مضمون: بطاقة / PayPal']],
+           veh:[['standard','سيارة عادية (Standard)'],['heavy','مركبة ثقيلة (Heavy)'],['crashedToys','دراجات وترفيهية']]},
+  iaai:   {pay:[['standard','عادي (Standard)'],['high','مشتريات عالية (High)']],
+           veh:[['non-licensed','بدون رخصة تاجر'],['licensed','برخصة تاجر'],['recRides','دراجات وترفيهية'],['heavy','مركبة ثقيلة (Heavy)']]}};
+const FC_KEY = 'aws_fee_calc_v1';
+function fcPrefs(){ let p; try{ p = JSON.parse(localStorage.getItem(FC_KEY)); }catch(e){} return Object.assign({auction:'copart', bidType:'online', pay:{copart:'secured', iaai:'standard'}, veh:{copart:'standard', iaai:'non-licensed'}, volume:'low'}, p || {}); }
+function fcBox(inForm, amount, auction){
+  const p = fcPrefs(), a = auction || p.auction;
+  const sel = (id, list, cur) => `<select class="inp" data-fc="${id}" onchange="fcChange(this)">${list.map(([v,t]) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${t}</option>`).join('')}</select>`;
+  return `<div class="fc" data-form="${inForm ? 1 : ''}">
+    <div class="grid">
+      <div class="f"><label>مبلغ المزايدة ($)</label><input class="inp" data-fc="amount" type="number" step="any" min="0" value="${esc(amount ?? '')}" onkeydown="if(event.key==='Enter'){event.preventDefault();fcRun(this)}"></div>
+      <div class="f"><label>المزاد</label>${sel('auction', [['copart','Copart'],['iaai','IAAI']], a)}</div>
+      <div class="f"><label>طريقة المزايدة</label>${sel('bidType', [['online','أونلاين (Online)'],['kiosk','كشك (Kiosk)'],['non-kiosk','حضوري (Non-Kiosk)']], p.bidType)}</div>
+      <div class="f"><label>طريقة الدفع</label>${sel('pay', FC_OPT[a].pay, p.pay[a])}</div>
+      <div class="f"><label>نوع المركبة</label>${sel('veh', FC_OPT[a].veh, p.veh[a])}</div>
+      <div class="f" data-fc-vol ${a === 'copart' ? '' : 'style="display:none"'}><label>حجم مشترياتك في Copart</label>${sel('volume', [['low','منخفض (Low Volume)'],['high','عالي (High Volume)']], p.volume)}</div>
+    </div>
+    <div class="row" style="margin-top:12px"><button type="button" class="btn pri" onclick="fcRun(this)">🧮 احسب</button><span class="small muted">الاختيارات تتحفظ للمرة الجاية</span></div>
+    <div class="fcout" data-fc="out"></div></div>`;
+}
+function feeCalc(){ openModal('حاسبة رسوم المزاد', fcBox(false), `<button class="btn" onclick="closeModal()">إغلاق</button>`); }
+function fcChange(el){
+  const box = el.closest('.fc'), g = k => box.querySelector(`[data-fc="${k}"]`), a = g('auction').value, p = fcPrefs();
+  if(el.dataset.fc === 'auction'){   // options differ per auction
+    g('pay').innerHTML = FC_OPT[a].pay.map(([v,t]) => `<option value="${v}" ${v === p.pay[a] ? 'selected' : ''}>${t}</option>`).join('');
+    g('veh').innerHTML = FC_OPT[a].veh.map(([v,t]) => `<option value="${v}" ${v === p.veh[a] ? 'selected' : ''}>${t}</option>`).join('');
+    box.querySelector('[data-fc-vol]').style.display = a === 'copart' ? '' : 'none';
+  }
+  g('out').innerHTML = '';
+}
+async function fcRun(el){
+  const box = el.closest('.fc'), g = k => box.querySelector(`[data-fc="${k}"]`), out = g('out');
+  const a = g('auction').value, amount = N(g('amount').value);
+  if(!(amount > 0)){ out.innerHTML = `<div class="note bad">اكتب مبلغ المزايدة الأول</div>`; g('amount').focus(); return; }
+  const p = fcPrefs(); p.auction = a; p.bidType = g('bidType').value; p.pay[a] = g('pay').value; p.veh[a] = g('veh').value; p.volume = g('volume').value;
+  try{ localStorage.setItem(FC_KEY, JSON.stringify(p)); }catch(e){}
+  const body = {bidAmount:amount, auction:a, bidType:p.bidType, bidPay:p.pay[a], bidVehicle:p.veh[a]};
+  if(a === 'copart') body.volume = p.volume;
+  out.innerHTML = `<div class="note info">جاري الحساب…</div>`;
+  let j, ok = false;
+  try{ const r = await fetch('/api/fees', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)}); j = await r.json(); ok = r.ok; }catch(e){}
+  if(!box.isConnected) return;
+  const fee = ok && j && j.quote && j.quote.auctionFees ? j.quote.auctionFees.auctionFee : null;
+  if(typeof fee !== 'number'){ out.innerHTML = `<div class="note bad">تعذر الحساب توا${j && (j.message || j.error) ? ' — ' + esc(j.message || j.error) : ''}. جرّب مرة ثانية بعد شوية.</div>`; return; }
+  out.innerHTML = `<div class="fcres">
+      <div><span>مبلغ المزايدة</span><b>${money(amount)}</b></div>
+      <div class="fee"><span>رسوم المزاد</span><b>${money(fee)}</b></div>
+      <div class="tot"><span>الإجمالي للمزاد</span><b>${money(j.quote.auctionFees.totalAmount)}</b></div></div>
+    ${box.dataset.form ? `<button type="button" class="btn pri" style="margin-top:10px" onclick="fcUse(${fee})">↙ حط ${money(fee)} في خانة رسوم المزاد</button>` : ''}
+    <div class="small muted" style="margin-top:8px">تقدير من auctionfeescalculator.com — الرقم النهائي هو اللي في فاتورة المزاد.</div>`;
+}
+/* car form: show/hide the inline calculator, prefilled from the form */
+function fcToggle(){
+  const el = $('#fcInline'); if(!el) return;
+  if(el.innerHTML){ el.innerHTML = ''; return; }
+  const auc = (cfEl('auction').value || '').toLowerCase();
+  el.innerHTML = `<div class="xbox">${fcBox(true, cfEl('buyPrice').value, auc === 'iaai' ? 'iaai' : auc === 'copart' ? 'copart' : null)}</div>`;
+}
+function fcUse(fee){ cfEl('auctionFees').value = fee; cfWire(); $('#fcInline').innerHTML = ''; toast('تم — رسوم المزاد ' + fee + '$'); }
 function viewCars(){
   const m = thisMonth();
   let due = 0, due1 = 0, due2 = 0, adv = 0, recv = 0, active = 0;
@@ -1129,7 +1202,7 @@ function viewCars(){
         ${['all','buy','ship','done'].map(s => `<button class="${ui.filter === s ? 'on' : ''}" onclick="ui.filter='${s}';render()">${s === 'all' ? 'الكل' : STG[s]} <span class="small">(${cnt(s)})</span></button>`).join('')}
       </div>
       <button class="btn" onclick="go('group')">📦 تجميع الحاويات</button>
-      <button class="btn" onclick="feeCalc()" title="يفتح موقع حاسبة رسوم المزاد في تبويب جديد">🧮 حاسبة رسوم المزاد</button>
+      <button class="btn" onclick="feeCalc()">🧮 حاسبة رسوم المزاد</button>
       <div class="sp"></div>
       <input class="inp search" id="q" placeholder="بحث: زبون، VIN، لوت…" value="${esc(ui.q)}" oninput="ui.q=this.value;render();const e=document.getElementById('q');e.focus();e.setSelectionRange(e.value.length,e.value.length)">
     </div>
@@ -1588,9 +1661,10 @@ function carForm(id, custId){
       <input type="hidden" name="img" value="${esc(c.img||'')}"></div></div>
     <div class="fsec">المرحلة 1: الشراء</div>
     ${fld('سعر الشراء ($)','buyPrice',c.buyPrice,'number','oninput="cfWire()"')}
-    <div class="f"><label>رسوم المزاد ($) <a class="lnk" href="javascript:feeCalc()" style="font-weight:700">🧮 احسبها</a></label><input class="inp" name="auctionFees" type="number" step="any" value="${esc(c.auctionFees ?? '')}" oninput="cfWire()"></div>
+    <div class="f"><label>رسوم المزاد ($) <a class="lnk" href="javascript:fcToggle()" style="font-weight:700">🧮 احسبها</a></label><input class="inp" name="auctionFees" type="number" step="any" value="${esc(c.auctionFees ?? '')}" oninput="cfWire()"></div>
     ${fld('عمولة المكتب ($)','officeFee',c.officeFee,'number')}
     <div class="f">${''}<label>عمولة الحوالة (%)</label><input class="inp" name="wirePct" type="number" step="any" value="${esc(c.wirePct ?? 1.5)}" oninput="cfWire()"><div class="hint" id="wireHint"></div></div>
+    <div id="fcInline"></div>
     <div class="fsec">المرحلة 2: الشحن (من خريطة المواني — قابلة للتعديل)</div>
     <div class="f full"><label>الساحة</label><input class="inp" name="yard" list="yardsList" value="${y ? esc(yardLabel(y)) : ''}" placeholder="اكتب اسم الساحة أو الولاية… مثلاً Dallas" onchange="cfYard()" style="direction:ltr;text-align:right">
       <datalist id="yardsList">${P.yards.map(yy => `<option value="${esc(yardLabel(yy))}">`).join('')}</datalist><div class="hint" id="yardHint"></div></div>
