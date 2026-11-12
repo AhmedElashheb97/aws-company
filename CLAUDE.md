@@ -43,6 +43,17 @@ on every computer. The user works from more than one computer; this file + git i
 - **Old system:** Firebase project `aws-cars` (repo `AhmedElashheb97/aws-cars`, source copy at
   `C:\Users\AEMAA\Desktop\Index.html` on the first PC). Data was imported from it (Settings → استيراد من AWS-CARS).
 
+## Daily backup to Google Drive
+
+- `backup/drive-backup.gs` = Google Apps Script (not part of the web app). Ahmed pastes it into script.google.com under his own
+  Google account, adds Script properties `BACKUP_EMAIL` / `BACKUP_PASSWORD` (an app login — he types them himself), runs `setup` once.
+- Every day ~03:00 it signs in through the Firebase Auth REST API, reads `cars`, `customers`, `containers`, `log`, `meta/settings`
+  through the Firestore REST API and writes `car-office-backup-YYYY-MM-DD.json` into the Drive folder "AWS COMPANY - نسخ احتياطية"
+  (same shape as the app's "تصدير نسخة"). Backups older than 90 days go to the Drive trash; a failed run emails him.
+- If the script in the repo changes, he has to paste the new version into script.google.com again — it does not update itself.
+- Restore = Settings → "استيراد نسخة". That import (`replaceAll`) only restores cars, customers and settings — containers and the
+  log are in the file but are NOT restored yet.
+
 ## Money engine (`calc(c)` / `sync(c)` in index.html)
 
 - **Stage 1 (buy):** required = buyPrice + auctionFees + officeFee + wire (wirePct, default 1.5% of price+fees)
@@ -83,6 +94,9 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
+- 2026-11-12 — Added `backup/drive-backup.gs`: daily Firestore → Google Drive backup via Google Apps Script (see "Daily backup"
+  section). Logic tested only against a mock of Google's services; NOT yet run for real — Ahmed still has to install it
+  (paste, Script properties, run `setup`). Left undone: app import does not restore containers/log.
 - 2026-11-11 — Customer page: new card "مكسبنا منه (المستلم)" = profit of his locked stages only (profit1 where `lock1`,
   profit2 where `lock2`), plus the count of locked stages. Ahmed chose received-only over total/expected. Display only — `calc`/`sync` untouched.
 - 2026-11-11 — Profits page list: lock date now sits under its header, profit column aligned to the edge and bolder, and the
