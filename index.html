@@ -705,6 +705,26 @@ function carThumb(c){ return c.img ? `<img class="thumb" src="${esc(c.img)}" loa
 function portById(id){ return P.ports.find(p => p.id === id); }
 function yardLabel(y){ return `${y.n}, ${y.s} — ${y.a}`; }
 const YARD_IDX = {}; P.yards.forEach((y,i) => YARD_IDX[yardLabel(y)] = i);
+/* forgiving yard lookup: accepts the exact list label, or what the auction page shows — "Phoenix (AZ)", "Phoenix, AZ", "phoenix".
+   auction ('Copart' / 'IAAI') breaks ties when both auctions have a yard with the same name. Returns {i} or {many:[...]} or null. */
+function findYard(text, auction){
+  text = String(text || '').trim();
+  if(!text) return null;
+  if(YARD_IDX[text] != null) return {i:YARD_IDX[text]};
+  const norm = t => t.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  let name = text, st = '', auc = '';
+  const m = text.match(/^(.*?)[\s,(]+([A-Za-z]{2})\)?\s*(?:[—–-]\s*(copart|iaai|iaa))?\s*$/i);
+  if(m && m[1].trim()){ name = m[1]; st = m[2].toUpperCase(); auc = (m[3] || '').toLowerCase(); }
+  else { const m2 = text.match(/^(.*?)\s*[—–-]\s*(copart|iaai|iaa)\s*$/i); if(m2){ name = m2[1]; auc = m2[2].toLowerCase(); } }
+  if(auc === 'iaa') auc = 'iaai';
+  const n = norm(name);
+  let list = P.yards.map((y,i) => ({y,i})).filter(o => norm(o.y.n) === n && (!st || o.y.s === st));
+  if(!list.length) list = P.yards.map((y,i) => ({y,i})).filter(o => norm(o.y.n).startsWith(n) && n.length >= 3 && (!st || o.y.s === st));
+  const want = auc || String(auction || '').toLowerCase();
+  if(list.length > 1 && (want === 'copart' || want === 'iaai')){ const f = list.filter(o => o.y.a.toLowerCase() === want); if(f.length) list = f; }
+  if(list.length === 1) return {i:list[0].i};
+  return list.length ? {many:list.map(o => yardLabel(o.y))} : null;
+}
 
 function quote(yi, pid, k){
   const y = P.yards[yi], res = {};
@@ -1648,7 +1668,7 @@ function carForm(id, custId){
     ${fld('السنة','year',c.year,'text','placeholder="2021"')}
     ${fld('النوع والموديل','make',c.make,'text','placeholder="Toyota Camry"')}
     ${fld('رقم اللوت','lot',c.lot,'text','style="direction:ltr"')}
-    <div class="f"><label>المزاد</label><select class="inp" name="auction">${['Copart','IAAI','Manheim','أخرى'].map(a => `<option ${c.auction === a ? 'selected' : ''}>${a}</option>`).join('')}</select></div>
+    <div class="f"><label>المزاد</label><select class="inp" name="auction" onchange="if(cfEl('yard').value && YARD_IDX[cfEl('yard').value] == null)cfYard()">${['Copart','IAAI','Manheim','أخرى'].map(a => `<option ${c.auction === a ? 'selected' : ''}>${a}</option>`).join('')}</select></div>
     <div class="f"></div>
     <div class="fsec">صورة السيارة</div>
     <div class="f full"><label>رابط السيارة (صفحة المزاد أو رابط الصورة)</label>
@@ -1774,9 +1794,9 @@ function cfWire(){
   $('#wireHint').innerHTML = `= ${money(b * N(cfEl('wirePct').value) / 100)}`;
 }
 function cfYard(){
-  const i = YARD_IDX[cfEl('yard').value];
-  if(i == null){ $('#yardHint').textContent = cfEl('yard').value ? 'ساحة غير موجودة في الخريطة — أدخل الأسعار يدوياً' : ''; return; }
-  const y = P.yards[i]; cfEl('port').value = y.p;
+  const f = findYard(cfEl('yard').value, cfEl('auction').value);
+  if(!f || f.i == null){ $('#yardHint').textContent = !cfEl('yard').value ? '' : f ? 'فيه أكثر من ساحة بالاسم هذا — اختار وحدة من القائمة: ' + f.many.join(' / ') : 'ساحة غير موجودة في الخريطة — أدخل الأسعار يدوياً'; return; }
+  const i = f.i, y = P.yards[i]; cfEl('yard').value = yardLabel(y); cfEl('port').value = y.p;
   const q = quote(i, y.p, +cfEl('perContainer').value);
   if(q.towCharge != null){ cfEl('towCharge').value = q.towCharge; cfEl('towCost').value = q.towCost; $('#yardHint').textContent = `ميناء ${y.p} · سحب ${q.towCharge}$ (تكلفة ${q.towCost}$)`; }
   else { $('#yardHint').textContent = `ميناء ${y.p} · سعر السحب لهذه الساحة غير متوفر بعد — أدخله يدوياً`; }
@@ -1844,7 +1864,7 @@ function cfReloc(){
 function xRoute(){
   const r = cfEl('relocPort') && cfEl('relocPort').value, h = $('#relocHint'); if(!h) return;
   if(!r){ h.innerHTML = ''; return; }
-  const yi = YARD_IDX[cfEl('yard').value], y = P.yards[yi], yp = cfEl('port').value;
+  const fy = findYard(cfEl('yard').value, cfEl('auction').value), yi = fy && fy.i, y = P.yards[yi], yp = cfEl('port').value;
   h.innerHTML = `<div>1. السحب: ${esc(y ? y.n + ', ' + y.s : 'الساحة')} ← ${esc(pName(yp))} (${money(cfEl('towCharge').value)})</div>
     <div>2. النقل: ${esc(pName(yp))} ← ${esc(pName(r))} <span class="muted">(اكتبه في السطر تحت)</span></div>
     <div>3. البحري من ${esc(pName(r))} (${money(cfEl('oceanCharge').value)})</div>`;
@@ -1914,7 +1934,7 @@ function saveCar(id){
   const d = formData('cf');
   const nums = ['buyPrice','auctionFees','officeFee','wirePct','shipWirePct','towCharge','oceanCharge','towCost','oceanCost','perContainer'];
   nums.forEach(n => d[n] = N(d[n]));
-  const yi = YARD_IDX[d.yard]; d.yard = yi == null ? null : yi;
+  const fy = findYard(d.yard, d.auction), yi = fy && fy.i; d.yard = yi == null ? null : yi;
   let cu = null;
   if(d.newOpen && d.newName.trim()){
     cu = {id:uid(), created:new Date().toISOString(), name:d.newName.trim(), phone:d.newPhone.trim(), phone2:'', city:d.newCity.trim(), notes:''};

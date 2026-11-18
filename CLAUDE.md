@@ -96,6 +96,10 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
+- 2026-11-18 — Yard field in the car form now accepts names the way the auction page writes them ("Phoenix (AZ)", "Phoenix, AZ",
+  "phoenix", "Tucson AZ") via `findYard(text, auction)`; the form's auction (Copart/IAAI) picks between same-name yards, else the hint
+  lists the choices. On a match the field is rewritten to the full list label. Ahmed couldn't find IAAI Phoenix because only the exact
+  label "Phoenix, AZ — IAAI" was accepted. Price list itself unchanged.
 - 2026-11-12 — Built-in auction fees calculator (Ahmed did not want a link to the outside site). "🧮 حاسبة رسوم المزاد" on the cars
   toolbar opens a window; "🧮 احسبها" beside "رسوم المزاد" in the car form opens the same calculator inline, prefilled with the buy
   price and auction, with a button that copies the fee into the field (never automatic). Numbers come from the free, keyless API of
