@@ -316,6 +316,9 @@ body.pub main{margin:0 auto}
   #print td,#print th{border:1px solid #ccc;padding:6px 8px;text-align:start}
   #print th{background:#f6f0ea}
   #print h1{color:#C2570C}
+  #print .pinv-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin:10px 0}
+  #print .pinv-head p{margin:0;flex:1}
+  #print .pinv-img{width:250px;max-height:180px;object-fit:cover;border-radius:10px;border:1px solid #ddd;flex:none}
 }
 
 /* ===== look 2: airy white, floating top bar, hero banner, tinted cards ===== */
@@ -2192,8 +2195,9 @@ function printInvoice(id){
   $('#print').innerHTML = `
     <div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="AWS" style="height:56px"><h1>${esc(db.settings.officeName)}</h1></div>
     <div>فاتورة الزبون — التاريخ: ${today()}</div>
-    <p><b>الزبون:</b> ${esc(c.customer||'')} ${c.phone ? ' — ' + esc(c.phone) : ''}<br>
+    <div class="pinv-head"><p><b>الزبون:</b> ${esc(c.customer||'')} ${c.phone ? ' — ' + esc(c.phone) : ''}<br>
        <b>السيارة:</b> ${esc(carName(c))} ${c.vin ? ' — VIN: ' + esc(c.vin) : ''} ${c.lot ? ' — Lot: ' + esc(c.lot) : ''}</p>
+      ${c.img ? `<img class="pinv-img" src="${esc(c.img)}" referrerpolicy="no-referrer" alt="">` : ''}</div>
     <h3>المرحلة 1: الشراء</h3>
     <table>${row('سعر الشراء في المزاد', $$(c.buyPrice))}${row('رسوم المزاد', $$(c.auctionFees))}${row('عمولة المكتب', $$(c.officeFee))}${row('عمولة الحوالة (' + +N(c.wirePct).toFixed(2) + '%)', $$(k.wire))}${ce('buy')}
       <tr><th>الإجمالي</th><th style="direction:ltr;text-align:left">${$$(k.req1)}</th></tr>
@@ -2208,7 +2212,13 @@ function printInvoice(id){
       ${c.payments.map(p => `<tr><td>${esc(p.date)}</td><td>${STG[p.stage]}</td><td>${esc(p.method)}</td><td style="direction:ltr;text-align:left">${$$(p.amount)}</td></tr>`).join('') || '<tr><td colspan="4">—</td></tr>'}</table>
     <h3>إجمالي الباقي على الزبون: <span style="direction:ltr;display:inline-block">${$$(Math.max(0,k.rem1) + (c.stage !== 'buy' ? Math.max(0,k.rem2) : 0))}</span></h3>
     ${c.vin ? `<p>تتبّع سيارتك: <span style="direction:ltr;display:inline-block">${esc(trackUrl(c.vin))}</span></p>` : ''}`;
-  window.print();
+  // wait for the car photo (max 5s) so it is on the printed page; a photo that fails to load is dropped
+  const img = $('#print .pinv-img');
+  if(!img || img.complete){ if(img && !img.naturalWidth) img.remove(); window.print(); return; }
+  toast('جاري تجهيز الفاتورة…');
+  let done = false;
+  const go = () => { if(done) return; done = true; if(!img.naturalWidth) img.remove(); window.print(); };
+  img.onload = go; img.onerror = go; setTimeout(go, 5000);
 }
 
 /* ---------- customer tracking (public page by VIN) ---------- */

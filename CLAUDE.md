@@ -96,6 +96,8 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
+- 2026-11-19 — Customer invoice (`printInvoice`) now shows the car's main photo (`c.img`) beside the customer/car details. Printing
+  waits up to 5s for the photo to load; a photo that fails to load is left out. Cars without a photo print as before. Visual only.
 - 2026-11-19 — Phone layout pass (Ahmed: "not clear on the phone"). Last `<style>` block "phones: fit the screen": at ≤640px any
   table wider than the screen becomes one card per row (`tblCards()` runs after every `render()`/`openModal`, copies header text into
   `data-l` and adds `.tcard` only when the table overflows — small tables stay tables). Forms/windows open as a bottom sheet with a
