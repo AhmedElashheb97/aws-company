@@ -79,13 +79,20 @@ container stage moves all its cars), extra charges box in the car form (relocati
 storage, other), customer **tracking page** (`/?vin=…` or `/#track`, synced to `tracking/{VIN}`, no costs/profit shown),
 WhatsApp tracking link, **change log** (who/when/old→new, per car & container), old-system importer, logo.
 
+## How Ahmed works (facts he told us — don't re-ask)
+
+- Customers always pay the office; the office pays the auction. No customer pays an auction directly.
+- No office overheads: no rent, salaries, electricity or internet. So car profits ≈ his net profit; a cash book / chart of
+  accounts was discussed (2026-11-19) and he does not need one for now. Revisit only if cash on hand stops matching.
+
 ## Known open issues (from the accounting review — not fixed yet, user decides)
 
 3. Lock date = save day (`today()`), not the date of the payment that completed the stage.
 4. A late customer charge after a lock reopens the stage and moves its profit to another month.
 5. Overpayments created after the fact (editing/removing expenses) show as negative remainder, not "راجع له".
 6. Stage-2 profit uses price-list costs until a real container cost is entered.
-7. If the customer paid the auction himself, the 1.5% wire is still charged.
+7. If the customer paid the auction himself, the 1.5% wire is still charged. — **not relevant in practice** (Ahmed, 2026-11-19: customers never pay the
+   auction themselves; they give him the money and the office pays). Leave as is unless he says otherwise.
 8. No record of payments to the shipping company → can't reconcile with cash on hand.
 
 ## Testing rules
