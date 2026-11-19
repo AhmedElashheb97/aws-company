@@ -312,14 +312,19 @@ body.pub main{margin:0 auto}
   body{background:#fff}
   body > *:not(#print){display:none !important}
   #print{display:block;padding:10px;font-size:13px}
-  #print table{width:100%;border-collapse:collapse;margin:8px 0}
-  #print td,#print th{border:1px solid #ccc;padding:6px 8px;text-align:start}
-  #print th{background:#f6f0ea}
-  #print h1{color:#C2570C}
-  #print .pinv-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin:10px 0}
-  #print .pinv-head p{margin:0;flex:1}
-  #print .pinv-img{width:250px;max-height:180px;object-fit:cover;border-radius:10px;border:1px solid #ddd;flex:none}
 }
+/* invoice layout — used by print (#print) and by the PDF (.pdfhost, drawn off-screen) */
+.pinvdoc{font-size:13px;line-height:1.55;color:#111;background:#fff;direction:rtl;font-family:"Tajawal","Segoe UI",Tahoma,Arial,sans-serif}
+.pinvdoc table{width:100%;border-collapse:collapse;margin:8px 0}
+.pinvdoc td,.pinvdoc th{border:1px solid #ccc;padding:6px 8px;text-align:start;font-weight:normal}
+.pinvdoc th{background:#f6f0ea;font-weight:700}
+.pinvdoc h1{color:#C2570C;font-size:22px;margin:0}
+.pinvdoc h3{font-size:15px;margin:14px 0 4px}
+.pinvdoc tr{break-inside:avoid}
+.pinvdoc .pinv-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin:10px 0}
+.pinvdoc .pinv-head p{margin:0;flex:1}
+.pinvdoc .pinv-img{width:250px;max-height:180px;object-fit:cover;border-radius:10px;border:1px solid #ddd;flex:none}
+.pdfhost{position:fixed;left:-12000px;top:0;width:760px;padding:0;background:#fff;z-index:-1}
 
 /* ===== look 2: airy white, floating top bar, hero banner, tinted cards ===== */
 @media screen{
@@ -1551,7 +1556,7 @@ function viewCar(c){
     <div class="actions">
       <button class="btn pri" onclick="paymentForm('${c.id}')">＋ دفعة من الزبون</button>
       <button class="btn" onclick="expenseForm('${c.id}')">＋ مصروف</button>
-      <button class="btn" onclick="printInvoice('${c.id}')">🧾 فاتورة الزبون</button>
+      <button class="btn" onclick="invoicePdf('${c.id}')">🧾 فاتورة الزبون (PDF)</button>
       ${c.vin ? `<button class="btn" onclick="trackLinkForm('${c.id}')">🔗 رابط التتبع</button>` : ''}
       <button class="btn" onclick="carForm('${c.id}')">تعديل</button>
       <button class="btn danger" onclick="delCar('${c.id}')">حذف</button>
@@ -2185,25 +2190,25 @@ function saveExpense(cid, eid){
 function delExpense(cid, eid){ ask('حذف هذا المصروف؟', () => { const c = getCar(cid); c.expenses = c.expenses.filter(x => x.id !== eid); commit(c); }, 'حذف'); }
 
 /* ---------- invoice (no office expenses) ---------- */
-function printInvoice(id){
-  const c = getCar(id), k = calc(c);
+function invoiceHtml(c, imgSrc){
+  const k = calc(c);
   const row = (a, b) => `<tr><td>${a}</td><td style="direction:ltr;text-align:left">${b}</td></tr>`;
   const $$ = n => '$' + r2(n).toLocaleString('en-US', {maximumFractionDigits:2});
   const ce = st => c.expenses.filter(e => (e.payer === 'customer' || e.onInv) && e.stage === st).map(e => e.payer === 'customer'
       ? row((e.kind === 'fine' ? 'غرامة: ' : '') + esc(e.desc), $$(e.amount))
       : row(esc(e.desc) + ' <i>(على حساب المكتب — ما ينحسبش عليك)</i>', '<s>' + $$(e.amount) + '</s> $0')).join('');
-  $('#print').innerHTML = `
+  return `<div class="pinvdoc">
     <div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="AWS" style="height:56px"><h1>${esc(db.settings.officeName)}</h1></div>
     <div>فاتورة الزبون — التاريخ: ${today()}</div>
     <div class="pinv-head"><p><b>الزبون:</b> ${esc(c.customer||'')} ${c.phone ? ' — ' + esc(c.phone) : ''}<br>
        <b>السيارة:</b> ${esc(carName(c))} ${c.vin ? ' — VIN: ' + esc(c.vin) : ''} ${c.lot ? ' — Lot: ' + esc(c.lot) : ''}</p>
-      ${c.img ? `<img class="pinv-img" src="${esc(c.img)}" referrerpolicy="no-referrer" alt="">` : ''}</div>
-    <h3>المرحلة 1: الشراء</h3>
+      ${imgSrc ? `<img class="pinv-img" src="${esc(imgSrc)}" referrerpolicy="no-referrer" alt="">` : ''}</div>
+    <h3>المرحلة الأولى: الشراء</h3>
     <table>${row('سعر الشراء في المزاد', $$(c.buyPrice))}${row('رسوم المزاد', $$(c.auctionFees))}${row('عمولة المكتب', $$(c.officeFee))}${row('عمولة الحوالة (' + +N(c.wirePct).toFixed(2) + '%)', $$(k.wire))}${ce('buy')}
       <tr><th>الإجمالي</th><th style="direction:ltr;text-align:left">${$$(k.req1)}</th></tr>
       ${k.auctionByCust ? row('مدفوع للمزاد مباشرة', $$(k.auctionByCust)) : ''}${row('المدفوع', $$(k.payments1))}
       <tr><th>الباقي</th><th style="direction:ltr;text-align:left">${$$(k.rem1)}</th></tr></table>
-    ${c.stage !== 'buy' || k.paid2 > 0 ? `<h3>المرحلة 2: الشحن</h3>
+    ${c.stage !== 'buy' || k.paid2 > 0 ? `<h3>المرحلة الثانية: الشحن</h3>
     <table>${row('السحب الداخلي', $$(c.towCharge))}${row('الشحن البحري', $$(c.oceanCharge))}${ce('ship')}${k.wire2 ? row('عمولة الحوالة (' + +N(c.shipWirePct).toFixed(2) + '%)', $$(k.wire2)) : ''}
       <tr><th>الإجمالي</th><th style="direction:ltr;text-align:left">${$$(k.req2)}</th></tr>${row('المدفوع', $$(k.paid2))}
       <tr><th>الباقي</th><th style="direction:ltr;text-align:left">${$$(k.rem2)}</th></tr></table>` : ''}
@@ -2211,7 +2216,11 @@ function printInvoice(id){
     <table><tr><th>التاريخ</th><th>المرحلة</th><th>الطريقة</th><th>المبلغ</th></tr>
       ${c.payments.map(p => `<tr><td>${esc(p.date)}</td><td>${STG[p.stage]}</td><td>${esc(p.method)}</td><td style="direction:ltr;text-align:left">${$$(p.amount)}</td></tr>`).join('') || '<tr><td colspan="4">—</td></tr>'}</table>
     <h3>إجمالي الباقي على الزبون: <span style="direction:ltr;display:inline-block">${$$(Math.max(0,k.rem1) + (c.stage !== 'buy' ? Math.max(0,k.rem2) : 0))}</span></h3>
-    ${c.vin ? `<p>تتبّع سيارتك: <span style="direction:ltr;display:inline-block">${esc(trackUrl(c.vin))}</span></p>` : ''}`;
+    ${c.vin ? `<p>تتبّع سيارتك: <span style="direction:ltr;display:inline-block">${esc(trackUrl(c.vin))}</span></p>` : ''}</div>`;
+}
+function printInvoice(id){
+  const c = getCar(id);
+  $('#print').innerHTML = invoiceHtml(c, c.img);
   // wait for the car photo (max 5s) so it is on the printed page; a photo that fails to load is dropped
   const img = $('#print .pinv-img');
   if(!img || img.complete){ if(img && !img.naturalWidth) img.remove(); window.print(); return; }
@@ -2219,6 +2228,73 @@ function printInvoice(id){
   let done = false;
   const go = () => { if(done) return; done = true; if(!img.naturalWidth) img.remove(); window.print(); };
   img.onload = go; img.onerror = go; setTimeout(go, 5000);
+}
+/* invoice as a PDF file (html2pdf, bundled in vendor/ and loaded only when needed). Falls back to printing if anything fails. */
+function loadScriptOnce(src){
+  loadScriptOnce.p = loadScriptOnce.p || {};
+  return loadScriptOnce.p[src] = loadScriptOnce.p[src] || new Promise((ok, no) => {
+    const sc = document.createElement('script'); sc.src = src; sc.onload = ok; sc.onerror = () => { delete loadScriptOnce.p[src]; no(new Error('load ' + src)); };
+    document.head.appendChild(sc);
+  });
+}
+/* the car photo as a data: URL so the PDF can draw it — auction photos go through /api/img (they have no CORS headers) */
+async function carImgData(url){
+  if(!url) return null;
+  if(url.startsWith('data:')) return url;
+  try{
+    const r = await fetch(/^https:/i.test(url) ? '/api/img?u=' + encodeURIComponent(url) : url);
+    if(!r.ok) return null;
+    const b = await r.blob(); if(!b.type.startsWith('image/')) return null;
+    return await new Promise(ok => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = () => ok(null); fr.readAsDataURL(b); });
+  }catch(e){ return null; }
+}
+/* html2canvas draws every word on an LTR canvas, so in Arabic words the trailing space lands on the wrong side and words run
+   together. While a PDF is drawn, Arabic text is drawn right-to-left (x stays the left edge, as html2canvas measured it). */
+function rtlCanvasText(on){
+  const P = CanvasRenderingContext2D.prototype;
+  if(on && !P.__ltrFillText){
+    P.__ltrFillText = P.fillText;
+    P.fillText = function(t, x, y, w){
+      if(!/[\u0600-\u06FF]/.test(t)) return w === undefined ? P.__ltrFillText.call(this, t, x, y) : P.__ltrFillText.call(this, t, x, y, w);
+      this.save(); this.direction = 'rtl'; this.textAlign = 'left';
+      w === undefined ? P.__ltrFillText.call(this, t, x, y) : P.__ltrFillText.call(this, t, x, y, w);
+      this.restore();
+    };
+  } else if(!on && P.__ltrFillText){ P.fillText = P.__ltrFillText; delete P.__ltrFillText; }
+}
+async function invoicePdf(id){
+  const c = getCar(id); if(!c) return;
+  if(invoicePdf.busy) return; invoicePdf.busy = true;
+  toast('جاري تجهيز الفاتورة PDF…');
+  let el;
+  try{
+    const [img] = await Promise.all([carImgData(c.img), loadScriptOnce('vendor/html2pdf-0.10.1.bundle.min.js')]);
+    el = document.createElement('div');
+    el.className = 'pdfhost';
+    el.innerHTML = invoiceHtml(c, img);
+    // one <span> per word: html2canvas then places each word exactly where the browser laid it out (Arabic spacing stays right)
+    const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [];
+    while(tw.nextNode()) if(tw.currentNode.nodeValue.trim()) nodes.push(tw.currentNode);
+    nodes.forEach(n => { const f = document.createDocumentFragment();
+      n.nodeValue.split(/(\s+)/).forEach(part => { if(!part) return; if(/^\s+$/.test(part)) f.appendChild(document.createTextNode(part)); else { const sp = document.createElement('span'); sp.textContent = part; f.appendChild(sp); } });
+      n.parentNode.replaceChild(f, n); });
+    document.body.appendChild(el);
+    await document.fonts.ready;
+    const name = ['فاتورة', c.customer, carName(c), (c.vin || '').slice(-6)].filter(Boolean).join(' ').replace(/[\\/:*?"<>|]+/g, '-').trim();
+    rtlCanvasText(true);
+    await html2pdf().set({
+      margin: [10, 10, 12, 10],
+      image: {type: 'jpeg', quality: 0.95},
+      html2canvas: {scale: 2, useCORS: true, backgroundColor: '#ffffff'},
+      jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'},
+      pagebreak: {mode: ['css'], avoid: ['tr', 'h3', '.pinv-head']},
+    }).from(el.firstElementChild).save(name + '.pdf');
+    toast('تم — الفاتورة نزلت PDF');
+  }catch(e){
+    console.error(e); toast('تعذر تجهيز PDF — نفتحولك الطباعة'); printInvoice(id);
+  }finally{
+    rtlCanvasText(false); if(el) el.remove(); invoicePdf.busy = false;
+  }
 }
 
 /* ---------- customer tracking (public page by VIN) ---------- */

@@ -36,6 +36,10 @@ on every computer. The user works from more than one computer; this file + git i
 - **Local preview:** `.claude/launch.json` → `serve.ps1` on port 8766 (local only, gitignored).
 - **`api/fees.js`** = the only server-side code: a Vercel serverless function (`POST /api/fees`) that forwards fee quotes to
   `https://api.auctionfeescalculator.com`. Does not run under a plain static server — local testing needs a server that mounts it.
+- **`api/img.js`** = Vercel function `GET /api/img?u=<https url>`: returns an auction photo with CORS so the invoice PDF can draw it
+  (https only, host names only — no IPs/localhost, image responses only, ≤ 8 MB).
+- **`vendor/html2pdf-0.10.1.bundle.min.js`** (MIT, bundled copy — CDNs are blocked in the cloud sessions) is loaded only when the
+  invoice PDF is made.
 - **Firebase project `aws-company`** (Firestore + Auth email/password, compat SDK 10.12.2).
   Collections: `cars`, `customers`, `containers`, `meta/settings`, `log`, `tracking`.
 - **Firestore rules** = `firestore.rules` in the repo. Publishing needs the Firebase console
@@ -103,6 +107,12 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
+- 2026-11-19 — "🧾 فاتورة الزبون (PDF)" on the car page now downloads the invoice as an A4 PDF (`invoicePdf`) instead of opening
+  the print dialog. Same content as before (`invoiceHtml(c, img)` is shared with `printInvoice`, which is now only the fallback if
+  the PDF fails). Car photo goes through `/api/img`. Arabic fix for html2canvas: each word is wrapped in its own span and Arabic words
+  are drawn right-to-left (`rtlCanvasText`), else words run together. Stage headings in the invoice now read "المرحلة الأولى: الشراء" /
+  "المرحلة الثانية: الشحن" (a digit next to a colon came out jumbled in the PDF). File name: "فاتورة <customer> <car> <last 6 of VIN>.pdf".
+  Text in the PDF is an image (not selectable). Visual only — money logic untouched.
 - 2026-11-19 — Proposed chart of accounts for Ahmed, in English: `docs/chart-of-accounts.pdf` (source `docs/chart-of-accounts.html`).
   Groups 1 Assets / 2 Liabilities / 3 Equity / 4 Revenue / 5 Expenses, each account mapped to the app. Proposal only — nothing built.
   If built, suggested first step: 11 Cash accounts, 21 Payable to shipping companies, 32 Owner's drawings.
