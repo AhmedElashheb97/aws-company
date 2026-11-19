@@ -107,6 +107,11 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
+- 2026-11-20 — Invoice PDF on phones: Ahmed shared the downloaded PDF to WhatsApp from iPhone and it arrived with an extra
+  "blob:https://aws-company.vercel.app/…" text (and the message failed). Now the PDF is built as a File (`outputPdf('blob')`) and
+  `pdfReady` shows a "الفاتورة جاهزة" window with "📤 إرسال (واتساب…)" → `navigator.share({files:[file]})` (file only, no text/url;
+  needs a fresh tap, hence the window) and "⬇ حفظ". If sharing is refused it saves the file instead. Computers (or browsers that
+  can't share files) download directly. Tested with a mocked share sheet only — not yet on a real iPhone.
 - 2026-11-20 — Invoice button now opens a small window first (`invoiceAsk`): choose المرحلة الأولى / المرحلة الثانية / المرحلتين
   (default: stage 1 while the car is in stage 1, else both). `invoiceHtml(c, img, st)` shows only the chosen stage(s) and their
   payments; a stage whose remainder is 0 gets a green "خالص ✓" stamp and its "الباقي" row reads "✓ خالص" (overpaid → "زيادة مدفوعة $X");

@@ -2313,19 +2313,40 @@ async function invoicePdf(id, st){
     await document.fonts.ready;
     const name = ['فاتورة', st === 'buy' ? 'شراء' : st === 'ship' ? 'شحن' : '', c.customer, carName(c), (c.vin || '').slice(-6)].filter(Boolean).join(' ').replace(/[\\/:*?"<>|]+/g, '-').trim();
     rtlCanvasText(true);
-    await html2pdf().set({
+    const blob = await html2pdf().set({
       margin: [10, 10, 12, 10],
       image: {type: 'jpeg', quality: 0.95},
       html2canvas: {scale: 2, useCORS: true, backgroundColor: '#ffffff'},
       jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'},
       pagebreak: {mode: ['css'], avoid: ['tr', 'h3', '.pinv-head']},
-    }).from(el.firstElementChild).save(name + '.pdf');
-    toast('تم — الفاتورة نزلت PDF');
+    }).from(el.firstElementChild).outputPdf('blob');
+    pdfReady(new File([blob], name + '.pdf', {type: 'application/pdf'}));
   }catch(e){
     console.error(e); toast('تعذر تجهيز PDF — نفتحولك الطباعة'); printInvoice(id, st);
   }finally{
     rtlCanvasText(false); if(el) el.remove(); invoicePdf.busy = false;
   }
+}
+
+/* PDF is ready. Phones (that can share files): a window with "send" — the share sheet gets ONLY the PDF file, so WhatsApp
+   receives a clean document with no "blob:" link. Sharing needs a fresh tap, hence the window. Computers: download straight away. */
+function pdfDownload(file){
+  const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = file.name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+}
+function pdfReady(file){
+  const phone = matchMedia('(pointer:coarse)').matches || /iPhone|iPad|Android/i.test(navigator.userAgent);
+  let canShare = false; try{ canShare = !!(navigator.canShare && navigator.canShare({files:[file]})); }catch(e){}
+  if(!(phone && canShare)){ pdfDownload(file); toast('تم — الفاتورة نزلت PDF'); return; }
+  window._pdfFile = file;
+  clearTimeout(toast._t); $('#toast').classList.remove('on');
+  openModal('الفاتورة جاهزة', `<div style="display:flex;gap:12px;align-items:center"><div style="font-size:34px">📄</div>
+      <div style="min-width:0"><b style="word-break:break-word">${esc(file.name)}</b><div class="small muted">${Math.max(1, Math.round(file.size / 1024))} KB</div></div></div>`,
+    `<button class="btn pri" onclick="pdfShare()">📤 إرسال (واتساب…)</button><button class="btn" onclick="pdfDownload(window._pdfFile);closeModal()">⬇ حفظ</button>`);
+}
+async function pdfShare(){
+  try{ await navigator.share({files:[window._pdfFile]}); closeModal(); }
+  catch(e){ if(e && e.name !== 'AbortError'){ pdfDownload(window._pdfFile); closeModal(); toast('تم حفظ الفاتورة — أرسلها من الملفات'); } }
 }
 
 /* ---------- customer tracking (public page by VIN) ---------- */
