@@ -103,6 +103,9 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
+- 2026-11-19 — Proposed chart of accounts for Ahmed, in English: `docs/chart-of-accounts.pdf` (source `docs/chart-of-accounts.html`).
+  Groups 1 Assets / 2 Liabilities / 3 Equity / 4 Revenue / 5 Expenses, each account mapped to the app. Proposal only — nothing built.
+  If built, suggested first step: 11 Cash accounts, 21 Payable to shipping companies, 32 Owner's drawings.
 - 2026-11-19 — Customer invoice (`printInvoice`) now shows the car's main photo (`c.img`) beside the customer/car details. Printing
   waits up to 5s for the photo to load; a photo that fails to load is left out. Cars without a photo print as before. Visual only.
 - 2026-11-19 — Phone layout pass (Ahmed: "not clear on the phone"). Last `<style>` block "phones: fit the screen": at ≤640px any

@@ -1,0 +1,115 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>AWS COMPANY — Chart of Accounts</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+@page{size:A4;margin:16mm 15mm 16mm}
+*{box-sizing:border-box}
+body{font-family:Inter,Arial,sans-serif;color:#111827;font-size:10.2pt;line-height:1.45;margin:0}
+.head{display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #F26A1B;padding-bottom:10px;margin-bottom:14px}
+.head img{height:46px}
+.head h1{font-size:20pt;margin:0;font-weight:800;letter-spacing:-.3px}
+.head .sub{color:#5B6676;font-size:9.5pt;text-align:right}
+h2{font-size:12.5pt;margin:18px 0 8px;font-weight:800;color:#111827}
+p{margin:0 0 8px}
+.muted{color:#5B6676}
+.intro{background:#F8FAFB;border:1px solid #E5E9EE;border-radius:10px;padding:10px 12px;margin-bottom:6px}
+table{width:100%;border-collapse:collapse;margin:4px 0 6px}
+th,td{text-align:left;padding:5px 8px;border-bottom:1px solid #EEF1F5;vertical-align:top}
+th{font-size:8.6pt;text-transform:uppercase;letter-spacing:.4px;color:#64748B;background:#F8FAFB;border-bottom:1px solid #E5E9EE}
+td.code{width:56px;font-weight:700;font-variant-numeric:tabular-nums;color:#374151}
+tr.grp td{background:#FFF3EA;font-weight:800;color:#B4470A;border-bottom:1px solid #F6D3BA;padding-top:7px}
+tr.sub td{font-weight:700;background:#FAFBFC}
+tr.sub td.code{padding-left:14px}
+tr.leaf td.code{padding-left:22px;font-weight:600;color:#5B6676}
+td.app{width:34%;color:#5B6676;font-size:9pt}
+.ok{color:#0E9F6E;font-weight:700}.no{color:#DC2F2F;font-weight:700}
+.note{border-left:4px solid #2563EB;background:#EEF4FF;padding:9px 12px;border-radius:6px;margin:8px 0}
+.note b{color:#1E40AF}
+.next{border-left:4px solid #F26A1B;background:#FFF6EF;padding:9px 12px;border-radius:6px;margin:8px 0}
+.pb{break-before:page}
+.foot{margin-top:14px;color:#94A3B8;font-size:8pt;border-top:1px solid #EEF1F5;padding-top:6px}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:8.6pt;background:#F1F4F8;padding:0 4px;border-radius:4px}
+</style></head><body>
+<div class="head"><img src="../logo.png" alt=""><div><h1>Chart of Accounts</h1><div class="sub">Proposal for AWS COMPANY · car import office<br>Prepared November 2026</div></div></div>
+
+<div class="intro">
+<p><b>How the office works (basis for this chart):</b> cars are bought at US auctions (Copart, IAAI) for customers and shipped to Al-Khoms, Libya. Customers always pay the office; the office pays the auction and the shipping companies (Atlantic Express, MTL). The office earns a commission, a 1.5% transfer commission, and a margin on inland towing and ocean freight. There are no office overheads (no rent, salaries, electricity or internet).</p>
+<p class="muted" style="margin:0">Each account shows where its numbers already come from in the office app, or that it does not exist there yet.</p>
+</div>
+
+<h2>The chart</h2>
+<table>
+<thead><tr><th>Code</th><th>Account</th><th>In the app today</th></tr></thead>
+<tbody>
+<tr class="grp"><td class="code">1</td><td colspan="2">ASSETS — what the office has</td></tr>
+<tr class="sub"><td class="code">11</td><td>Cash and payment accounts</td><td class="app"><span class="no">Not tracked</span></td></tr>
+<tr class="leaf"><td class="code">1101</td><td>Cash on hand — USD</td><td class="app">—</td></tr>
+<tr class="leaf"><td class="code">1102</td><td>Cash on hand — LYD (if dinars are handled)</td><td class="app">—</td></tr>
+<tr class="leaf"><td class="code">1103</td><td>Bank account</td><td class="app">—</td></tr>
+<tr class="leaf"><td class="code">1104</td><td>Card / PayPal (used to pay auctions)</td><td class="app">—</td></tr>
+<tr class="sub"><td class="code">12</td><td>Customer receivables — one sub-account per customer</td><td class="app"><span class="ok">Yes</span> — customer “balance due” (stage 1 + stage 2)</td></tr>
+<tr class="sub"><td class="code">13</td><td>Auction advances — auctions paid by the office, not yet repaid by the customer</td><td class="app"><span class="ok">Yes</span> — “office auction advances” card</td></tr>
+
+<tr class="grp"><td class="code">2</td><td colspan="2">LIABILITIES — what the office owes</td></tr>
+<tr class="sub"><td class="code">21</td><td>Payable to shipping companies</td><td class="app"><span class="no">Not tracked</span></td></tr>
+<tr class="leaf"><td class="code">2101</td><td>Atlantic Express</td><td class="app">—</td></tr>
+<tr class="leaf"><td class="code">2102</td><td>MTL</td><td class="app">—</td></tr>
+<tr class="sub"><td class="code">22</td><td>Payable to auctions (won, not yet paid)</td><td class="app"><span class="no">Not tracked</span></td></tr>
+<tr class="leaf"><td class="code">2201</td><td>Copart</td><td class="app">—</td></tr>
+<tr class="leaf"><td class="code">2202</td><td>IAAI</td><td class="app">—</td></tr>
+<tr class="sub"><td class="code">23</td><td>Refunds owed to customers</td><td class="app"><span class="ok">Yes</span> — “refund due” per car / customer</td></tr>
+
+<tr class="grp"><td class="code">3</td><td colspan="2">OWNER’S EQUITY — what belongs to the owner</td></tr>
+<tr class="sub"><td class="code">31</td><td>Owner’s capital — money put into the business</td><td class="app"><span class="no">Not tracked</span></td></tr>
+<tr class="sub"><td class="code">32</td><td>Owner’s drawings — money taken out for personal use</td><td class="app"><span class="no">Not tracked</span></td></tr>
+<tr class="sub"><td class="code">33</td><td>Retained profit</td><td class="app">Derived from 4 − 5</td></tr>
+
+<tr class="grp"><td class="code">4</td><td colspan="2">REVENUE — what the office earns</td></tr>
+<tr class="sub"><td class="code">41</td><td>Office commission</td><td class="app"><span class="ok">Yes</span> — <code>officeFee</code></td></tr>
+<tr class="sub"><td class="code">42</td><td>Transfer commission (1.5% on stage 1, optional on shipping)</td><td class="app"><span class="ok">Yes</span> — <code>wire</code>, <code>wire2</code></td></tr>
+<tr class="sub"><td class="code">43</td><td>Inland towing margin (charged − cost)</td><td class="app"><span class="ok">Yes</span> — <code>towCharge − towCost</code></td></tr>
+<tr class="sub"><td class="code">44</td><td>Ocean freight margin (charged − cost)</td><td class="app"><span class="ok">Yes</span> — <code>oceanCharge − oceanCost</code></td></tr>
+<tr class="sub"><td class="code">45</td><td>Other income</td><td class="app">—</td></tr>
+
+<tr class="grp"><td class="code">5</td><td colspan="2">EXPENSES — what reduces the office’s profit</td></tr>
+<tr class="sub"><td class="code">51</td><td>Auction payment costs (card, PayPal, exchange loss)</td><td class="app"><span class="ok">Yes</span> — office expense marked as payment cost</td></tr>
+<tr class="sub"><td class="code">52</td><td>Fines and storage paid by the office</td><td class="app"><span class="ok">Yes</span> — office expense, type “fine”</td></tr>
+<tr class="sub"><td class="code">53</td><td>Other car costs paid by the office</td><td class="app"><span class="ok">Yes</span> — other office expenses</td></tr>
+<tr class="sub"><td class="code">54</td><td>Bank and transfer fees</td><td class="app"><span class="no">Not tracked</span></td></tr>
+<tr class="sub"><td class="code">55</td><td>Cash differences (shortage / surplus at count)</td><td class="app"><span class="no">Not tracked</span></td></tr>
+</tbody></table>
+
+<div class="note"><b>Pass-through money is neither revenue nor expense.</b> The car’s auction price and auction fees, and any costs charged to the customer (fines, storage, FedEx, relocation to another port), are collected from the customer and paid on to the auction or the shipping company. They move between <b>12 Customer receivables</b> and <b>11 Cash</b> and never touch accounts 4 or 5. The app already treats them this way.</div>
+
+<h2>How the app’s numbers map to the chart</h2>
+<table>
+<thead><tr><th style="width:38%">App figure</th><th>Accounts</th></tr></thead>
+<tbody>
+<tr><td>Stage 1 profit</td><td>41 + 42 − (51 + 52 + 53 for the buy stage)</td></tr>
+<tr><td>Stage 2 profit</td><td>43 + 44 + 42 (shipping commission) − (52 + 53 for the shipping stage)</td></tr>
+<tr><td>“Received profit” for a month</td><td>Revenue − expenses of stages locked (fully paid) in that month</td></tr>
+<tr><td>Customer balance due</td><td>12 for that customer</td></tr>
+<tr><td>Office auction advances</td><td>13</td></tr>
+<tr><td>Refund due to customer</td><td>23</td></tr>
+<tr><td>Customer payment received</td><td>Debit 11 (cash / bank) · Credit 12 (customer)</td></tr>
+<tr><td>Office pays the auction</td><td>Debit 12 (customer) · Credit 11 (card / bank)</td></tr>
+<tr><td>Office pays Atlantic / MTL</td><td>Debit 21 · Credit 11 <span class="muted">(not recorded in the app yet)</span></td></tr>
+</tbody></table>
+
+<h2>Coverage today</h2>
+<table>
+<thead><tr><th style="width:38%">Area</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>Customers, advances, refunds (12, 13, 23)</td><td><span class="ok">Covered</span></td></tr>
+<tr><td>Revenue (41–44)</td><td><span class="ok">Covered</span>, calculated per car</td></tr>
+<tr><td>Car-related office expenses (51–53)</td><td><span class="ok">Covered</span></td></tr>
+<tr><td>Cash, bank, card (11)</td><td><span class="no">Missing</span></td></tr>
+<tr><td>Amounts owed to shipping companies and auctions (21, 22)</td><td><span class="no">Missing</span></td></tr>
+<tr><td>Owner’s capital and drawings (31, 32)</td><td><span class="no">Missing</span></td></tr>
+<tr><td>Bank fees, cash differences (54, 55)</td><td><span class="no">Missing</span></td></tr>
+</tbody></table>
+<p>In short: the app fully covers the <b>customer and profit</b> side. What is missing is the <b>office’s own money</b> side — where the cash is, what the office owes others, and what the owner has taken out.</p>
+
+<div class="next"><b>Suggested first step if this is built:</b> add only <b>11 Cash accounts</b>, <b>21 Payable to shipping companies</b> and <b>32 Owner’s drawings</b>. Together they answer “how much money should I have right now?”, and the cash can be checked against it at the end of each month. Everything else can wait until the business needs it.</div>
+
+<div class="foot">AWS COMPANY · Chart of accounts proposal · based on the office app as of November 2026. Not reviewed by an accountant.</div>
+</body></html>
