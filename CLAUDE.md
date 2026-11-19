@@ -107,6 +107,10 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
+- 2026-11-20 — Invoice button now opens a small window first (`invoiceAsk`): choose المرحلة الأولى / المرحلة الثانية / المرحلتين
+  (default: stage 1 while the car is in stage 1, else both). `invoiceHtml(c, img, st)` shows only the chosen stage(s) and their
+  payments; a stage whose remainder is 0 gets a green "خالص ✓" stamp and its "الباقي" row reads "✓ خالص" (overpaid → "زيادة مدفوعة $X");
+  if every shown stage is paid the bottom line is "✓ خالص — ما عليك شي". File name gets "شراء"/"شحن" for a single stage. Display only.
 - 2026-11-19 — "🧾 فاتورة الزبون (PDF)" on the car page now downloads the invoice as an A4 PDF (`invoicePdf`) instead of opening
   the print dialog. Same content as before (`invoiceHtml(c, img)` is shared with `printInvoice`, which is now only the fallback if
   the PDF fails). Car photo goes through `/api/img`. Arabic fix for html2canvas: each word is wrapped in its own span and Arabic words

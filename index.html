@@ -321,6 +321,10 @@ body.pub main{margin:0 auto}
 .pinvdoc h1{color:#C2570C;font-size:22px;margin:0}
 .pinvdoc h3{font-size:15px;margin:14px 0 4px}
 .pinvdoc tr{break-inside:avoid}
+.pinvdoc .pinv-stamp{display:inline-block;margin-inline-start:10px;padding:2px 12px;border:2px solid #1F8A52;color:#1F8A52;border-radius:8px;font-size:13px;font-weight:800}
+.pinvdoc .pinv-paid th{background:#E3F4EA;color:#1F6340}
+.pinvdoc .pinv-paid small{font-weight:600;color:#3d6b52}
+.pinvdoc .pinv-allpaid{color:#1F8A52;border:2px solid #1F8A52;border-radius:10px;padding:8px 14px;display:inline-block}
 .pinvdoc .pinv-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin:10px 0}
 .pinvdoc .pinv-head p{margin:0;flex:1}
 .pinvdoc .pinv-img{width:250px;max-height:180px;object-fit:cover;border-radius:10px;border:1px solid #ddd;flex:none}
@@ -1556,7 +1560,7 @@ function viewCar(c){
     <div class="actions">
       <button class="btn pri" onclick="paymentForm('${c.id}')">＋ دفعة من الزبون</button>
       <button class="btn" onclick="expenseForm('${c.id}')">＋ مصروف</button>
-      <button class="btn" onclick="invoicePdf('${c.id}')">🧾 فاتورة الزبون (PDF)</button>
+      <button class="btn" onclick="invoiceAsk('${c.id}')">🧾 فاتورة الزبون (PDF)</button>
       ${c.vin ? `<button class="btn" onclick="trackLinkForm('${c.id}')">🔗 رابط التتبع</button>` : ''}
       <button class="btn" onclick="carForm('${c.id}')">تعديل</button>
       <button class="btn danger" onclick="delCar('${c.id}')">حذف</button>
@@ -2190,37 +2194,49 @@ function saveExpense(cid, eid){
 function delExpense(cid, eid){ ask('حذف هذا المصروف؟', () => { const c = getCar(cid); c.expenses = c.expenses.filter(x => x.id !== eid); commit(c); }, 'حذف'); }
 
 /* ---------- invoice (no office expenses) ---------- */
-function invoiceHtml(c, imgSrc){
+/* st: which stages to show — 'buy', 'ship' or 'both'. A paid-up stage (remainder 0) is marked "خالص". */
+function invoiceHtml(c, imgSrc, st){
   const k = calc(c);
   const row = (a, b) => `<tr><td>${a}</td><td style="direction:ltr;text-align:left">${b}</td></tr>`;
   const $$ = n => '$' + r2(n).toLocaleString('en-US', {maximumFractionDigits:2});
+  st = st || (c.stage !== 'buy' || k.paid2 > 0 ? 'both' : 'buy');
+  const show1 = st !== 'ship', show2 = st !== 'buy';
+  const paid = (req, rem) => req > 0 && rem <= 0.009;
+  const remRow = (req, rem) => paid(req, rem)
+    ? `<tr class="pinv-paid"><th>الباقي</th><th style="direction:ltr;text-align:left">${rem < -0.009 ? `<small>(زيادة مدفوعة ${$$(-rem)})</small> ` : ''}✓ خالص</th></tr>`
+    : `<tr><th>الباقي</th><th style="direction:ltr;text-align:left">${$$(rem)}</th></tr>`;
+  const badge = (req, rem) => paid(req, rem) ? ' <span class="pinv-stamp">خالص ✓</span>' : '';
+  const pays = c.payments.filter(p => (p.stage === 'buy' && show1) || (p.stage === 'ship' && show2));
+  const due = (show1 ? Math.max(0, k.rem1) : 0) + (show2 ? Math.max(0, k.rem2) : 0);
+  const allPaid = (!show1 || paid(k.req1, k.rem1)) && (!show2 || paid(k.req2, k.rem2));
   const ce = st => c.expenses.filter(e => (e.payer === 'customer' || e.onInv) && e.stage === st).map(e => e.payer === 'customer'
       ? row((e.kind === 'fine' ? 'غرامة: ' : '') + esc(e.desc), $$(e.amount))
       : row(esc(e.desc) + ' <i>(على حساب المكتب — ما ينحسبش عليك)</i>', '<s>' + $$(e.amount) + '</s> $0')).join('');
   return `<div class="pinvdoc">
     <div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="AWS" style="height:56px"><h1>${esc(db.settings.officeName)}</h1></div>
-    <div>فاتورة الزبون — التاريخ: ${today()}</div>
+    <div>فاتورة الزبون — ${st === 'buy' ? 'المرحلة الأولى (الشراء)' : st === 'ship' ? 'المرحلة الثانية (الشحن)' : 'المرحلتين'} — التاريخ: ${today()}</div>
     <div class="pinv-head"><p><b>الزبون:</b> ${esc(c.customer||'')} ${c.phone ? ' — ' + esc(c.phone) : ''}<br>
        <b>السيارة:</b> ${esc(carName(c))} ${c.vin ? ' — VIN: ' + esc(c.vin) : ''} ${c.lot ? ' — Lot: ' + esc(c.lot) : ''}</p>
       ${imgSrc ? `<img class="pinv-img" src="${esc(imgSrc)}" referrerpolicy="no-referrer" alt="">` : ''}</div>
-    <h3>المرحلة الأولى: الشراء</h3>
+    ${show1 ? `<h3>المرحلة الأولى: الشراء${badge(k.req1, k.rem1)}</h3>
     <table>${row('سعر الشراء في المزاد', $$(c.buyPrice))}${row('رسوم المزاد', $$(c.auctionFees))}${row('عمولة المكتب', $$(c.officeFee))}${row('عمولة الحوالة (' + +N(c.wirePct).toFixed(2) + '%)', $$(k.wire))}${ce('buy')}
       <tr><th>الإجمالي</th><th style="direction:ltr;text-align:left">${$$(k.req1)}</th></tr>
       ${k.auctionByCust ? row('مدفوع للمزاد مباشرة', $$(k.auctionByCust)) : ''}${row('المدفوع', $$(k.payments1))}
-      <tr><th>الباقي</th><th style="direction:ltr;text-align:left">${$$(k.rem1)}</th></tr></table>
-    ${c.stage !== 'buy' || k.paid2 > 0 ? `<h3>المرحلة الثانية: الشحن</h3>
+      ${remRow(k.req1, k.rem1)}</table>` : ''}
+    ${show2 ? `<h3>المرحلة الثانية: الشحن${badge(k.req2, k.rem2)}</h3>
     <table>${row('السحب الداخلي', $$(c.towCharge))}${row('الشحن البحري', $$(c.oceanCharge))}${ce('ship')}${k.wire2 ? row('عمولة الحوالة (' + +N(c.shipWirePct).toFixed(2) + '%)', $$(k.wire2)) : ''}
       <tr><th>الإجمالي</th><th style="direction:ltr;text-align:left">${$$(k.req2)}</th></tr>${row('المدفوع', $$(k.paid2))}
-      <tr><th>الباقي</th><th style="direction:ltr;text-align:left">${$$(k.rem2)}</th></tr></table>` : ''}
+      ${remRow(k.req2, k.rem2)}</table>` : ''}
     <h3>الدفعات</h3>
     <table><tr><th>التاريخ</th><th>المرحلة</th><th>الطريقة</th><th>المبلغ</th></tr>
-      ${c.payments.map(p => `<tr><td>${esc(p.date)}</td><td>${STG[p.stage]}</td><td>${esc(p.method)}</td><td style="direction:ltr;text-align:left">${$$(p.amount)}</td></tr>`).join('') || '<tr><td colspan="4">—</td></tr>'}</table>
-    <h3>إجمالي الباقي على الزبون: <span style="direction:ltr;display:inline-block">${$$(Math.max(0,k.rem1) + (c.stage !== 'buy' ? Math.max(0,k.rem2) : 0))}</span></h3>
+      ${pays.map(p => `<tr><td>${esc(p.date)}</td><td>${STG[p.stage]}</td><td>${esc(p.method)}</td><td style="direction:ltr;text-align:left">${$$(p.amount)}</td></tr>`).join('') || '<tr><td colspan="4">—</td></tr>'}</table>
+    ${allPaid ? `<h3 class="pinv-allpaid">✓ خالص — ما عليك شي${st === 'both' ? '' : ' في المرحلة هذي'}</h3>`
+      : `<h3>إجمالي الباقي على الزبون${st === 'both' ? '' : ' في المرحلة هذي'}: <span style="direction:ltr;display:inline-block">${$$(due)}</span></h3>`}
     ${c.vin ? `<p>تتبّع سيارتك: <span style="direction:ltr;display:inline-block">${esc(trackUrl(c.vin))}</span></p>` : ''}</div>`;
 }
-function printInvoice(id){
+function printInvoice(id, st){
   const c = getCar(id);
-  $('#print').innerHTML = invoiceHtml(c, c.img);
+  $('#print').innerHTML = invoiceHtml(c, c.img, st);
   // wait for the car photo (max 5s) so it is on the printed page; a photo that fails to load is dropped
   const img = $('#print .pinv-img');
   if(!img || img.complete){ if(img && !img.naturalWidth) img.remove(); window.print(); return; }
@@ -2262,7 +2278,22 @@ function rtlCanvasText(on){
     };
   } else if(!on && P.__ltrFillText){ P.fillText = P.__ltrFillText; delete P.__ltrFillText; }
 }
-async function invoicePdf(id){
+/* invoice button: choose which stage(s) first */
+function invoiceAsk(id){
+  const c = getCar(id); if(!c) return;
+  const k = calc(c), paid = (req, rem) => req > 0 && rem <= 0.009;
+  const def = c.stage === 'buy' && !(k.paid2 > 0) ? 'buy' : 'both';
+  const opt = (v, t, sub) => `<label><input type="radio" name="invSt" value="${v}" ${v === def ? 'checked' : ''}><div><b>${t}</b><div class="small muted">${sub}</div></div></label>`;
+  const st = (req, rem) => paid(req, rem) ? '✓ خالص' : 'الباقي ' + money(Math.max(0, rem));
+  openModal('فاتورة الزبون', `<div class="muted small" style="margin-bottom:10px">شن تبي يطلع في الفاتورة؟</div>
+    <div class="choice" style="grid-template-columns:1fr">
+      ${opt('buy', 'المرحلة الأولى: الشراء', st(k.req1, k.rem1))}
+      ${opt('ship', 'المرحلة الثانية: الشحن', st(k.req2, k.rem2))}
+      ${opt('both', 'المرحلتين مع بعض', 'فاتورة كاملة')}
+    </div>`,
+    `<button class="btn pri" onclick="const v=document.querySelector('[name=invSt]:checked').value;closeModal();invoicePdf('${c.id}',v)">⬇ تنزيل PDF</button><button class="btn" onclick="closeModal()">إلغاء</button>`);
+}
+async function invoicePdf(id, st){
   const c = getCar(id); if(!c) return;
   if(invoicePdf.busy) return; invoicePdf.busy = true;
   toast('جاري تجهيز الفاتورة PDF…');
@@ -2271,7 +2302,7 @@ async function invoicePdf(id){
     const [img] = await Promise.all([carImgData(c.img), loadScriptOnce('vendor/html2pdf-0.10.1.bundle.min.js')]);
     el = document.createElement('div');
     el.className = 'pdfhost';
-    el.innerHTML = invoiceHtml(c, img);
+    el.innerHTML = invoiceHtml(c, img, st);
     // one <span> per word: html2canvas then places each word exactly where the browser laid it out (Arabic spacing stays right)
     const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [];
     while(tw.nextNode()) if(tw.currentNode.nodeValue.trim()) nodes.push(tw.currentNode);
@@ -2280,7 +2311,7 @@ async function invoicePdf(id){
       n.parentNode.replaceChild(f, n); });
     document.body.appendChild(el);
     await document.fonts.ready;
-    const name = ['فاتورة', c.customer, carName(c), (c.vin || '').slice(-6)].filter(Boolean).join(' ').replace(/[\\/:*?"<>|]+/g, '-').trim();
+    const name = ['فاتورة', st === 'buy' ? 'شراء' : st === 'ship' ? 'شحن' : '', c.customer, carName(c), (c.vin || '').slice(-6)].filter(Boolean).join(' ').replace(/[\\/:*?"<>|]+/g, '-').trim();
     rtlCanvasText(true);
     await html2pdf().set({
       margin: [10, 10, 12, 10],
@@ -2291,7 +2322,7 @@ async function invoicePdf(id){
     }).from(el.firstElementChild).save(name + '.pdf');
     toast('تم — الفاتورة نزلت PDF');
   }catch(e){
-    console.error(e); toast('تعذر تجهيز PDF — نفتحولك الطباعة'); printInvoice(id);
+    console.error(e); toast('تعذر تجهيز PDF — نفتحولك الطباعة'); printInvoice(id, st);
   }finally{
     rtlCanvasText(false); if(el) el.remove(); invoicePdf.busy = false;
   }
