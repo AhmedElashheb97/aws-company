@@ -96,6 +96,12 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
+- 2026-11-19 — Phone layout pass (Ahmed: "not clear on the phone"). Last `<style>` block "phones: fit the screen": at ≤640px any
+  table wider than the screen becomes one card per row (`tblCards()` runs after every `render()`/`openModal`, copies header text into
+  `data-l` and adds `.tcard` only when the table overflows — small tables stay tables). Forms/windows open as a bottom sheet with a
+  sticky title and sticky save/cancel; inputs 16px (no iOS zoom). Car form: the customer field used inline `grid-column:span 2`, which
+  created a hidden 2nd column on phones and squeezed every field — now class `.span2`, full width on phones; `.grid > *{min-width:0}`.
+  Also: button groups in a 2-column grid, banner chips scroll sideways, KPI icons hidden on phones. Desktop/tablet unchanged. Visual only.
 - 2026-11-18 — Yard field in the car form now accepts names the way the auction page writes them ("Phoenix (AZ)", "Phoenix, AZ",
   "phoenix", "Tucson AZ") via `findYard(text, auction)`; the form's auction (Copart/IAAI) picks between same-name yards, else the hint
   lists the choices. On a match the field is rewritten to the full list label. Ahmed couldn't find IAAI Phoenix because only the exact

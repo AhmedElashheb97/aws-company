@@ -484,6 +484,72 @@ body{background:var(--bg)}
   .kpi .v{font-size:22px}
   #toast{bottom:100px}
 }
+
+/* ---------- phones: fit the screen (2026-11-19) ---------- */
+.grid.g3 .span2{grid-column:span 2}
+.grid > *{min-width:0}
+select.inp{max-width:100%;min-width:0}
+@media screen and (max-width:600px){ .grid .span2,.grid.g3 .span2{grid-column:1/-1} }
+@media screen and (max-width:640px){
+  /* wide tables → one card per row */
+  .tblwrap:has(> .tcard){overflow:visible}
+  .tbl.tcard,.tbl.tcard tbody{display:block}
+  .tbl.tcard thead{display:none}
+  .tbl.tcard tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 14px;padding:14px 16px;border-bottom:1px solid var(--line-2)}
+  .tbl.tcard tr:last-child{border-bottom:0}
+  .tbl.tcard td,.tbl.tcard td.num{display:block;padding:0;border:0;min-width:0;background:transparent !important;text-align:start}
+  .tbl.tcard td::before{content:attr(data-l);display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:4px}
+  .tbl.tcard td[data-l=""]::before,.tbl.tcard td:first-child::before{display:none}
+  .tbl.tcard td:first-child,.tbl.tcard td[colspan],.tbl.tcard td[data-l=""]{grid-column:1/-1}
+  .tbl.tcard td[data-l=""]:empty{display:none}
+  .tbl.tcard tr.click:active{background:var(--surface-2)}
+  .tbl.tcard .pcell{white-space:normal}
+  .tbl.tcard .pchips{flex-direction:row;flex-wrap:wrap}
+  .chead .actions .btn.pri{grid-column:1/-1}
+  .tbl.tcard .carcell .thumb{width:76px;height:56px}
+  .tbl.tcard td.pamt{text-align:start;padding:0}
+  .tbl.tcard .bdg{white-space:normal}
+
+  /* page headers & button groups */
+  .chead{gap:10px}
+  .chead > div[style*="flex:1"]{flex-basis:calc(100% - 110px)}
+  .chead .actions,.chead > .row{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+  .chead .actions .btn,.chead > .row .btn{justify-content:center;width:100%;white-space:normal;text-align:center}
+  h1{font-size:22px}
+
+  /* cars toolbar */
+  .card > .pad.row{gap:8px}
+  .card > .pad.row > .tabs{display:flex;width:100%}
+  .card > .pad.row > .tabs button{flex:1;padding:7px 4px}
+  .card > .pad.row > .btn{flex:1 1 40%;justify-content:center;padding:9px 8px;font-size:14.5px}
+  .card > .pad.row > .sp{display:none}
+  .card > .pad.row > .search,.card > .pad.row > .inp{max-width:none;flex:1 1 100%}
+
+  /* welcome banner: shorter, chips scroll sideways */
+  .hero .hs{display:none}
+  .hero .ha{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-18px;padding:2px 18px 4px}
+  .hero .ha::-webkit-scrollbar{display:none}
+  .hero .ha em,.hero .ha span{white-space:nowrap;flex:none}
+
+  /* KPI cards: no icon, tighter */
+  .kpi .kic{display:none}
+  .kpi .l{min-height:0}
+  .kpi .v{padding-top:6px}
+
+  /* car page */
+  .info{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 14px}
+  .stage .top,.stage .body{padding-inline:14px}
+  .ln{font-size:15px}
+
+  /* forms & windows: sheet from the bottom, title and buttons always visible */
+  .mbg{padding:10px 0 0}
+  .modal,.modal.wide{max-width:none;margin-top:auto;border-radius:20px 20px 0 0}
+  .modal .mh{position:sticky;top:0;z-index:3;background:var(--surface);border-radius:20px 20px 0 0;padding:14px 16px}
+  .modal .mb{padding:14px 16px}
+  .modal .mf{position:sticky;bottom:0;z-index:3;border-radius:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+  .modal .mf .btn{flex:1;justify-content:center;padding:12px}
+  .inp,select.inp,textarea.inp{font-size:16px}
+}
 </style>
 </head>
 <body>
@@ -800,7 +866,18 @@ function render(){
   else if(ui.view === 'log'){ const f = document.activeElement && document.activeElement.id === 'lq'; app.innerHTML = viewLog(); if(f){ const e = $('#lq'); e.focus(); e.setSelectionRange(e.value.length, e.value.length); } }
   else if(ui.view === 'map') app.innerHTML = viewMap();
   else app.innerHTML = viewCars();
+  tblCards(app);
 }
+/* phones: a table wider than the screen turns into one card per row (labels come from its header) */
+function tblCards(root){
+  (root || document).querySelectorAll('table.tbl').forEach(t => {
+    const heads = [...t.querySelectorAll('thead th')].map(th => th.textContent.trim());
+    t.querySelectorAll('tbody tr').forEach(tr => { let i = 0; [...tr.children].forEach(td => { if(!td.hasAttribute('data-l')) td.setAttribute('data-l', td.colSpan > 1 ? '' : (heads[i] || '')); i += td.colSpan || 1; }); });
+    t.classList.remove('tcard');
+    if(innerWidth <= 640 && t.parentElement && t.scrollWidth > t.parentElement.clientWidth + 2) t.classList.add('tcard');
+  });
+}
+addEventListener('resize', () => { clearTimeout(tblCards._t); tblCards._t = setTimeout(() => tblCards(document), 150); });
 
 /* ---------- change log ---------- */
 const ACT_CLS = {'إضافة':'done', 'تعديل':'ship', 'حذف':'bad'};
@@ -1627,6 +1704,7 @@ function openModal(title, body, foot, wide){
   $('#modalRoot').innerHTML = `<div class="mbg" onmousedown="if(event.target===this)closeModal()">
     <div class="modal ${wide ? 'wide' : ''}"><div class="mh"><h2>${title}</h2><div class="sp"></div><button class="btn ghost sm" onclick="closeModal()">✕</button></div>
     <div class="mb">${body}</div>${foot ? `<div class="mf">${foot}</div>` : ''}</div></div>`;
+  tblCards($('#modalRoot'));
   const f = $('#modalRoot input:not([type=hidden]):not([type=radio]):not([type=checkbox]), #modalRoot select'); if(f) setTimeout(() => f.focus(), 30);
 }
 function closeModal(){ $('#modalRoot').innerHTML = ''; }
@@ -1647,7 +1725,7 @@ function carForm(id, custId){
   const custs = db.customers.slice().sort((a,b) => (a.name||'').localeCompare(b.name||'', 'ar'));
   const body = `<form id="cf" class="grid g3" onsubmit="event.preventDefault();saveCar('${id||''}')">
     <div class="fsec">الزبون</div>
-    <div class="f" style="grid-column:span 2"><label>الزبون</label>
+    <div class="f span2"><label>الزبون</label>
       <div class="inrow"><select class="inp" name="customerId" onchange="cfCust()">
         <option value="">— اختر الزبون —</option>
         ${legacy ? `<option value="__legacy" selected>${esc(c.customer)} (مش مسجل في الزبائن)</option>` : ''}
