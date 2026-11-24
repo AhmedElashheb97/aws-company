@@ -107,6 +107,15 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
+- 2026-11-24 — PREVIEW (branch `preview-funds`, NOT on main yet — Ahmed must approve): "الخزائن" page (menu item, wallet icon).
+  US dollars only and separate from the cars (Ahmed's choice: payments are NOT linked to a treasury). New collections `funds`
+  {id,name,kind cash|bank|card|other,opening,openDate,note,created} and `fundMoves` {id,type in|out|transfer,fund,to?,amount,date,cat,desc,by,at};
+  balance = opening + in − out ± transfers (`fundBalance`). Page: total of all treasuries, month in/out, one card per treasury
+  (click = its moves with a running balance), buttons ↓ داخل / ↑ طالع / ⇄ تحويل, edit/delete moves; a treasury with moves can't be
+  deleted. Changes go to the change log (kind 'fund'). `firestore.rules` gains funds + fundMoves (Ahmed must publish them in the
+  Firebase console BEFORE using the page live, or saves fail); `backup/drive-backup.gs` now also backs them up (he must paste the
+  new script into script.google.com). "استيراد نسخة" does not restore them. Also: top menu is icons-only between 901–1240px and the
+  tracking link is icon-only on desktop (8 links didn't fit beside "سيارة جديدة").
 - 2026-11-20 — Invoice PDF on phones: Ahmed shared the downloaded PDF to WhatsApp from iPhone and it arrived with an extra
   "blob:https://aws-company.vercel.app/…" text (and the message failed). Now the PDF is built as a File (`outputPdf('blob')`) and
   `pdfReady` shows a "الفاتورة جاهزة" window with "📤 إرسال (واتساب…)" → `navigator.share({files:[file]})` (file only, no text/url;

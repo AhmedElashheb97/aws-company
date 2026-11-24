@@ -428,6 +428,15 @@ body{background:var(--bg)}
 .bdg.loc{color:#334155} .sec,.fsec,a.lnk,.kpi.hl .v{color:var(--brand-d)}
 }
 
+/* الخزائن */
+.funds{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.card.fund{padding:16px 18px;cursor:pointer;transition:transform .12s,box-shadow .15s,border-color .15s;border-top:3px solid #CBD2DC}
+.card.fund:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(17,24,39,.1)}
+.card.fund.on{border-color:var(--brand);box-shadow:0 0 0 2px var(--brand),var(--shadow)}
+.card.fund .fk{font-size:13px;color:var(--muted);font-weight:700}
+.card.fund .fn{font-size:18px;font-weight:800;margin-top:4px}
+.card.fund .fb{font-size:28px;font-weight:800;margin-top:6px;letter-spacing:-.3px}
+@media screen and (max-width:640px){ .funds{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px} .card.fund{padding:12px 14px} .card.fund .fb{font-size:21px} .card.fund .fn{font-size:15.5px} }
 /* auction fees calculator */
 @media screen{
 .fcout:not(:empty){margin-top:14px}
@@ -465,6 +474,8 @@ body{background:var(--bg)}
   #nav a.on .ic{background:transparent;color:var(--brand);box-shadow:none}
   #nav a.on::after{content:"";position:absolute;inset-inline:12px;bottom:0;height:3px;border-radius:3px;background:var(--brand)}
   #nav a .ext{display:none}
+  #nav a[target]{font-size:0;gap:0;padding:8px}
+  #nav a[target] .ic{width:22px}
   #side .newcar{order:5;width:auto;padding:9px 14px;border-radius:12px;flex:none}
   #side .foot{order:6;margin:0;flex-direction:row;align-items:center;border:0;padding:0;gap:2px}
   .sbtn{width:auto;padding:4px;font-size:0;gap:0}
@@ -474,11 +485,18 @@ body{background:var(--bg)}
   main{margin:0 auto;max-width:1320px;padding:22px 28px 60px}
 }
 
+/* ---------- narrow computers / tablets: menu as icons only (names show on hover) ---------- */
+@media screen and (min-width:901px) and (max-width:1240px){
+  #nav a{font-size:0;gap:0;padding:9px 10px}
+  #nav a .ic{width:24px;height:24px}
+  #nav a.on::after{inset-inline:6px}
+}
 /* ---------- phones ---------- */
 @media screen and (max-width:900px){
   #side{margin:8px 8px 0;top:8px;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
   #nav{left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom));border:1px solid var(--line);border-radius:20px;padding:6px 2px;box-shadow:0 10px 30px rgba(17,24,39,.16)}
-  #nav a{font-size:10.5px;min-width:0;padding:2px 1px}
+  #nav a{font-size:10px;min-width:0;padding:2px 0}
+  #nav a .ic{width:34px}
   #nav a[target]{display:none}
   #nav a.on{color:var(--brand-d)}
   #nav a[data-v=map],#nav a[data-v=log]{font-size:0}
@@ -574,9 +592,10 @@ select.inp{max-width:100%;min-width:0}
     <a data-v="customers"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>الزبائن</a>
     <a data-v="profits"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>الأرباح</a>
     <a data-v="containers"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="1.5"/><path d="M6 9v7"/><path d="M10 9v7"/><path d="M14 9v7"/><path d="M18 9v7"/></svg></span>الحاويات</a>
+    <a data-v="funds"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>الخزائن</a>
     <a data-v="map"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.1 6.3 9.9 4.2a2 2 0 0 0-1.8 0L3.6 6.4A1 1 0 0 0 3 7.3v12.1a1 1 0 0 0 1.4.9l3.7-1.8a2 2 0 0 1 1.8 0l4.2 2.1a2 2 0 0 0 1.8 0l4.5-2.2a1 1 0 0 0 .6-.9V5.4a1 1 0 0 0-1.4-.9l-3.7 1.8a2 2 0 0 1-1.8 0z"/><path d="M15 6v15"/><path d="M9 3v15"/></svg></span>خريطة المواني</a>
     <a data-v="log"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg></span>سجل التعديلات</a>
-    <a href="./#track" target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.99-5.54 10.19-7.4 11.8a1 1 0 0 1-1.2 0C9.54 20.19 4 14.99 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span>صفحة التتبع<svg class="ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a>
+    <a href="./#track" target="_blank" rel="noopener" title="صفحة التتبع للزبون"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.99-5.54 10.19-7.4 11.8a1 1 0 0 1-1.2 0C9.54 20.19 4 14.99 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span>صفحة التتبع<svg class="ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a>
   </nav>
   <div class="foot">
     <button class="sbtn" onclick="openSettings()"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span>الإعدادات</button>
@@ -621,6 +640,8 @@ function load(){
   d = d || {};
   d.cars = d.cars || [];
   d.customers = d.customers || [];
+  d.funds = d.funds || [];
+  d.fundMoves = d.fundMoves || [];
   d.settings = Object.assign({officeName:'AWS COMPANY', officeFee:0, wirePct:1.5, perContainer:4}, d.settings||{});
   return d;
 }
@@ -645,7 +666,7 @@ function saveContainer(ct, changes){
 function removeCust(id){ const old = shadow.customers[id]; db.customers = db.customers.filter(x => x.id !== id); if(USE_FB){ if(old) addLog('customer', id, old.name, 'حذف', ['حذف الزبون']); fs.collection('customers').doc(id).delete().catch(fbErr); } else save(); }
 
 /* ---------- change log: who changed what, and when ---------- */
-const shadow = {cars:{}, customers:{}, containers:{}, settings:null};   // last copy seen from the cloud, to compare against
+const shadow = {cars:{}, customers:{}, containers:{}, funds:{}, fundMoves:{}, settings:null};   // last copy seen from the cloud, to compare against
 const $t = n => '$' + r2(n).toLocaleString('en-US', {maximumFractionDigits:2});
 function addLog(kind, ref, title, action, changes){
   if(!USE_FB || !fbAuth || !fbAuth.currentUser || !changes.length) return;
@@ -718,7 +739,7 @@ function initFirebase(){
   firebase.initializeApp(FBC);
   fbAuth = firebase.auth(); fs = firebase.firestore();
   fs.enablePersistence({synchronizeTabs:true}).catch(() => {});
-  db = {cars:[], customers:[], settings:load().settings};
+  db = {cars:[], customers:[], funds:[], fundMoves:[], settings:load().settings};
   fbAuth.onAuthStateChanged(user => {
     unsub.forEach(f => f()); unsub = [];
     if(!user){ $('#login').classList.add('on'); setCloud(''); return; }
@@ -735,6 +756,12 @@ function initFirebase(){
     }, fbErr));
     unsub.push(fs.collection('customers').onSnapshot(snap => { db.customers = snap.docs.map(d => d.data()); shadow.customers = Object.fromEntries(snap.docs.map(d => [d.id, d.data()])); render(); }, fbErr));
     unsub.push(fs.collection('meta').doc('settings').onSnapshot(d => { if(d.exists){ db.settings = Object.assign(db.settings, d.data()); shadow.settings = d.data(); render(); } }, fbErr));
+    unsub.push(fs.collection('funds').onSnapshot(snap => {
+      db.funds = snap.docs.map(d => d.data()); shadow.funds = Object.fromEntries(snap.docs.map(d => [d.id, d.data()])); if(ui.view === 'funds') render();
+    }, e => console.error('funds', e)));
+    unsub.push(fs.collection('fundMoves').onSnapshot(snap => {
+      db.fundMoves = snap.docs.map(d => d.data()); shadow.fundMoves = Object.fromEntries(snap.docs.map(d => [d.id, d.data()])); if(ui.view === 'funds') render();
+    }, e => console.error('fundMoves', e)));
     unsub.push(fs.collection('containers').onSnapshot(snap => {
       db.containers = snap.docs.map(d => d.data()); shadow.containers = Object.fromEntries(snap.docs.map(d => [d.id, d.data()])); render();
     }, e => console.error('containers', e)));
@@ -862,6 +889,7 @@ function commit(c){ if(c) sync(c); save(c); render(); }
 
 /* ===================== router / render ===================== */
 function go(view, carId){ ui.view = view; ui.carId = carId || null; window.scrollTo(0,0); render(); }
+document.querySelectorAll('#nav a').forEach(a => { if(!a.title) a.title = a.textContent.trim(); });
 document.getElementById('nav').addEventListener('click', e => { const a = e.target.closest('a[data-v]'); if(a) go(a.dataset.v); });
 
 function render(){
@@ -877,6 +905,7 @@ function render(){
   else if(ui.view === 'container'){ const ct = getCt(ui.carId); app.innerHTML = ct ? viewContainer(ct) : (ui.view = 'containers', viewContainers()); }
   else if(ui.view === 'log'){ const f = document.activeElement && document.activeElement.id === 'lq'; app.innerHTML = viewLog(); if(f){ const e = $('#lq'); e.focus(); e.setSelectionRange(e.value.length, e.value.length); } }
   else if(ui.view === 'map') app.innerHTML = viewMap();
+  else if(ui.view === 'funds') app.innerHTML = viewFunds();
   else app.innerHTML = viewCars();
   tblCards(app);
 }
@@ -891,12 +920,174 @@ function tblCards(root){
 }
 addEventListener('resize', () => { clearTimeout(tblCards._t); tblCards._t = setTimeout(() => tblCards(document), 150); });
 
+/* ---------- الخزائن: where the money is (separate from the cars; US dollars only) ----------
+   fund: {id, name, kind:'cash'|'bank'|'card'|'other', opening, openDate, note, created}
+   move: {id, type:'in'|'out'|'transfer', fund, to?, amount, date, cat, desc, by, at}
+   balance = opening + money in − money out ± transfers */
+const FUND_KIND = {cash:'💵 كاش', bank:'🏦 مصرف', card:'💳 بطاقة / حساب دفع', other:'📦 أخرى'};
+const MOVE_CAT = {in:['دفعة من زبون', 'تحويل من برّا', 'إيداع', 'أخرى'], out:['سداد مزاد', 'شركة الشحن', 'رسوم وتكلفة دفع', 'غرامات وتخزين', 'سحب شخصي', 'أخرى']};
+const getFund = id => (db.funds || []).find(f => f.id === id);
+const fundName = id => { const f = getFund(id); return f ? f.name : '—'; };
+function fundBalance(f){
+  let b = N(f.opening);
+  (db.fundMoves || []).forEach(m => {
+    if(m.type === 'in' && m.fund === f.id) b += N(m.amount);
+    else if(m.type === 'out' && m.fund === f.id) b -= N(m.amount);
+    else if(m.type === 'transfer'){ if(m.fund === f.id) b -= N(m.amount); if(m.to === f.id) b += N(m.amount); }
+  });
+  return r2(b);
+}
+/* effect of one move on a fund (+ in, − out); 0 if the move does not touch it */
+function moveDelta(m, fid){
+  if(m.type === 'in') return m.fund === fid ? N(m.amount) : 0;
+  if(m.type === 'out') return m.fund === fid ? -N(m.amount) : 0;
+  return (m.to === fid ? N(m.amount) : 0) - (m.fund === fid ? N(m.amount) : 0);
+}
+function saveFund(f, changes){
+  if(!USE_FB) return save();
+  addLog('fund', f.id, 'خزنة ' + f.name, shadow.funds[f.id] ? 'تعديل' : 'إضافة', changes);
+  fs.collection('funds').doc(f.id).set(plain(f)).catch(fbErr);
+}
+function saveMove(m, changes, isNew){
+  if(!USE_FB) return save();
+  addLog('fund', m.fund, 'خزنة ' + fundName(m.fund), isNew ? 'إضافة' : 'تعديل', changes);
+  fs.collection('fundMoves').doc(m.id).set(plain(m)).catch(fbErr);
+}
+const moveLine = m => `${m.type === 'in' ? 'داخل' : m.type === 'out' ? 'طالع' : 'تحويل'} ${$t(m.amount)}${m.type === 'transfer' ? ` من ${fundName(m.fund)} إلى ${fundName(m.to)}` : ` — ${fundName(m.fund)}`}${m.cat ? ' — ' + m.cat : ''}${m.desc ? ' — ' + m.desc : ''} — ${m.date || ''}`;
+
+function viewFunds(){
+  const funds = (db.funds || []).slice().sort((a,b) => (a.created || '').localeCompare(b.created || ''));
+  const sel = ui.fundSel && getFund(ui.fundSel) ? ui.fundSel : '';
+  const total = r2(funds.reduce((s,f) => s + fundBalance(f), 0));
+  const m = ui.fundMonth || thisMonth();
+  const inM = (db.fundMoves || []).filter(x => (x.date || '').startsWith(m) && x.type !== 'transfer' && (!sel || x.fund === sel));
+  const sumIn = r2(inM.filter(x => x.type === 'in').reduce((s,x) => s + N(x.amount), 0));
+  const sumOut = r2(inM.filter(x => x.type === 'out').reduce((s,x) => s + N(x.amount), 0));
+  // moves list, newest first; with one fund selected, show its running balance
+  let list = (db.fundMoves || []).filter(x => !sel || x.fund === sel || x.to === sel)
+    .slice().sort((a,b) => (a.date || '').localeCompare(b.date || '') || (a.at || '').localeCompare(b.at || ''));
+  if(sel){ let run = N(getFund(sel).opening); list.forEach(x => { run = r2(run + moveDelta(x, sel)); x._run = run; }); }
+  list = list.reverse();
+  const card = f => { const b = fundBalance(f); return `<div class="card fund ${sel === f.id ? 'on' : ''}" onclick="ui.fundSel=ui.fundSel==='${f.id}'?'':'${f.id}';render()">
+      <div class="fk">${FUND_KIND[f.kind] || FUND_KIND.other}</div>
+      <div class="fn">${esc(f.name)}</div>
+      <div class="fb ${b < 0 ? 'pneg' : ''}">${money(b)}</div>
+      <div class="row small" style="gap:6px;margin-top:8px"><span class="muted">${sel === f.id ? 'اضغط تشوف الكل' : 'اضغط تشوف حركتها'}</span><div class="sp"></div>
+        <button class="btn sm ghost" onclick="event.stopPropagation();fundForm('${f.id}')">تعديل</button></div></div>`; };
+  const row = x => { const d = sel ? moveDelta(x, sel) : (x.type === 'in' ? N(x.amount) : x.type === 'out' ? -N(x.amount) : 0);
+    return `<tr>
+      <td><span class="num">${esc(x.date || '')}</span></td>
+      <td>${x.type === 'transfer' ? `<span class="bdg ship">⇄ تحويل</span><div class="small muted">${esc(fundName(x.fund))} ← ${esc(fundName(x.to))}</div>`
+          : `<span class="bdg ${x.type === 'in' ? 'done' : 'bad'}">${x.type === 'in' ? '↓ داخل' : '↑ طالع'}</span><div class="small muted">${esc(fundName(x.fund))}</div>`}</td>
+      <td>${x.cat ? `<b>${esc(x.cat)}</b>` : ''}${x.desc ? `<div class="small">${esc(x.desc)}</div>` : ''}${!x.cat && !x.desc ? '<span class="muted">—</span>' : ''}</td>
+      <td class="pamt"><b class="${d > 0 ? 'ppos' : d < 0 ? 'pneg' : ''}"><span class="num">${d > 0 ? '+' : d < 0 ? '−' : ''}${$t(x.type === 'transfer' && !sel ? x.amount : Math.abs(d))}</span></b></td>
+      ${sel ? `<td class="pamt"><span class="num">${money(x._run)}</span></td>` : ''}
+      <td style="white-space:nowrap"><button class="btn sm" onclick="moveForm('${x.type}','${x.id}')">تعديل</button> <button class="btn sm danger" onclick="delMove('${x.id}')">حذف</button></td></tr>`; };
+  return `
+  <div class="chead"><div style="flex:1;min-width:200px"><h1>الخزائن</h1><div class="muted small">وين فلوسك توّا — منفصلة عن حسابات السيارات</div></div>
+    <div class="actions"><button class="btn pri" onclick="fundForm()">＋ خزنة جديدة</button></div></div>
+  ${funds.length ? `
+  <div class="kpis">
+    <div class="card kpi hl"><div class="l">إجمالي كل الخزائن</div><div class="v">${money(total)}</div><div class="small muted">${funds.length} خزنة</div></div>
+    <div class="card kpi" style="--kc:#0E9F6E"><div class="l">داخل — ${monthName(m)}${sel ? ' · ' + esc(fundName(sel)) : ''}</div><div class="v ppos">${money(sumIn)}</div></div>
+    <div class="card kpi" style="--kc:#DC2F2F"><div class="l">طالع — ${monthName(m)}${sel ? ' · ' + esc(fundName(sel)) : ''}</div><div class="v pneg">${money(sumOut)}</div></div>
+  </div>
+  <div class="sech">الخزائن <small>اضغط على خزنة تشوف حركتها بروحها</small></div>
+  <div class="funds">${funds.map(card).join('')}</div>
+  <div class="card" style="margin-top:18px">
+    <div class="pad row" style="border-bottom:1px solid var(--line)">
+      <h3>الحركة${sel ? ' — ' + esc(fundName(sel)) : ''}</h3><div class="sp"></div>
+      <button class="btn" onclick="moveForm('in')">↓ داخل</button>
+      <button class="btn" onclick="moveForm('out')">↑ طالع</button>
+      <button class="btn" onclick="moveForm('transfer')" ${funds.length < 2 ? 'disabled title="يبيلها خزنتين"' : ''}>⇄ تحويل</button>
+    </div>
+    ${list.length ? `<div class="tblwrap"><table class="tbl"><thead><tr><th>التاريخ</th><th>النوع</th><th>البيان</th><th class="pamt">المبلغ</th>${sel ? '<th class="pamt">الرصيد</th>' : ''}<th></th></tr></thead>
+      <tbody>${list.map(row).join('')}</tbody></table></div>`
+      : `<div class="empty">ما فيش حركة${sel ? ' على الخزنة هذي' : ''} بعد — سجّل أول حركة من الأزرار فوق</div>`}
+  </div>`
+  : `<div class="card empty" style="padding:50px 20px"><div style="font-size:40px">👛</div><h2 style="margin:8px 0">ما عندكش خزائن بعد</h2>
+      <div class="muted" style="margin-bottom:16px">دير خزنة لكل مكان فيه فلوسك: الكاش في المكتب، حساب المصرف، البطاقة اللي تدفع بيها للمزاد…</div>
+      <button class="btn pri" onclick="fundForm()">＋ أول خزنة</button></div>`}`;
+}
+function fundForm(id){
+  const f = id ? getFund(id) : {kind:'cash', openDate:today()};
+  const used = id && (db.fundMoves || []).some(m => m.fund === id || m.to === id);
+  openModal(id ? 'تعديل الخزنة' : 'خزنة جديدة', `<form id="ff" class="grid" onsubmit="event.preventDefault();saveFundForm('${id || ''}')">
+    ${fld('اسم الخزنة', 'name', f.name, 'text', 'required placeholder="مثلاً: كاش المكتب، مصرف الجمهورية، بطاقة الدفع"', 'full')}
+    <div class="f"><label>النوع</label><select class="inp" name="kind">${Object.entries(FUND_KIND).map(([k,t]) => `<option value="${k}" ${f.kind === k ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+    ${fld('الرصيد اللي فيها توّا ($)', 'opening', f.opening, 'number', 'placeholder="0"')}
+    ${fld('بتاريخ', 'openDate', f.openDate, 'date')}
+    <div class="f full"><label>ملاحظات</label><textarea class="inp" name="note" rows="2">${esc(f.note || '')}</textarea></div>
+    <div class="f full hint">الرصيد اللي فيها توّا = الفلوس الموجودة فيها قبل ما تبدا تسجّل الحركة في البرنامج.</div>
+  </form>`, `<button class="btn pri" onclick="document.getElementById('ff').requestSubmit()">حفظ</button><button class="btn" onclick="closeModal()">إلغاء</button>
+    ${id ? `<div class="sp"></div><button class="btn danger" onclick="delFund('${id}')" ${used ? 'disabled title="فيها حركة — امسح الحركة الأول"' : ''}>حذف</button>` : ''}`);
+}
+function saveFundForm(id){
+  const d = formData('ff'); d.name = d.name.trim(); if(!d.name) return;
+  const old = id ? Object.assign({}, getFund(id)) : null;
+  const f = old ? getFund(id) : {id:uid(), created:new Date().toISOString()};
+  Object.assign(f, {name:d.name, kind:d.kind, opening:r2(N(d.opening)), openDate:d.openDate || today(), note:d.note.trim()});
+  if(!old) db.funds.push(f);
+  const F = {name:'الاسم', kind:'النوع', opening:'الرصيد الأول', openDate:'تاريخ الرصيد', note:'ملاحظات'};
+  const fmt = (k, v) => k === 'kind' ? (FUND_KIND[v] || v) : k === 'opening' ? $t(v) : (v || '—');
+  const ch = old ? Object.keys(F).filter(k => String(old[k] ?? '') !== String(f[k] ?? '')).map(k => `${F[k]}: ${fmt(k, old[k])} ← ${fmt(k, f[k])}`)
+                 : [`خزنة جديدة — ${FUND_KIND[f.kind]} — الرصيد الأول ${$t(f.opening)}`];
+  saveFund(f, ch); closeModal(); render(); toast(old ? 'تم حفظ الخزنة' : 'تمت إضافة الخزنة');
+}
+function delFund(id){
+  if((db.fundMoves || []).some(m => m.fund === id || m.to === id)) return toast('فيها حركة — امسح الحركة الأول');
+  const f = getFund(id); if(!f) return;
+  ask(`نحذفوا الخزنة "${esc(f.name)}"؟`, () => {
+    db.funds = db.funds.filter(x => x.id !== id); if(ui.fundSel === id) ui.fundSel = '';
+    if(USE_FB){ addLog('fund', id, 'خزنة ' + f.name, 'حذف', ['حذف الخزنة']); fs.collection('funds').doc(id).delete().catch(fbErr); } else save();
+    render(); toast('تم الحذف');
+  }, 'حذف');
+}
+function moveForm(type, id){
+  const m = id ? (db.fundMoves || []).find(x => x.id === id) : {type, date:today(), fund:ui.fundSel || ''};
+  if(!m) return;
+  type = m.type;
+  const funds = (db.funds || []);
+  const opts = cur => `<option value="">— اختار —</option>` + funds.map(f => `<option value="${f.id}" ${cur === f.id ? 'selected' : ''}>${esc(f.name)} (${money(fundBalance(f)).replace(/<[^>]+>/g, '')})</option>`).join('');
+  const title = type === 'in' ? '↓ فلوس داخلة' : type === 'out' ? '↑ فلوس طالعة' : '⇄ تحويل بين خزائن';
+  openModal((id ? 'تعديل — ' : '') + title, `<form id="mf" class="grid" onsubmit="event.preventDefault();saveMoveForm('${type}','${id || ''}')">
+    <div class="f ${type === 'transfer' ? '' : 'full'}"><label>${type === 'in' ? 'دخلت في خزنة' : type === 'out' ? 'طلعت من خزنة' : 'من خزنة'}</label><select class="inp" name="fund" required>${opts(m.fund)}</select></div>
+    ${type === 'transfer' ? `<div class="f"><label>إلى خزنة</label><select class="inp" name="to" required>${opts(m.to)}</select></div>` : ''}
+    ${fld('المبلغ ($)', 'amount', m.amount, 'number', 'required min="0.01"')}
+    ${fld('التاريخ', 'date', m.date, 'date', 'required')}
+    ${type === 'transfer' ? '' : `<div class="f full"><label>النوع</label><select class="inp" name="cat">${MOVE_CAT[type].map(c => `<option ${m.cat === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div>`}
+    ${fld('البيان / ملاحظة', 'desc', m.desc, 'text', 'placeholder="مثلاً: دفعة محمد الزوي — Camry، أو سداد Copart لوت 4567…"', 'full')}
+    <div class="err small" id="mfErr" style="grid-column:1/-1;color:var(--bad)"></div>
+  </form>`, `<button class="btn pri" onclick="document.getElementById('mf').requestSubmit()">حفظ</button><button class="btn" onclick="closeModal()">إلغاء</button>`);
+}
+function saveMoveForm(type, id){
+  const d = formData('mf'), amount = r2(N(d.amount));
+  if(!(amount > 0)) return $('#mfErr').textContent = 'اكتب المبلغ';
+  if(!getFund(d.fund)) return $('#mfErr').textContent = 'اختار الخزنة';
+  if(type === 'transfer' && (!getFund(d.to) || d.to === d.fund)) return $('#mfErr').textContent = 'اختار خزنتين مختلفات';
+  const old = id ? Object.assign({}, (db.fundMoves || []).find(x => x.id === id)) : null;
+  const m = old ? db.fundMoves.find(x => x.id === id) : {id:uid(), type, at:new Date().toISOString(), by:USE_FB && fbAuth && fbAuth.currentUser ? fbAuth.currentUser.email || '' : ''};
+  Object.assign(m, {fund:d.fund, amount, date:d.date || today(), desc:(d.desc || '').trim()});
+  if(type === 'transfer'){ m.to = d.to; delete m.cat; } else { m.cat = d.cat || ''; delete m.to; }
+  if(!old) db.fundMoves.push(m);
+  saveMove(m, old ? [`${moveLine(old)} ← ${moveLine(m)}`] : [moveLine(m)], !old);
+  closeModal(); render(); toast('تم الحفظ');
+}
+function delMove(id){
+  const m = (db.fundMoves || []).find(x => x.id === id); if(!m) return;
+  ask(`نحذفوا الحركة؟<div class="small muted" style="margin-top:6px">${esc(moveLine(m))}</div>`, () => {
+    db.fundMoves = db.fundMoves.filter(x => x.id !== id);
+    if(USE_FB){ addLog('fund', m.fund, 'خزنة ' + fundName(m.fund), 'حذف', ['حذف حركة: ' + moveLine(m)]); fs.collection('fundMoves').doc(id).delete().catch(fbErr); } else save();
+    render(); toast('تم الحذف');
+  }, 'حذف');
+}
+
 /* ---------- change log ---------- */
 const ACT_CLS = {'إضافة':'done', 'تعديل':'ship', 'حذف':'bad'};
 function logTime(at){ const d = new Date(at); return isNaN(d) ? '' : d.toLocaleString('en-GB', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}); }
 function logItems(list, showTitle){
   return list.map(l => `<div class="logi">
-    <div class="logh">${showTitle ? `<b class="${l.kind !== 'settings' ? 'click' : ''}" ${l.kind === 'car' ? `onclick="go('car','${l.ref}')"` : l.kind === 'customer' ? `onclick="go('customer','${l.ref}')"` : l.kind === 'container' ? `onclick="go('container','${l.ref}')"` : ''}>${esc(l.title)}</b>` : ''}
+    <div class="logh">${showTitle ? `<b class="${l.kind !== 'settings' ? 'click' : ''}" ${l.kind === 'car' ? `onclick="go('car','${l.ref}')"` : l.kind === 'customer' ? `onclick="go('customer','${l.ref}')"` : l.kind === 'container' ? `onclick="go('container','${l.ref}')"` : l.kind === 'fund' ? `onclick="go('funds')"` : ''}>${esc(l.title)}</b>` : ''}
       <span class="bdg ${ACT_CLS[l.action] || 'exp'}">${esc(l.action)}</span>
       <div class="sp"></div><span class="small muted"><span class="num">${esc(logTime(l.at))}</span> · ${esc((l.by || '').split('@')[0])}</span></div>
     <ul>${(l.changes || []).map(x => `<li>${logLine(x)}</li>`).join('')}</ul></div>`).join('');

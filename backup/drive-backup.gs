@@ -2,7 +2,7 @@
  * AWS COMPANY — نسخة احتياطية يومية من Firebase إلى Google Drive
  * يتركّب في script.google.com بحساب Google اللي تبي النسخ تتخزن في الدرايف متاعه.
  *
- * كل يوم يقرأ: cars, customers, containers, log, meta/settings
+ * كل يوم يقرأ: cars, customers, containers, funds, fundMoves, log, meta/settings
  * ويكتب ملف  car-office-backup-YYYY-MM-DD.json  في مجلد "AWS COMPANY - نسخ احتياطية".
  * الملف بنفس شكل زر "تصدير نسخة" في البرنامج، فيتستورد من الإعدادات ← "استيراد نسخة".
  *
@@ -45,10 +45,12 @@ function runBackup_() {
     cars: listAll_('cars', token).map(c => Object.assign({expenses: [], payments: [], refunds: []}, c)),
     customers: listAll_('customers', token),
     containers: listAll_('containers', token),
+    funds: listAll_('funds', token),
+    fundMoves: listAll_('fundMoves', token),
     settings: getDoc_('meta/settings', token) || {},
     log: listAll_('log', token).sort((a, b) => String(b.at || '').localeCompare(String(a.at || ''))),
   };
-  const counts = {cars: data.cars.length, customers: data.customers.length, containers: data.containers.length, log: data.log.length};
+  const counts = {cars: data.cars.length, customers: data.customers.length, containers: data.containers.length, funds: data.funds.length, fundMoves: data.fundMoves.length, log: data.log.length};
   data._backup = {at: new Date().toISOString(), project: PROJECT_ID, counts: counts};
 
   const folder = getFolder_();
