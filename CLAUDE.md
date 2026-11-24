@@ -107,7 +107,7 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
-- 2026-11-24 — PREVIEW (branch `preview-funds`, NOT on main yet — Ahmed must approve): "الخزائن" page (menu item, wallet icon).
+- 2026-11-24 — Published to main with Ahmed's OK ("انشر"; he said more changes to it are coming). "الخزائن" page (menu item, wallet icon).
   US dollars only and separate from the cars (Ahmed's choice: payments are NOT linked to a treasury). New collections `funds`
   {id,name,kind cash|bank|card|other,opening,openDate,note,created} and `fundMoves` {id,type in|out|transfer,fund,to?,amount,date,cat,desc,by,at};
   balance = opening + in − out ± transfers (`fundBalance`). Page: total of all treasuries, month in/out, one card per treasury
