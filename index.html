@@ -437,6 +437,22 @@ body{background:var(--bg)}
 .card.fund .fn{font-size:18px;font-weight:800;margin-top:4px}
 .card.fund .fb{font-size:28px;font-weight:800;margin-top:6px;letter-spacing:-.3px}
 @media screen and (max-width:640px){ .funds{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px} .card.fund{padding:12px 14px} .card.fund .fb{font-size:21px} .card.fund .fn{font-size:15.5px} }
+.card.pool{padding:20px 22px;margin-bottom:22px;color:#fff;border:0;
+  background:radial-gradient(600px 260px at 10% 0%,rgba(242,106,27,.5),transparent 60%),linear-gradient(120deg,#1A1F27,#242B36 60%,#3A2A20)}
+.card.pool .pl{font-weight:700;opacity:.85}
+.card.pool .pv{font-size:34px;font-weight:800;color:#FF9A57;margin:2px 0 4px;letter-spacing:-.3px}
+.card.pool .pv.pneg{color:#FF8A8A}
+.card.pool .btn:not(.pri){background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);color:#fff;box-shadow:none}
+.card.pool select.inp{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);color:#fff}
+.card.pool select.inp option{color:#111}
+.card.pool .poolrows{margin-top:14px;background:#fff;color:var(--ink);border-radius:14px;overflow:hidden}
+.arows{display:flex;flex-direction:column;gap:8px}
+.arow{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px}
+.atot{margin-top:12px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.atot > div{display:flex;justify-content:space-between;padding:9px 12px;border-bottom:1px solid var(--line-2)}
+.atot > div:last-child{border-bottom:0;background:var(--surface-2)}
+.atot b{font-size:17px}
+@media screen and (max-width:640px){ .card.pool{padding:16px} .card.pool .pv{font-size:28px} .arow{grid-template-columns:minmax(0,1fr) 120px} }
 /* auction fees calculator */
 @media screen{
 .fcout:not(:empty){margin-top:14px}
@@ -721,7 +737,7 @@ function logCust(o, cu){
   addLog('customer', cu.id, cu.name, 'تعديل', Object.keys(F).filter(k => String(o[k] ?? '') !== String(cu[k] ?? '')).map(k => `${F[k]}: ${o[k] || '—'} ← ${cu[k] || '—'}`));
 }
 function logSettings(){
-  const o = shadow.settings || {}, s = db.settings, F = {officeName:'اسم المكتب', officeFee:'عمولة المكتب الافتراضية', wirePct:'عمولة الحوالة الافتراضية %', perContainer:'سيارات في الحاوية'};
+  const o = shadow.settings || {}, s = db.settings, F = {officeName:'اسم المكتب', officeFee:'عمولة المكتب الافتراضية', wirePct:'عمولة الحوالة الافتراضية %', perContainer:'سيارات في الحاوية', profitFrom:'الخزائن: نحسب المكسب من شهر'};
   addLog('settings', 'settings', 'الإعدادات', 'تعديل', Object.keys(F).filter(k => String(o[k] ?? '') !== String(s[k] ?? '')).map(k => `${F[k]}: ${o[k] ?? '—'} ← ${s[k] ?? '—'}`));
 }
 async function replaceAll(d){
@@ -925,13 +941,22 @@ addEventListener('resize', () => { clearTimeout(tblCards._t); tblCards._t = setT
    move: {id, type:'in'|'out'|'transfer', fund, to?, amount, date, cat, desc, by, at}
    balance = opening + money in − money out ± transfers */
 const FUND_KIND = {cash:'💵 كاش', bank:'🏦 مصرف', card:'💳 بطاقة / حساب دفع', other:'📦 أخرى'};
-const MOVE_CAT = {in:['دفعة من زبون', 'تحويل من برّا', 'إيداع', 'أخرى'], out:['سداد مزاد', 'شركة الشحن', 'رسوم وتكلفة دفع', 'غرامات وتخزين', 'سحب شخصي', 'أخرى']};
+const MOVE_CAT = {in:['دخل آخر', 'إيداع', 'أخرى'], out:['سحب شخصي', 'مصروف', 'استثمار', 'أخرى']};
+/* the treasuries hold PROFIT only (Ahmed, 2026-11-24): received profit (locked car stages) waits in the "not distributed" pool
+   until he moves it into treasuries with "وزّع المكسب" (moves of type 'alloc'). Customer money never goes into a treasury. */
+function profitPool(){
+  const from = db.settings.profitFrom || '';
+  const rows = profitRows().filter(r => r.date && (!from || r.date.slice(0, 7) >= from)).sort((a,b) => (b.date || '').localeCompare(a.date || ''));
+  const recv = r2(rows.reduce((t,r) => t + N(r.amount), 0));
+  const alloc = r2((db.fundMoves || []).filter(m => m.type === 'alloc').reduce((t,m) => t + N(m.amount), 0));
+  return {rows, recv, alloc, left:r2(recv - alloc), from};
+}
 const getFund = id => (db.funds || []).find(f => f.id === id);
 const fundName = id => { const f = getFund(id); return f ? f.name : '—'; };
 function fundBalance(f){
   let b = N(f.opening);
   (db.fundMoves || []).forEach(m => {
-    if(m.type === 'in' && m.fund === f.id) b += N(m.amount);
+    if((m.type === 'in' || m.type === 'alloc') && m.fund === f.id) b += N(m.amount);
     else if(m.type === 'out' && m.fund === f.id) b -= N(m.amount);
     else if(m.type === 'transfer'){ if(m.fund === f.id) b -= N(m.amount); if(m.to === f.id) b += N(m.amount); }
   });
@@ -939,7 +964,7 @@ function fundBalance(f){
 }
 /* effect of one move on a fund (+ in, − out); 0 if the move does not touch it */
 function moveDelta(m, fid){
-  if(m.type === 'in') return m.fund === fid ? N(m.amount) : 0;
+  if(m.type === 'in' || m.type === 'alloc') return m.fund === fid ? N(m.amount) : 0;
   if(m.type === 'out') return m.fund === fid ? -N(m.amount) : 0;
   return (m.to === fid ? N(m.amount) : 0) - (m.fund === fid ? N(m.amount) : 0);
 }
@@ -953,7 +978,7 @@ function saveMove(m, changes, isNew){
   addLog('fund', m.fund, 'خزنة ' + fundName(m.fund), isNew ? 'إضافة' : 'تعديل', changes);
   fs.collection('fundMoves').doc(m.id).set(plain(m)).catch(fbErr);
 }
-const moveLine = m => `${m.type === 'in' ? 'داخل' : m.type === 'out' ? 'طالع' : 'تحويل'} ${$t(m.amount)}${m.type === 'transfer' ? ` من ${fundName(m.fund)} إلى ${fundName(m.to)}` : ` — ${fundName(m.fund)}`}${m.cat ? ' — ' + m.cat : ''}${m.desc ? ' — ' + m.desc : ''} — ${m.date || ''}`;
+const moveLine = m => `${m.type === 'alloc' ? 'من المكسب' : m.type === 'in' ? 'داخل' : m.type === 'out' ? 'طالع' : 'تحويل'} ${$t(m.amount)}${m.type === 'transfer' ? ` من ${fundName(m.fund)} إلى ${fundName(m.to)}` : ` — ${fundName(m.fund)}`}${m.cat ? ' — ' + m.cat : ''}${m.desc ? ' — ' + m.desc : ''} — ${m.date || ''}`;
 
 function viewFunds(){
   const funds = (db.funds || []).slice().sort((a,b) => (a.created || '').localeCompare(b.created || ''));
@@ -961,7 +986,7 @@ function viewFunds(){
   const total = r2(funds.reduce((s,f) => s + fundBalance(f), 0));
   const m = ui.fundMonth || thisMonth();
   const inM = (db.fundMoves || []).filter(x => (x.date || '').startsWith(m) && x.type !== 'transfer' && (!sel || x.fund === sel));
-  const sumIn = r2(inM.filter(x => x.type === 'in').reduce((s,x) => s + N(x.amount), 0));
+  const sumIn = r2(inM.filter(x => x.type === 'in' || x.type === 'alloc').reduce((s,x) => s + N(x.amount), 0));
   const sumOut = r2(inM.filter(x => x.type === 'out').reduce((s,x) => s + N(x.amount), 0));
   // moves list, newest first; with one fund selected, show its running balance
   let list = (db.fundMoves || []).filter(x => !sel || x.fund === sel || x.to === sel)
@@ -974,18 +999,41 @@ function viewFunds(){
       <div class="fb ${b < 0 ? 'pneg' : ''}">${money(b)}</div>
       <div class="row small" style="gap:6px;margin-top:8px"><span class="muted">${sel === f.id ? 'اضغط تشوف الكل' : 'اضغط تشوف حركتها'}</span><div class="sp"></div>
         <button class="btn sm ghost" onclick="event.stopPropagation();fundForm('${f.id}')">تعديل</button></div></div>`; };
-  const row = x => { const d = sel ? moveDelta(x, sel) : (x.type === 'in' ? N(x.amount) : x.type === 'out' ? -N(x.amount) : 0);
+  const pool = profitPool();
+  const months = [...new Set(profitRows().filter(r => r.date).map(r => r.date.slice(0, 7)))].sort();
+  const poolCard = `<div class="card pool">
+      <div class="row" style="gap:10px;align-items:flex-start">
+        <div style="flex:1;min-width:200px"><div class="pl">مكسب ما توزّعش بعد</div>
+          <div class="pv ${pool.left < -0.009 ? 'pneg' : ''}">${money(pool.left)}</div>
+          <div class="small" style="opacity:.85">المكسب المستلم${pool.from ? ' من ' + monthName(pool.from) : ' (كل الشهور)'}: <b>${money(pool.recv)}</b> · وزّعت منه: <b>${money(pool.alloc)}</b></div>
+          ${pool.left < -0.009 ? '<div class="small" style="margin-top:4px;color:#FFB4B4">⚠ وزّعت أكثر من المكسب المستلم — ممكن مرحلة انفتحت من جديد بعد ما وزّعت</div>' : ''}</div>
+        <div class="row" style="gap:8px">
+          <button class="btn pri" onclick="allocForm()" ${funds.length ? '' : 'disabled title="دير خزنة الأول"'}>★ وزّع المكسب</button>
+          <button class="btn" onclick="ui.poolOpen=!ui.poolOpen;render()">${ui.poolOpen ? 'خبّي' : 'من وين؟'}</button></div>
+      </div>
+      <div class="row small" style="gap:8px;margin-top:10px;opacity:.9"><span>نحسب المكسب من:</span>
+        <select class="inp" style="width:auto;padding:5px 10px" onchange="db.settings.profitFrom=this.value;saveSettingsStore();render()">
+          <option value="" ${!pool.from ? 'selected' : ''}>كل الشهور</option>
+          ${[...new Set([...months, thisMonth(), pool.from].filter(Boolean))].sort().map(mm => `<option value="${mm}" ${pool.from === mm ? 'selected' : ''}>${monthName(mm)}</option>`).join('')}
+        </select></div>
+      ${ui.poolOpen ? `<div class="poolrows">${pool.rows.length ? `<table class="tbl"><thead><tr><th>السيارة</th><th>المرحلة</th><th>تاريخ القفل</th><th class="pamt">المكسب</th></tr></thead><tbody>
+        ${pool.rows.map(r => `<tr class="click" onclick="go('car','${r.c.id}')"><td><b>${esc(carName(r.c))}</b><div class="small muted">${esc(r.c.customer || '')}</div></td>
+          <td><span class="bdg ${r.stage}">${STG[r.stage]}</span></td><td><span class="num">${esc(r.date)}</span></td><td class="pamt"><b class="${pcls(r.amount)}">${money(r.amount)}</b></td></tr>`).join('')}
+        </tbody></table>` : '<div class="empty">ما فيش مراحل مقفولة في الفترة هذي</div>'}</div>` : ''}
+    </div>`;
+  const row = x => { const d = sel ? moveDelta(x, sel) : (x.type === 'in' || x.type === 'alloc' ? N(x.amount) : x.type === 'out' ? -N(x.amount) : 0);
     return `<tr>
       <td><span class="num">${esc(x.date || '')}</span></td>
       <td>${x.type === 'transfer' ? `<span class="bdg ship">⇄ تحويل</span><div class="small muted">${esc(fundName(x.fund))} ← ${esc(fundName(x.to))}</div>`
-          : `<span class="bdg ${x.type === 'in' ? 'done' : 'bad'}">${x.type === 'in' ? '↓ داخل' : '↑ طالع'}</span><div class="small muted">${esc(fundName(x.fund))}</div>`}</td>
+          : `<span class="bdg ${x.type === 'out' ? 'bad' : 'done'}">${x.type === 'alloc' ? '★ من المكسب' : x.type === 'in' ? '↓ داخل' : '↑ طالع'}</span><div class="small muted">${esc(fundName(x.fund))}</div>`}</td>
       <td>${x.cat ? `<b>${esc(x.cat)}</b>` : ''}${x.desc ? `<div class="small">${esc(x.desc)}</div>` : ''}${!x.cat && !x.desc ? '<span class="muted">—</span>' : ''}</td>
       <td class="pamt"><b class="${d > 0 ? 'ppos' : d < 0 ? 'pneg' : ''}"><span class="num">${d > 0 ? '+' : d < 0 ? '−' : ''}${$t(x.type === 'transfer' && !sel ? x.amount : Math.abs(d))}</span></b></td>
       ${sel ? `<td class="pamt"><span class="num">${money(x._run)}</span></td>` : ''}
       <td style="white-space:nowrap"><button class="btn sm" onclick="moveForm('${x.type}','${x.id}')">تعديل</button> <button class="btn sm danger" onclick="delMove('${x.id}')">حذف</button></td></tr>`; };
   return `
-  <div class="chead"><div style="flex:1;min-width:200px"><h1>الخزائن</h1><div class="muted small">وين فلوسك توّا — منفصلة عن حسابات السيارات</div></div>
-    <div class="actions"><button class="btn pri" onclick="fundForm()">＋ خزنة جديدة</button></div></div>
+  <div class="chead"><div style="flex:1;min-width:200px"><h1>الخزائن</h1><div class="muted small">مكسبك وين ماشي — فلوس الزبائن ما تدخلش هني</div></div>
+    <div class="actions"><button class="btn" onclick="fundForm()">＋ خزنة جديدة</button></div></div>
+  ${poolCard}
   ${funds.length ? `
   <div class="kpis">
     <div class="card kpi hl"><div class="l">إجمالي كل الخزائن</div><div class="v">${money(total)}</div><div class="small muted">${funds.length} خزنة</div></div>
@@ -997,7 +1045,8 @@ function viewFunds(){
   <div class="card" style="margin-top:18px">
     <div class="pad row" style="border-bottom:1px solid var(--line)">
       <h3>الحركة${sel ? ' — ' + esc(fundName(sel)) : ''}</h3><div class="sp"></div>
-      <button class="btn" onclick="moveForm('in')">↓ داخل</button>
+      <button class="btn" onclick="allocForm()">★ من المكسب</button>
+      <button class="btn" onclick="moveForm('in')">↓ داخل آخر</button>
       <button class="btn" onclick="moveForm('out')">↑ طالع</button>
       <button class="btn" onclick="moveForm('transfer')" ${funds.length < 2 ? 'disabled title="يبيلها خزنتين"' : ''}>⇄ تحويل</button>
     </div>
@@ -1006,19 +1055,19 @@ function viewFunds(){
       : `<div class="empty">ما فيش حركة${sel ? ' على الخزنة هذي' : ''} بعد — سجّل أول حركة من الأزرار فوق</div>`}
   </div>`
   : `<div class="card empty" style="padding:50px 20px"><div style="font-size:40px">👛</div><h2 style="margin:8px 0">ما عندكش خزائن بعد</h2>
-      <div class="muted" style="margin-bottom:16px">دير خزنة لكل مكان فيه فلوسك: الكاش في المكتب، حساب المصرف، البطاقة اللي تدفع بيها للمزاد…</div>
+      <div class="muted" style="margin-bottom:16px">دير خزنة لكل وجهة تبي تحط فيها مكسبك، وبعدها وزّع المكسب عليهم.</div>
       <button class="btn pri" onclick="fundForm()">＋ أول خزنة</button></div>`}`;
 }
 function fundForm(id){
   const f = id ? getFund(id) : {kind:'cash', openDate:today()};
   const used = id && (db.fundMoves || []).some(m => m.fund === id || m.to === id);
   openModal(id ? 'تعديل الخزنة' : 'خزنة جديدة', `<form id="ff" class="grid" onsubmit="event.preventDefault();saveFundForm('${id || ''}')">
-    ${fld('اسم الخزنة', 'name', f.name, 'text', 'required placeholder="مثلاً: كاش المكتب، مصرف الجمهورية، بطاقة الدفع"', 'full')}
+    ${fld('اسم الخزنة', 'name', f.name, 'text', 'required placeholder="مثلاً: ماهر، شمال افريقيا، ادخار"', 'full')}
     <div class="f"><label>النوع</label><select class="inp" name="kind">${Object.entries(FUND_KIND).map(([k,t]) => `<option value="${k}" ${f.kind === k ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
     ${fld('الرصيد اللي فيها توّا ($)', 'opening', f.opening, 'number', 'placeholder="0"')}
     ${fld('بتاريخ', 'openDate', f.openDate, 'date')}
     <div class="f full"><label>ملاحظات</label><textarea class="inp" name="note" rows="2">${esc(f.note || '')}</textarea></div>
-    <div class="f full hint">الرصيد اللي فيها توّا = الفلوس الموجودة فيها قبل ما تبدا تسجّل الحركة في البرنامج.</div>
+    <div class="f full hint">الرصيد اللي فيها توّا = اللي فيها من قبل ما تبدا تستعمل البرنامج. لو جديدة خليه 0.</div>
   </form>`, `<button class="btn pri" onclick="document.getElementById('ff').requestSubmit()">حفظ</button><button class="btn" onclick="closeModal()">إلغاء</button>
     ${id ? `<div class="sp"></div><button class="btn danger" onclick="delFund('${id}')" ${used ? 'disabled title="فيها حركة — امسح الحركة الأول"' : ''}>حذف</button>` : ''}`);
 }
@@ -1049,13 +1098,13 @@ function moveForm(type, id){
   type = m.type;
   const funds = (db.funds || []);
   const opts = cur => `<option value="">— اختار —</option>` + funds.map(f => `<option value="${f.id}" ${cur === f.id ? 'selected' : ''}>${esc(f.name)} (${money(fundBalance(f)).replace(/<[^>]+>/g, '')})</option>`).join('');
-  const title = type === 'in' ? '↓ فلوس داخلة' : type === 'out' ? '↑ فلوس طالعة' : '⇄ تحويل بين خزائن';
+  const title = type === 'alloc' ? '★ من المكسب' : type === 'in' ? '↓ فلوس داخلة' : type === 'out' ? '↑ فلوس طالعة' : '⇄ تحويل بين خزائن';
   openModal((id ? 'تعديل — ' : '') + title, `<form id="mf" class="grid" onsubmit="event.preventDefault();saveMoveForm('${type}','${id || ''}')">
-    <div class="f ${type === 'transfer' ? '' : 'full'}"><label>${type === 'in' ? 'دخلت في خزنة' : type === 'out' ? 'طلعت من خزنة' : 'من خزنة'}</label><select class="inp" name="fund" required>${opts(m.fund)}</select></div>
+    <div class="f ${type === 'transfer' ? '' : 'full'}"><label>${type === 'in' || type === 'alloc' ? 'دخلت في خزنة' : type === 'out' ? 'طلعت من خزنة' : 'من خزنة'}</label><select class="inp" name="fund" required>${opts(m.fund)}</select></div>
     ${type === 'transfer' ? `<div class="f"><label>إلى خزنة</label><select class="inp" name="to" required>${opts(m.to)}</select></div>` : ''}
     ${fld('المبلغ ($)', 'amount', m.amount, 'number', 'required min="0.01"')}
     ${fld('التاريخ', 'date', m.date, 'date', 'required')}
-    ${type === 'transfer' ? '' : `<div class="f full"><label>النوع</label><select class="inp" name="cat">${MOVE_CAT[type].map(c => `<option ${m.cat === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div>`}
+    ${type === 'transfer' || type === 'alloc' ? '' : `<div class="f full"><label>النوع</label><select class="inp" name="cat">${[...new Set([...MOVE_CAT[type], m.cat].filter(Boolean))].map(c => `<option ${m.cat === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div>`}
     ${fld('البيان / ملاحظة', 'desc', m.desc, 'text', 'placeholder="مثلاً: دفعة محمد الزوي — Camry، أو سداد Copart لوت 4567…"', 'full')}
     <div class="err small" id="mfErr" style="grid-column:1/-1;color:var(--bad)"></div>
   </form>`, `<button class="btn pri" onclick="document.getElementById('mf').requestSubmit()">حفظ</button><button class="btn" onclick="closeModal()">إلغاء</button>`);
@@ -1068,10 +1117,39 @@ function saveMoveForm(type, id){
   const old = id ? Object.assign({}, (db.fundMoves || []).find(x => x.id === id)) : null;
   const m = old ? db.fundMoves.find(x => x.id === id) : {id:uid(), type, at:new Date().toISOString(), by:USE_FB && fbAuth && fbAuth.currentUser ? fbAuth.currentUser.email || '' : ''};
   Object.assign(m, {fund:d.fund, amount, date:d.date || today(), desc:(d.desc || '').trim()});
-  if(type === 'transfer'){ m.to = d.to; delete m.cat; } else { m.cat = d.cat || ''; delete m.to; }
+  if(type === 'transfer'){ m.to = d.to; delete m.cat; } else { m.cat = type === 'alloc' ? 'توزيع مكسب' : d.cat || ''; delete m.to; }
   if(!old) db.fundMoves.push(m);
   saveMove(m, old ? [`${moveLine(old)} ← ${moveLine(m)}`] : [moveLine(m)], !old);
   closeModal(); render(); toast('تم الحفظ');
+}
+function allocForm(){
+  const funds = (db.funds || []).slice().sort((a,b) => (a.created || '').localeCompare(b.created || ''));
+  if(!funds.length) return toast('دير خزنة الأول');
+  const pool = profitPool();
+  openModal('★ وزّع المكسب', `<form id="af" onsubmit="event.preventDefault();saveAlloc()">
+    <div class="note info" style="margin:0 0 14px">مكسب ما توزّعش: <b>${money(pool.left)}</b></div>
+    <div class="arows">${funds.map(f => `<div class="arow"><div><b>${esc(f.name)}</b><div class="small muted">فيها توّا ${money(fundBalance(f))}</div></div>
+      <input class="inp" type="number" step="any" min="0" data-fid="${f.id}" placeholder="0" oninput="allocSum()"></div>`).join('')}</div>
+    <div class="grid" style="margin-top:12px">${fld('التاريخ', 'date', today(), 'date')}${fld('ملاحظة', 'desc', '', 'text', 'placeholder="مثلاً: مكسب نوفمبر"')}</div>
+    <div class="atot" id="aTot"></div>
+    <div class="small" id="afErr" style="color:var(--bad);min-height:18px;margin-top:6px"></div>
+  </form>`, `<button class="btn pri" onclick="document.getElementById('af').requestSubmit()">وزّع</button><button class="btn" onclick="closeModal()">إلغاء</button>`);
+  allocForm.left = pool.left; allocSum();
+}
+function allocSum(){
+  const t = r2([...document.querySelectorAll('#af [data-fid]')].reduce((s,e) => s + N(e.value), 0)), left = r2(allocForm.left - t);
+  const el = $('#aTot'); if(!el) return;
+  el.innerHTML = `<div><span>المجموع</span><b>${money(t)}</b></div><div class="${left < -0.009 ? 'pneg' : ''}"><span>يبقى ما توزّعش</span><b>${money(left)}</b></div>`;
+}
+function saveAlloc(){
+  const items = [...document.querySelectorAll('#af [data-fid]')].map(e => ({fund:e.dataset.fid, amount:r2(N(e.value))})).filter(x => x.amount > 0);
+  if(!items.length) return $('#afErr').textContent = 'اكتب المبلغ لخزنة وحدة على الأقل';
+  const t = r2(items.reduce((s,x) => s + x.amount, 0));
+  if(t > allocForm.left + 0.009) return $('#afErr').textContent = `المجموع ${$t(t)} أكثر من المكسب اللي ما توزّعش (${$t(allocForm.left)})`;
+  const d = formData('af'), by = USE_FB && fbAuth && fbAuth.currentUser ? fbAuth.currentUser.email || '' : '';
+  items.forEach(x => { const m = {id:uid(), type:'alloc', fund:x.fund, amount:x.amount, date:d.date || today(), cat:'توزيع مكسب', desc:(d.desc || '').trim(), at:new Date().toISOString(), by};
+    db.fundMoves.push(m); saveMove(m, [moveLine(m)], true); });
+  closeModal(); render(); toast('تم توزيع ' + $t(t));
 }
 function delMove(id){
   const m = (db.fundMoves || []).find(x => x.id === id); if(!m) return;

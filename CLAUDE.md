@@ -107,6 +107,14 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
+- 2026-11-24 — PREVIEW (branch `preview-profit-funds`, NOT on main yet — Ahmed must approve): treasuries now hold PROFIT ONLY
+  (Ahmed: "الخزائن تكون فيها مكاسب فقط — منحطش فلوس الزبائن"). Dark "مكسب ما توزّعش بعد" card on the treasuries page =
+  received profit (locked stages, `profitRows`) from `db.settings.profitFrom` (month, '' = all; stored in meta/settings, selector on
+  the card) − all moves of type `alloc`. "من وين؟" lists the locked stages behind it. "★ وزّع المكسب" window: an amount per treasury,
+  total can't exceed the undistributed profit; each amount becomes a move `{type:'alloc', cat:'توزيع مكسب'}` that adds to the treasury.
+  If a stage reopens after distributing, the pool goes negative with a warning. "↓ داخل" renamed "داخل آخر" (categories: دخل آخر /
+  إيداع / أخرى — no more "دفعة من زبون"); "↑ طالع" categories: سحب شخصي / مصروف / استثمار / أخرى. Ahmed's first use: profit
+  $1,568.09 → ماهر $693.09 + شمال افريقيا $875.
 - 2026-11-24 — Published to main with Ahmed's OK ("انشر"; he said more changes to it are coming). "الخزائن" page (menu item, wallet icon).
   US dollars only and separate from the cars (Ahmed's choice: payments are NOT linked to a treasury). New collections `funds`
   {id,name,kind cash|bank|card|other,opening,openDate,note,created} and `fundMoves` {id,type in|out|transfer,fund,to?,amount,date,cat,desc,by,at};
