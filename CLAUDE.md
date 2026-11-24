@@ -107,7 +107,7 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
-- 2026-11-24 — PREVIEW (branch `preview-profit-funds`, NOT on main yet — Ahmed must approve): treasuries now hold PROFIT ONLY
+- 2026-11-24 — Published to main with Ahmed's OK ("انشر"): treasuries now hold PROFIT ONLY
   (Ahmed: "الخزائن تكون فيها مكاسب فقط — منحطش فلوس الزبائن"). Dark "مكسب ما توزّعش بعد" card on the treasuries page =
   received profit (locked stages, `profitRows`) from `db.settings.profitFrom` (month, '' = all; stored in meta/settings, selector on
   the card) − all moves of type `alloc`. "من وين؟" lists the locked stages behind it. "★ وزّع المكسب" window: an amount per treasury,
