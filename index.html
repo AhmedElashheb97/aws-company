@@ -453,6 +453,11 @@ body{background:var(--bg)}
 .atot > div:last-child{border-bottom:0;background:var(--surface-2)}
 .atot b{font-size:17px}
 @media screen and (max-width:640px){ .card.pool{padding:16px} .card.pool .pv{font-size:28px} .arow{grid-template-columns:minmax(0,1fr) 120px} }
+.ftabs{margin-bottom:16px}
+.ftabs button{font-size:15.5px;padding:8px 18px}
+.card.debtbig{padding:18px 20px}
+.card.debtbig .l{color:var(--muted);font-weight:700}
+.card.debtbig .v{font-size:30px;font-weight:800;margin-top:4px}
 /* auction fees calculator */
 @media screen{
 .fcout:not(:empty){margin-top:14px}
@@ -658,6 +663,7 @@ function load(){
   d.customers = d.customers || [];
   d.funds = d.funds || [];
   d.fundMoves = d.fundMoves || [];
+  d.debts = d.debts || [];
   d.settings = Object.assign({officeName:'AWS COMPANY', officeFee:0, wirePct:1.5, perContainer:4}, d.settings||{});
   return d;
 }
@@ -682,7 +688,7 @@ function saveContainer(ct, changes){
 function removeCust(id){ const old = shadow.customers[id]; db.customers = db.customers.filter(x => x.id !== id); if(USE_FB){ if(old) addLog('customer', id, old.name, 'حذف', ['حذف الزبون']); fs.collection('customers').doc(id).delete().catch(fbErr); } else save(); }
 
 /* ---------- change log: who changed what, and when ---------- */
-const shadow = {cars:{}, customers:{}, containers:{}, funds:{}, fundMoves:{}, settings:null};   // last copy seen from the cloud, to compare against
+const shadow = {cars:{}, customers:{}, containers:{}, funds:{}, fundMoves:{}, debts:{}, settings:null};   // last copy seen from the cloud, to compare against
 const $t = n => '$' + r2(n).toLocaleString('en-US', {maximumFractionDigits:2});
 function addLog(kind, ref, title, action, changes){
   if(!USE_FB || !fbAuth || !fbAuth.currentUser || !changes.length) return;
@@ -755,7 +761,7 @@ function initFirebase(){
   firebase.initializeApp(FBC);
   fbAuth = firebase.auth(); fs = firebase.firestore();
   fs.enablePersistence({synchronizeTabs:true}).catch(() => {});
-  db = {cars:[], customers:[], funds:[], fundMoves:[], settings:load().settings};
+  db = {cars:[], customers:[], funds:[], fundMoves:[], debts:[], settings:load().settings};
   fbAuth.onAuthStateChanged(user => {
     unsub.forEach(f => f()); unsub = [];
     if(!user){ $('#login').classList.add('on'); setCloud(''); return; }
@@ -775,6 +781,9 @@ function initFirebase(){
     unsub.push(fs.collection('funds').onSnapshot(snap => {
       db.funds = snap.docs.map(d => d.data()); shadow.funds = Object.fromEntries(snap.docs.map(d => [d.id, d.data()])); if(ui.view === 'funds') render();
     }, e => console.error('funds', e)));
+    unsub.push(fs.collection('debts').onSnapshot(snap => {
+      db.debts = snap.docs.map(d => Object.assign({entries:[]}, d.data())); shadow.debts = Object.fromEntries(snap.docs.map(d => [d.id, d.data()])); if(ui.view === 'funds') render();
+    }, e => console.error('debts', e)));
     unsub.push(fs.collection('fundMoves').onSnapshot(snap => {
       db.fundMoves = snap.docs.map(d => d.data()); shadow.fundMoves = Object.fromEntries(snap.docs.map(d => [d.id, d.data()])); if(ui.view === 'funds') render();
     }, e => console.error('fundMoves', e)));
@@ -921,7 +930,7 @@ function render(){
   else if(ui.view === 'container'){ const ct = getCt(ui.carId); app.innerHTML = ct ? viewContainer(ct) : (ui.view = 'containers', viewContainers()); }
   else if(ui.view === 'log'){ const f = document.activeElement && document.activeElement.id === 'lq'; app.innerHTML = viewLog(); if(f){ const e = $('#lq'); e.focus(); e.setSelectionRange(e.value.length, e.value.length); } }
   else if(ui.view === 'map') app.innerHTML = viewMap();
-  else if(ui.view === 'funds') app.innerHTML = viewFunds();
+  else if(ui.view === 'funds') app.innerHTML = fundsTabs() + (ui.fundTab === 'debts' ? viewDebts() : viewFunds());
   else app.innerHTML = viewCars();
   tblCards(app);
 }
@@ -980,6 +989,142 @@ function saveMove(m, changes, isNew){
 }
 const moveLine = m => `${m.type === 'alloc' ? 'من المكسب' : m.type === 'in' ? 'داخل' : m.type === 'out' ? 'طالع' : 'تحويل'} ${$t(m.amount)}${m.type === 'transfer' ? ` من ${fundName(m.fund)} إلى ${fundName(m.to)}` : ` — ${fundName(m.fund)}`}${m.cat ? ' — ' + m.cat : ''}${m.desc ? ' — ' + m.desc : ''} — ${m.date || ''}`;
 
+/* ---------- الديون: people who are not customers, and how much we owe them (or they owe us) ----------
+   debt: {id, name, phone, note, created, entries:[{id, type:'took'|'paid', amount, date, desc}]}
+   took = we took money from him (we owe more) · paid = we paid him back (we owe less). balance > 0 → we owe him; < 0 → he owes us. */
+function fundsTabs(){
+  const t = ui.fundTab === 'debts' ? 'debts' : 'funds', owe = debtTotals().owe;
+  return `<div class="tabs ftabs"><button class="${t === 'funds' ? 'on' : ''}" onclick="ui.fundTab='funds';render()">👛 الخزائن</button>
+    <button class="${t === 'debts' ? 'on' : ''}" onclick="ui.fundTab='debts';render()">🤝 الديون${owe > 0.009 ? ` <span class="small pneg">${money(owe)}</span>` : ''}</button></div>`;
+}
+const getDebt = id => (db.debts || []).find(d => d.id === id);
+const debtBal = d => r2((d.entries || []).reduce((s,e) => s + (e.type === 'took' ? N(e.amount) : -N(e.amount)), 0));
+function debtTotals(){
+  let owe = 0, owed = 0;
+  (db.debts || []).forEach(d => { const b = debtBal(d); if(b > 0) owe += b; else owed -= b; });
+  return {owe:r2(owe), owed:r2(owed)};
+}
+const debtState = b => b > 0.009 ? `<span class="pneg">يبي منا ${money(b)}</span>` : b < -0.009 ? `<span class="ppos">لينا عنده ${money(-b)}</span>` : `<span class="ppos">✓ خالص</span>`;
+const entryLine = e => `${e.type === 'took' ? 'أخذنا منه' : 'رجعناله'} ${$t(e.amount)}${e.desc ? ' — ' + e.desc : ''} — ${e.date || ''}`;
+function saveDebt(d, changes, action){
+  if(!USE_FB) return save();
+  addLog('debt', d.id, 'دين: ' + d.name, action || (shadow.debts[d.id] ? 'تعديل' : 'إضافة'), changes);
+  fs.collection('debts').doc(d.id).set(plain(d)).catch(fbErr);
+}
+function viewDebts(){
+  const list = (db.debts || []).slice().sort((a,b) => debtBal(b) - debtBal(a) || (a.name || '').localeCompare(b.name || ''));
+  const d = ui.debtSel && getDebt(ui.debtSel);
+  const t = debtTotals();
+  if(d){
+    let run = 0;
+    const rows = (d.entries || []).slice().sort((a,b) => (a.date || '').localeCompare(b.date || '') || (a.at || '').localeCompare(b.at || ''))
+      .map(e => { run = r2(run + (e.type === 'took' ? N(e.amount) : -N(e.amount))); return Object.assign({}, e, {_run:run}); }).reverse();
+    const b = debtBal(d);
+    return `
+    <div class="chead"><button class="btn" onclick="ui.debtSel='';render()">→ رجوع</button>
+      <div style="flex:1;min-width:200px"><h1>${esc(d.name)}</h1><div class="muted small">${d.phone ? `<span class="num">${esc(d.phone)}</span>` : ''}${d.note ? ' · ' + esc(d.note) : ''}</div></div>
+      <div class="actions"><button class="btn pri" onclick="entryForm('${d.id}','took')">＋ أخذنا منه</button><button class="btn" onclick="entryForm('${d.id}','paid')">− رجعناله</button>
+        <button class="btn" onclick="debtForm('${d.id}')">تعديل</button></div></div>
+    <div class="card debtbig"><div class="l">الحساب معاه توّا</div><div class="v">${debtState(b)}</div></div>
+    <div class="card" style="margin-top:16px">
+      <div class="pad" style="border-bottom:1px solid var(--line)"><h3>الحركة</h3></div>
+      ${rows.length ? `<div class="tblwrap"><table class="tbl"><thead><tr><th>التاريخ</th><th>النوع</th><th>ملاحظة</th><th class="pamt">المبلغ</th><th class="pamt">يبي منا بعدها</th><th></th></tr></thead><tbody>
+        ${rows.map(e => `<tr><td><span class="num">${esc(e.date || '')}</span></td>
+          <td><span class="bdg ${e.type === 'took' ? 'bad' : 'done'}">${e.type === 'took' ? '↓ أخذنا منه' : '↑ رجعناله'}</span></td>
+          <td>${e.desc ? esc(e.desc) : '<span class="muted">—</span>'}</td>
+          <td class="pamt"><b class="${e.type === 'took' ? 'pneg' : 'ppos'}">${money(e.amount)}</b></td>
+          <td class="pamt"><span class="num">${money(e._run)}</span></td>
+          <td style="white-space:nowrap"><button class="btn sm" onclick="entryForm('${d.id}','${e.type}','${e.id}')">تعديل</button> <button class="btn sm danger" onclick="delEntry('${d.id}','${e.id}')">حذف</button></td></tr>`).join('')}
+        </tbody></table></div>` : `<div class="empty">ما فيش حركة بعد — سجّل "أخذنا منه" أو "رجعناله"</div>`}
+    </div>`;
+  }
+  return `
+  <div class="chead"><div style="flex:1;min-width:200px"><h1>الديون</h1><div class="muted small">ناس مش زبائن — كم يبوا منا، أو كم لينا عندهم</div></div>
+    <div class="actions"><button class="btn pri" onclick="debtForm()">＋ شخص جديد</button></div></div>
+  ${list.length ? `
+  <div class="kpis">
+    <div class="card kpi" style="--kc:#DC2F2F"><div class="l">إجمالي اللي علينا</div><div class="v pneg">${money(t.owe)}</div><div class="small muted">${list.filter(x => debtBal(x) > 0.009).length} شخص</div></div>
+    <div class="card kpi" style="--kc:#0E9F6E"><div class="l">لينا عند ناس</div><div class="v ppos">${money(t.owed)}</div></div>
+  </div>
+  <div class="funds">${list.map(x => { const b = debtBal(x); return `<div class="card fund debt" onclick="ui.debtSel='${x.id}';render()">
+      <div class="fk">${x.phone ? `<span class="num">${esc(x.phone)}</span>` : '🤝'}</div><div class="fn">${esc(x.name)}</div>
+      <div class="fb" style="font-size:22px">${debtState(b)}</div>
+      <div class="small muted" style="margin-top:6px">${(x.entries || []).length} حركة · اضغط تشوف التفاصيل</div></div>`; }).join('')}</div>`
+  : `<div class="card empty" style="padding:50px 20px"><div style="font-size:40px">🤝</div><h2 style="margin:8px 0">ما فيش ديون مسجلة</h2>
+      <div class="muted" style="margin-bottom:16px">ضيف أي شخص مش زبون أخذت منه فلوس (أو سلّفته)، وسجّل كم أخذت وكم رجعت.</div>
+      <button class="btn pri" onclick="debtForm()">＋ أول شخص</button></div>`}`;
+}
+function debtForm(id){
+  const d = id ? getDebt(id) : {};
+  const first = !id;
+  openModal(id ? 'تعديل الشخص' : 'شخص جديد', `<form id="df" class="grid" onsubmit="event.preventDefault();saveDebtForm('${id || ''}')">
+    ${fld('الاسم', 'name', d.name, 'text', 'required', 'full')}
+    ${fld('الهاتف', 'phone', d.phone, 'tel', 'style="direction:ltr;text-align:right"')}
+    ${fld('ملاحظة', 'note', d.note, 'text')}
+    ${first ? `<div class="fsec">كم يبي منا توّا؟ (اختياري)</div>
+      ${fld('المبلغ ($)', 'amount', '', 'number', 'min="0" placeholder="0"')}
+      ${fld('التاريخ', 'date', today(), 'date')}
+      <div class="f full hint">لو ما يبي منا شي توّا خليه فاضي، وسجّل بعدين من "أخذنا منه".</div>` : ''}
+  </form>`, `<button class="btn pri" onclick="document.getElementById('df').requestSubmit()">حفظ</button><button class="btn" onclick="closeModal()">إلغاء</button>
+    ${id ? `<div class="sp"></div><button class="btn danger" onclick="delDebt('${id}')">حذف</button>` : ''}`);
+}
+function saveDebtForm(id){
+  const f = formData('df'); f.name = f.name.trim(); if(!f.name) return;
+  const old = id ? JSON.parse(JSON.stringify(getDebt(id))) : null;
+  const d = old ? getDebt(id) : {id:uid(), created:new Date().toISOString(), entries:[]};
+  Object.assign(d, {name:f.name, phone:(f.phone || '').trim(), note:(f.note || '').trim()});
+  const ch = [];
+  if(!old){
+    ch.push('شخص جديد' + (d.phone ? ' — ' + d.phone : ''));
+    const a = r2(N(f.amount));
+    if(a > 0){ const e = {id:uid(), type:'took', amount:a, date:f.date || today(), desc:'الرصيد الأول', at:new Date().toISOString()}; d.entries.push(e); ch.push(entryLine(e)); }
+    db.debts.push(d);
+  } else {
+    const F = {name:'الاسم', phone:'الهاتف', note:'ملاحظة'};
+    Object.keys(F).forEach(k => { if(String(old[k] ?? '') !== String(d[k] ?? '')) ch.push(`${F[k]}: ${old[k] || '—'} ← ${d[k] || '—'}`); });
+  }
+  saveDebt(d, ch); closeModal(); if(!old) ui.debtSel = d.id; render(); toast('تم الحفظ');
+}
+function delDebt(id){
+  const d = getDebt(id); if(!d) return;
+  const b = debtBal(d);
+  ask(`نحذفوا "${esc(d.name)}" وكل حركته؟${Math.abs(b) > 0.009 ? `<div class="note bad" style="margin-top:8px">الحساب معاه مش خالص: ${debtState(b)}</div>` : ''}`, () => {
+    db.debts = db.debts.filter(x => x.id !== id); ui.debtSel = '';
+    if(USE_FB){ addLog('debt', id, 'دين: ' + d.name, 'حذف', ['حذف الشخص وحركته' + (Math.abs(b) > 0.009 ? ' — كان ' + (b > 0 ? 'يبي منا ' : 'لينا عنده ') + $t(Math.abs(b)) : '')]); fs.collection('debts').doc(id).delete().catch(fbErr); } else save();
+    closeModal(); render(); toast('تم الحذف');
+  }, 'حذف');
+}
+function entryForm(did, type, eid){
+  const d = getDebt(did); if(!d) return;
+  const e = eid ? (d.entries || []).find(x => x.id === eid) : {type, date:today()};
+  if(!e) return;
+  type = e.type;
+  openModal(`${eid ? 'تعديل — ' : ''}${type === 'took' ? '＋ أخذنا من' : '− رجعنا لـ'} ${esc(d.name)}`, `<form id="ef" class="grid" onsubmit="event.preventDefault();saveEntry('${did}','${type}','${eid || ''}')">
+    <div class="f full"><label>النوع</label><div class="seg"><button type="button" class="${type === 'took' ? 'on' : ''}" onclick="closeModal();entryForm('${did}','took'${eid ? `,'${eid}'` : ''})" ${eid ? 'disabled' : ''}>أخذنا منه</button><button type="button" class="${type === 'paid' ? 'on' : ''}" onclick="closeModal();entryForm('${did}','paid'${eid ? `,'${eid}'` : ''})" ${eid ? 'disabled' : ''}>رجعناله</button></div></div>
+    ${fld('المبلغ ($)', 'amount', e.amount, 'number', 'required min="0.01"')}
+    ${fld('التاريخ', 'date', e.date, 'date', 'required')}
+    ${fld('ملاحظة', 'desc', e.desc, 'text', 'placeholder="مثلاً: سلفة لسداد مزاد…"', 'full')}
+    <div class="f full hint">الحساب معاه توّا: ${debtState(debtBal(d))}</div>
+    <div class="small" id="efErr" style="grid-column:1/-1;color:var(--bad)"></div>
+  </form>`, `<button class="btn pri" onclick="document.getElementById('ef').requestSubmit()">حفظ</button><button class="btn" onclick="closeModal()">إلغاء</button>`);
+}
+function saveEntry(did, type, eid){
+  const d = getDebt(did), f = formData('ef'), amount = r2(N(f.amount));
+  if(!(amount > 0)) return $('#efErr').textContent = 'اكتب المبلغ';
+  const old = eid ? Object.assign({}, d.entries.find(x => x.id === eid)) : null;
+  const e = old ? d.entries.find(x => x.id === eid) : {id:uid(), type, at:new Date().toISOString()};
+  Object.assign(e, {amount, date:f.date || today(), desc:(f.desc || '').trim()});
+  if(!old) d.entries.push(e);
+  saveDebt(d, old ? [`${entryLine(old)} ← ${entryLine(e)}`] : [entryLine(e)], old ? 'تعديل' : 'إضافة');
+  closeModal(); render(); toast('تم الحفظ');
+}
+function delEntry(did, eid){
+  const d = getDebt(did), e = d && d.entries.find(x => x.id === eid); if(!e) return;
+  ask(`نحذفوا الحركة؟<div class="small muted" style="margin-top:6px">${esc(entryLine(e))}</div>`, () => {
+    d.entries = d.entries.filter(x => x.id !== eid);
+    saveDebt(d, ['حذف حركة: ' + entryLine(e)], 'حذف'); render(); toast('تم الحذف');
+  }, 'حذف');
+}
 function viewFunds(){
   const funds = (db.funds || []).slice().sort((a,b) => (a.created || '').localeCompare(b.created || ''));
   const sel = ui.fundSel && getFund(ui.fundSel) ? ui.fundSel : '';
@@ -1165,7 +1310,7 @@ const ACT_CLS = {'إضافة':'done', 'تعديل':'ship', 'حذف':'bad'};
 function logTime(at){ const d = new Date(at); return isNaN(d) ? '' : d.toLocaleString('en-GB', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}); }
 function logItems(list, showTitle){
   return list.map(l => `<div class="logi">
-    <div class="logh">${showTitle ? `<b class="${l.kind !== 'settings' ? 'click' : ''}" ${l.kind === 'car' ? `onclick="go('car','${l.ref}')"` : l.kind === 'customer' ? `onclick="go('customer','${l.ref}')"` : l.kind === 'container' ? `onclick="go('container','${l.ref}')"` : l.kind === 'fund' ? `onclick="go('funds')"` : ''}>${esc(l.title)}</b>` : ''}
+    <div class="logh">${showTitle ? `<b class="${l.kind !== 'settings' ? 'click' : ''}" ${l.kind === 'car' ? `onclick="go('car','${l.ref}')"` : l.kind === 'customer' ? `onclick="go('customer','${l.ref}')"` : l.kind === 'container' ? `onclick="go('container','${l.ref}')"` : l.kind === 'fund' ? `onclick="ui.fundTab='funds';go('funds')"` : l.kind === 'debt' ? `onclick="ui.fundTab='debts';ui.debtSel='${l.ref}';go('funds')"` : ''}>${esc(l.title)}</b>` : ''}
       <span class="bdg ${ACT_CLS[l.action] || 'exp'}">${esc(l.action)}</span>
       <div class="sp"></div><span class="small muted"><span class="num">${esc(logTime(l.at))}</span> · ${esc((l.by || '').split('@')[0])}</span></div>
     <ul>${(l.changes || []).map(x => `<li>${logLine(x)}</li>`).join('')}</ul></div>`).join('');

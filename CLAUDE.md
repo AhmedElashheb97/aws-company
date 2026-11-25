@@ -107,6 +107,12 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
+- 2026-11-25 — PREVIEW (branch `preview-debts`, NOT on main yet — Ahmed must approve): "الديون" = second tab on the treasuries page
+  (tabs 👛 الخزائن / 🤝 الديون, `ui.fundTab`). People who are not customers: collection `debts`
+  {id,name,phone,note,created,entries:[{id,type took|paid,amount,date,desc,at}]}; balance = Σtook − Σpaid (>0 we owe him, <0 he owes
+  us). List with totals "إجمالي اللي علينا" / "لينا عند ناس", person page with running balance, ＋ أخذنا منه / − رجعناله, edit/delete;
+  optional starting amount when adding a person. Not linked to treasuries or cars. Logged as kind 'debt'. Needs a new rule line
+  `match /debts/{id}` published in Firebase (in `firestore.rules`) and the updated backup script pasted (it now backs up `debts`).
 - 2026-11-24 — Published to main with Ahmed's OK ("انشر"): treasuries now hold PROFIT ONLY
   (Ahmed: "الخزائن تكون فيها مكاسب فقط — منحطش فلوس الزبائن"). Dark "مكسب ما توزّعش بعد" card on the treasuries page =
   received profit (locked stages, `profitRows`) from `db.settings.profitFrom` (month, '' = all; stored in meta/settings, selector on
