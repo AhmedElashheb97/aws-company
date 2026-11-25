@@ -41,7 +41,7 @@ on every computer. The user works from more than one computer; this file + git i
 - **`vendor/html2pdf-0.10.1.bundle.min.js`** (MIT, bundled copy — CDNs are blocked in the cloud sessions) is loaded only when the
   invoice PDF is made.
 - **Firebase project `aws-company`** (Firestore + Auth email/password, compat SDK 10.12.2).
-  Collections: `cars`, `customers`, `containers`, `meta/settings`, `log`, `tracking`.
+  Collections: `cars`, `customers`, `containers`, `meta/settings`, `log`, `tracking`, `funds`, `fundMoves`, `debts`.
 - **Firestore rules** = `firestore.rules` in the repo. Publishing needs the Firebase console
   (Firestore → Rules → Publish). Current rules: signed-in users read/write cars, customers, meta,
   containers; `tracking/{VIN}` is public `get` only; `log` is append-only (create with `by == auth email`,
@@ -107,7 +107,7 @@ WhatsApp tracking link, **change log** (who/when/old→new, per car & container)
 
 ## Change log (newest first)
 
-- 2026-11-25 — PREVIEW (branch `preview-debts`, NOT on main yet — Ahmed must approve): "الديون" = second tab on the treasuries page
+- 2026-11-25 — Published to main with Ahmed's OK ("انشر"): "الديون" = second tab on the treasuries page
   (tabs 👛 الخزائن / 🤝 الديون, `ui.fundTab`). People who are not customers: collection `debts`
   {id,name,phone,note,created,entries:[{id,type took|paid,amount,date,desc,at}]}; balance = Σtook − Σpaid (>0 we owe him, <0 he owes
   us). List with totals "إجمالي اللي علينا" / "لينا عند ناس", person page with running balance, ＋ أخذنا منه / − رجعناله, edit/delete;
